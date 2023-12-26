@@ -25,19 +25,23 @@ const AuthComponent: React.FC<AuthComponentProps> = ({ user, setUser }) => {
       <div>
         <Routes>
           <Route path="/welcome" element={<WelcomePage />} />
-          <Route path="/">
-            {user ? (
-              <>
-                <p>Welcome, {user.email}</p>
-                <SignOut onSignOutSuccess={handleSignOutSuccess} />
-              </>
-            ) : (
-              <>
-               <SignIn onSignInSuccess={handleSignInSuccess} />
-               <SignUp onSignUpSuccess={handleSignUpSuccess} />
-              </>
-            )}
-          </Route>
+          {user ? (
+            <>
+              <p>Welcome, {user.email}</p>
+              <SignOut onSignOutSuccess={handleSignOutSuccess} />
+            </>
+          ) : (
+            <>
+              <Route
+                path="/"
+                element={<SignIn onSignInSuccess={handleSignInSuccess} />}
+              />
+              <Route
+                path="/"
+                element={<SignUp onSignUpSuccess={handleSignUpSuccess} />}
+              />
+            </>
+          )}
         </Routes>
       </div>
     </Router>
