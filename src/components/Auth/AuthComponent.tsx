@@ -1,13 +1,13 @@
-import React from "react";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import React, { useState } from "react";
+import { auth } from "../../../firebase";
 import SignIn from "./SignIn";
 import SignOut from "./SignOut";
 import SignUp from "./SignUp";
 import WelcomePage from "../../pages/WelcomePage";
-import { auth } from "../../../firebase";
-import { AuthComponentProps } from "../../types/interfaces";
 
-const AuthComponent: React.FC<AuthComponentProps> = ({ user, setUser }) => {
+const AuthComponent: React.FC = () => {
+  const [user, setUser] = useState<any | null>(auth.currentUser);
+
   const handleSignInSuccess = () => {
     setUser(auth.currentUser);
   };
@@ -21,30 +21,20 @@ const AuthComponent: React.FC<AuthComponentProps> = ({ user, setUser }) => {
   };
 
   return (
-    <Router>
-      <div>
-        <Routes>
-          <Route path="/welcome" element={<WelcomePage />} />
-          {user ? (
-            <>
-              <p>Welcome, {user.email}</p>
-              <SignOut onSignOutSuccess={handleSignOutSuccess} />
-            </>
-          ) : (
-            <>
-              <Route
-                path="/"
-                element={<SignIn onSignInSuccess={handleSignInSuccess} />}
-              />
-              <Route
-                path="/"
-                element={<SignUp onSignUpSuccess={handleSignUpSuccess} />}
-              />
-            </>
-          )}
-        </Routes>
-      </div>
-    </Router>
+    <div>
+      {user ? (
+        <>
+          <p>Welcome, {user.email}</p>
+          <SignOut onSignOutSuccess={handleSignOutSuccess} />
+          <WelcomePage />
+        </>
+      ) : (
+        <>
+          <SignIn onSignInSuccess={handleSignInSuccess} />
+          <SignUp onSignUpSuccess={handleSignUpSuccess} />
+        </>
+      )}
+    </div>
   );
 };
 

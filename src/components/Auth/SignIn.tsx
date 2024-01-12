@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../firebase";
-import { SignInProps } from "../../types/interfaces";
 
-const SignIn: React.FC<SignInProps> = ({ onSignInSuccess }: { onSignInSuccess: () => void }) => {
+interface SignInProps {
+  onSignInSuccess: () => void;
+}
+
+const SignIn: React.FC<SignInProps> = ({ onSignInSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -21,6 +24,7 @@ const SignIn: React.FC<SignInProps> = ({ onSignInSuccess }: { onSignInSuccess: (
 
   return (
     <div>
+      <h2>Sign In</h2>
       <input
         type="email"
         placeholder="Email"

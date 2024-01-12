@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { Auth } from "firebase/auth";
 import { auth } from "../../../firebase";
-import { SignUpProps } from "../../types/interfaces";
+
+interface SignUpProps {
+  onSignUpSuccess: () => void;
+}
 
 const SignUp: React.FC<SignUpProps> = ({ onSignUpSuccess }) => {
   const [email, setEmail] = useState("");
@@ -11,7 +13,7 @@ const SignUp: React.FC<SignUpProps> = ({ onSignUpSuccess }) => {
 
   const handleSignUp = async () => {
     try {
-      await createUserWithEmailAndPassword(auth as Auth, email, password);
+      await createUserWithEmailAndPassword(auth, email, password);
       setError(null);
       onSignUpSuccess();
     } catch (error: any) {
@@ -22,6 +24,7 @@ const SignUp: React.FC<SignUpProps> = ({ onSignUpSuccess }) => {
 
   return (
     <div>
+      <h2>Sign Up</h2>
       <input
         type="email"
         placeholder="Email"
