@@ -1,13 +1,15 @@
-import { useState } from "react";
-import AuthComponent from './components/Auth/AuthComponent';
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import MainPage from "./pages/MainPage";
 
 function App() {
-  const [user, setUser] = useState<any | null>(null);
+  
 
   return (
-    <>
-      <AuthComponent user={user} setUser={setUser} />
-    </>
+    <BrowserRouter>
+    <Routes> 
+      <Route path="/" element={<MainPage />} />
+    </Routes>
+    </BrowserRouter>
   );
 }
 

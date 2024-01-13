@@ -6,7 +6,7 @@ interface SignInProps {
   onSignInSuccess: () => void;
 }
 
-const SignIn: React.FC<SignInProps> = ({ onSignInSuccess }) => {
+const SignIn: React.FC<SignInProps> = ({ onSignInSuccess }: { onSignInSuccess: () => void }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -14,6 +14,7 @@ const SignIn: React.FC<SignInProps> = ({ onSignInSuccess }) => {
   const handleSignIn = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      
       setError(null);
       onSignInSuccess();
     } catch (error: any) {
