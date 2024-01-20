@@ -3,7 +3,7 @@ import { auth } from "../../../firebase";
 import SignIn from "./SignIn";
 import SignOut from "./SignOut";
 import SignUp from "./SignUp";
-import WelcomePage from "../../pages/WelcomePage";
+import WelcomePage from "../../pages/WelcomePage/WelcomePage";
 
 const AuthComponent: React.FC = () => {
   const [user, setUser] = useState<any | null>(auth.currentUser);
