@@ -4,7 +4,7 @@ import AuthComponent from './components/Auth/AuthComponent';
 import MainPage from './pages/MainPage/MainPage';
 
 function App() {
-  const [user, setUser] = useState<any | null>(null);
+  
 
   return (
     <BrowserRouter>

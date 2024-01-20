@@ -5,8 +5,11 @@ import SignOut from "./SignOut";
 import SignUp from "./SignUp";
 import WelcomePage from "../../pages/WelcomePage/WelcomePage";
 
+
+
 const AuthComponent: React.FC = () => {
   const [user, setUser] = useState<any | null>(auth.currentUser);
+  
 
   const handleSignInSuccess = () => {
     setUser(auth.currentUser);
