@@ -1,0 +1,29 @@
+{
+    "name": "graphiql-app",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint",
+        "format:check": "prettier --check .",
+        "format:fix": "prettier --write .",
+        "prepare": "husky install"
+    },
+    "dependencies": {
+        "next": "14.2.5",
+        "prettier": "^3.3.3",
+        "react": "^18",
+        "react-dom": "^18"
+    },
+    "devDependencies": {
+        "@types/node": "^20",
+        "@types/react": "^18",
+        "@types/react-dom": "^18",
+        "eslint": "^8",
+        "eslint-config-next": "14.2.5",
+        "husky": "^8.0.0",
+        "typescript": "^5"
+    }
+}
