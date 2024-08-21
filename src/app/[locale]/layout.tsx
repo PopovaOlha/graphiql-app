@@ -1,8 +1,13 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import { i18nConfig } from '../../../i18nConfig';
 
 const inter = Inter({ subsets: ['latin'] });
+
+export function generateStaticParams() {
+    return i18nConfig.locales.map((locale) => ({ locale }));
+}
 
 export const metadata: Metadata = {
     title: 'REST/GraphQL Client',

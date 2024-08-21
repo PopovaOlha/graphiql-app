@@ -12,10 +12,14 @@
         "prepare": "husky install"
     },
     "dependencies": {
+        "i18next": "^23.14.0",
+        "i18next-resources-to-backend": "^1.2.1",
         "next": "14.2.5",
+        "next-i18n-router": "^5.5.1",
         "prettier": "^3.3.3",
         "react": "^18",
-        "react-dom": "^18"
+        "react-dom": "^18",
+        "react-i18next": "^15.0.1"
     },
     "devDependencies": {
         "@types/node": "^20",
