@@ -1,0 +1,22 @@
+.signupContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5; /* Цвет фона */
+}
+
+.signupPaper {
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.signupTitle {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.signupButton {
+    margin-top: 20px;
+}

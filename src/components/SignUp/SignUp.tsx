@@ -1,11 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import {
-    auth,
-    logInWithEmailAndPassword,
-    signInWithGoogle,
-} from '../../services/firebase';
+import { useRouter } from 'next/navigation';
+import { auth, registerWithEmailAndPassword } from '../../services/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
     Container,
@@ -18,21 +14,19 @@ import {
     Snackbar,
     Alert,
 } from '@mui/material';
-import styles from './Login.module.css';
+import styles from './SignUp.module.css';
 
-const Login: React.FC = () => {
+const SignUp: React.FC = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [user, loading] = useAuthState(auth);
+    const [name, setName] = useState<string>('');
+    const [user] = useAuthState(auth);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
-    useEffect(() => {
-        if (loading) return;
-        if (user) router.push('/');
-    }, [user, loading, router]);
-
-    const handleLogin = async (e: React.FormEvent): Promise<void> => {
+    const handleSignUp = async (
+        e: React.FormEvent<HTMLFormElement>
+    ): Promise<void> => {
         e.preventDefault();
 
         const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -46,15 +40,16 @@ const Login: React.FC = () => {
 
         if (!passwordPattern.test(password)) {
             setError(
-                'Password must contain at least 8 characters, including one letter, one digit, and one special character.'
+                'Password must be at least 8 characters long, contain at least one letter, one number, and one special character.'
             );
             return;
         }
 
         try {
-            await logInWithEmailAndPassword(email, password);
+            await registerWithEmailAndPassword(name, email, password);
+            router.push('/');
         } catch (err) {
-            setError('Failed to log in. Please check your credentials.');
+            setError('Failed to sign up. Please try again.');
         }
     };
 
@@ -63,18 +58,27 @@ const Login: React.FC = () => {
     };
 
     return (
-        <Container component="main" maxWidth="xs" className={styles.loginContainer}>
+        <Container component="main" maxWidth="xs" className={styles.signupContainer}>
             <CssBaseline />
-            <Paper elevation={3} className={styles.loginPaper}>
+            <Paper elevation={3} className={styles.signupPaper}>
                 <Typography
                     variant="h5"
                     component="h1"
-                    className={styles.loginTitle}
+                    className={styles.signupTitle}
                 >
-                    Sign In
+                    Sign Up
                 </Typography>
-                <form onSubmit={handleLogin}>
+                <form onSubmit={handleSignUp}>
                     <Box display="flex" flexDirection="column" alignItems="center">
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            fullWidth
+                            label="Full Name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                        />
                         <TextField
                             variant="outlined"
                             margin="normal"
@@ -99,25 +103,15 @@ const Login: React.FC = () => {
                             variant="contained"
                             color="primary"
                             fullWidth
-                            className={styles.loginButton}
+                            className={styles.signupButton}
                         >
-                            Login
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="outlined"
-                            color="primary"
-                            fullWidth
-                            onClick={signInWithGoogle}
-                            className={styles.loginButton}
-                        >
-                            Login with Google
+                            Sign Up
                         </Button>
                     </Box>
                 </form>
-                <Typography variant="body2" className={styles.loginText}>
-                    Don't have an account? <a href="/register">Sign up</a> now.
-                </Typography>
+                <div>
+                    Already have an account? <a href="/signin">Log in</a> now.
+                </div>
             </Paper>
             <Snackbar
                 open={!!error}
@@ -132,4 +126,4 @@ const Login: React.FC = () => {
     );
 };
 
-export default Login;
+export default SignUp;
