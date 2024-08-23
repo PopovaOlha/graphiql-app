@@ -1,6 +1,6 @@
 'use client';
-import SignUp from '../../components/SignUp/SignUp';
-import styles from '../../styles/signup.module.scss';
+import SignUp from '@/components/SignUp/SignUp';
+import styles from '@/styles/signup.module.scss';
 
 const SignUpPage: React.FC = () => {
     return (

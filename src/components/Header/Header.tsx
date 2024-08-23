@@ -1,11 +1,12 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { Button } from '@mui/material';
-import styles from './Header.module.scss';
+import { useRouter } from 'next/navigation';
+import { FC } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, logout } from '../../services/firebase';
-import { FC } from 'react';
+import { LanguageSelect } from '../LanguageSelect';
+import styles from './Header.module.scss';
 
 const Header: FC = () => {
     const router = useRouter();
@@ -21,6 +22,7 @@ const Header: FC = () => {
             <div className={styles.logoContainer}>
                 <img src="/logo.svg" alt="Logo" className={styles.logo} />
             </div>
+            <LanguageSelect />
             <nav className={styles.navlist}>
                 <div className={styles.buttonContainer}>
                     {!user ? (

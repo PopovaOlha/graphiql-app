@@ -1,12 +1,13 @@
 'use client';
 
+import Header from '@/components/Header/Header';
+import { auth } from '@/services/firebase';
+import styles from '@/styles/welcomepage.module.scss';
 import { Box, Button, Typography } from '@mui/material';
+import { t } from 'i18next';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import Header from '../../components/Header/Header';
-import { auth } from '../../services/firebase';
-import styles from '../../styles/welcomepage.module.scss';
 
 const WelcomePage: FC = () => {
     const [user] = useAuthState(auth);
@@ -15,6 +16,7 @@ const WelcomePage: FC = () => {
     return (
         <div className={styles.container}>
             <Header />
+            <h1>{t('title')}</h1>
             {user ? (
                 <>
                     <h1 className={styles.title}>
