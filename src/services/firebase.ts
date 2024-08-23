@@ -1,4 +1,4 @@
-import { Auth } from 'firebase/auth';
+import { Auth, updateProfile } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import {
     GoogleAuthProvider,
@@ -73,6 +73,11 @@ const registerWithEmailAndPassword = async (
     try {
         const res = await createUserWithEmailAndPassword(auth, email, password);
         const user: User = res.user;
+
+        await updateProfile(user, {
+            displayName: name,
+        });
+
         await addDoc(collection(db, 'users'), {
             uid: user.uid,
             name,
