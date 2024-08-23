@@ -1,7 +1,7 @@
 import { TranslationsProvider } from '@/components/TranslationsProvider';
 import initTranslations from '../i18n';
-import styles from './page.module.css';
-import { LanguageSelect } from '@/components/LanguageSelect';
+import styles from './page.module.scss';
+import WelcomePage from './welcomepage/page';
 
 const i18nNamespaces: string[] = ['mainPage'];
 
@@ -21,10 +21,8 @@ export default async function Home({
             <main className={styles.main}>
                 <div className={styles.description}>
                     <h1>{t('title')}</h1>
-                    <div style={{marginTop: '50px'}}>
-                        <LanguageSelect/>
-                    </div>
                 </div>
+                <WelcomePage />
             </main>
         </TranslationsProvider>
     );

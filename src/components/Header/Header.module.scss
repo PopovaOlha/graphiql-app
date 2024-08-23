@@ -1,0 +1,39 @@
+.header {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    transition:
+        background-color 0.3s,
+        padding 0.3s;
+    z-index: 1000;
+}
+
+.logoContainer {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 100px;
+    height: auto;
+}
+
+.navlist {
+    display: flex;
+    align-items: center;
+}
+
+.buttonContainer {
+    display: flex;
+    align-items: center;
+}
+
+.button {
+    margin-left: 10px;
+}

@@ -1,10 +1,9 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { i18nConfig } from '../../i18nConfig';
-import { ChangeEvent } from 'react';
 
 const LanguageSelect = () => {
     const { i18n, t } = useTranslation();
@@ -23,9 +22,7 @@ const LanguageSelect = () => {
         document.cookie = `NEXT_LOCALE=${newLocale};expires=${expires};path=/`;
 
         // redirect to the new locale path
-        if (
-            currentLocale === i18nConfig.defaultLocale
-        ) {
+        if (currentLocale === i18nConfig.defaultLocale) {
             router.push('/' + newLocale + currentPathname);
         } else {
             router.push(
