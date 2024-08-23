@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Button } from '@mui/material';
-import styles from './Header.module.css';
+import styles from './Header.module.scss';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, logout } from '../../services/firebase';
 import { FC } from 'react';

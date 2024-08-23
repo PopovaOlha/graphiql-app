@@ -1,12 +1,12 @@
 'use client';
 
-import { Typography, Button, Box } from '@mui/material';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../../services/firebase';
-import Header from '../../components/Header/Header';
+import { Box, Button, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
-import styles from '../../styles/welcomepage.module.css';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import Header from '../../components/Header/Header';
+import { auth } from '../../services/firebase';
+import styles from '../../styles/welcomepage.module.scss';
 
 const WelcomePage: FC = () => {
     const [user] = useAuthState(auth);

@@ -18,7 +18,7 @@ import {
     Snackbar,
     Alert,
 } from '@mui/material';
-import styles from './SignIn.module.css';
+import styles from './SignIn.module.scss';
 
 const SignIn: React.FC = () => {
     const [email, setEmail] = useState<string>('');
@@ -118,7 +118,7 @@ const SignIn: React.FC = () => {
                     </Box>
                 </form>
                 <Typography variant="body2" className={styles.loginText}>
-                    Don't have an account? <a href="/signup">Sign up</a> now.
+                    Don&apos;t have an account? <a href="/signup">Sign up</a> now.
                 </Typography>
             </Paper>
             <Snackbar

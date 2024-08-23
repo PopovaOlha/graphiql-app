@@ -14,7 +14,7 @@ import {
     Snackbar,
     Alert,
 } from '@mui/material';
-import styles from './SignUp.module.css';
+import styles from './SignUp.module.scss';
 
 const SignUp: React.FC = () => {
     const [email, setEmail] = useState<string>('');
