@@ -27,6 +27,12 @@ const SignIn: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
+    useEffect(() => {
+        if (user) {
+            router.push('/');
+        }
+    }, [user, router]);
+
     const handleLogin = async (e: React.FormEvent): Promise<void> => {
         e.preventDefault();
 
@@ -48,7 +54,7 @@ const SignIn: React.FC = () => {
 
         try {
             await logInWithEmailAndPassword(auth, email, password);
-            router.push('/restful');
+            router.push('/');
         } catch (err) {
             setError('Failed to log in. Please check your credentials.');
         }

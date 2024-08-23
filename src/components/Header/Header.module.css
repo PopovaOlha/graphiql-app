@@ -1,37 +1,39 @@
 .header {
-    background-color: #ffffff;
-    padding: 20px 0;
-    border-bottom: 1px solid #ddd;
-    position: fixed;
+    position: sticky;
     top: 0;
-    left: 0;
     width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    transition:
+        background-color 0.3s,
+        padding 0.3s;
     z-index: 1000;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.container {
+.logoContainer {
     display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 100px;
+    height: auto;
 }
 
 .navlist {
     display: flex;
-    justify-content: space-around;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+    align-items: center;
 }
 
-.title {
-    text-align: left;
-    font-size: 1.5rem;
+.buttonContainer {
+    display: flex;
+    align-items: center;
 }
 
 .button {
-    margin: 0 8px;
-    color: rgb(56, 14, 241);
-}
-.button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: rgb(56, 14, 241);
+    margin-left: 10px;
 }

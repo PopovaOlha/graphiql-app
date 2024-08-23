@@ -24,6 +24,12 @@ const SignUp: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
+    useEffect(() => {
+        if (user) {
+            router.push('/');
+        }
+    }, [user, router]);
+
     const handleSignUp = async (
         e: React.FormEvent<HTMLFormElement>
     ): Promise<void> => {
