@@ -26,7 +26,7 @@ const SignUp: React.FC = () => {
 
     useEffect(() => {
         if (user) {
-            router.push('/');
+            router.push('/welcomepage');
         }
     }, [user, router]);
 
