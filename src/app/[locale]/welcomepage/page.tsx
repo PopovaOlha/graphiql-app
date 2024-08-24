@@ -1,5 +1,6 @@
 'use client';
 
+import CardGroup from '@/components/CardGroup/CardGroup';
 import { auth } from '@/services/firebase';
 import styles from '@/styles/welcomepage.module.scss';
 import { Box, Button, Typography } from '@mui/material';
@@ -58,6 +59,7 @@ const WelcomePage: FC = () => {
                         </Typography>
                     </>
                 )}
+                <CardGroup />
             </main>
         </div>
     );
