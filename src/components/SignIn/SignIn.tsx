@@ -55,8 +55,9 @@ const SignIn: React.FC = () => {
         try {
             await logInWithEmailAndPassword(auth, email, password);
             router.push('/');
-        } catch (err) {
+        } catch (error) {
             setError('Failed to log in. Please check your credentials.');
+            console.error(error);
         }
     };
 
