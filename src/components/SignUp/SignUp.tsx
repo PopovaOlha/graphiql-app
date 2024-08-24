@@ -26,7 +26,7 @@ const SignUp: React.FC = () => {
 
     useEffect(() => {
         if (user) {
-            router.push('/');
+            router.push('/welcomepage');
         }
     }, [user, router]);
 
@@ -54,8 +54,9 @@ const SignUp: React.FC = () => {
         try {
             await registerWithEmailAndPassword(name, email, password);
             router.push('/');
-        } catch (err) {
+        } catch (error) {
             setError('Failed to sign up. Please try again.');
+            console.error(error);
         }
     };
 
