@@ -6,6 +6,7 @@ import { FC } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, logout } from '../../services/firebase';
 import { LanguageSelect } from '../LanguageSelect';
+import Image from 'next/image';
 import styles from './Header.module.scss';
 
 const Header: FC = () => {
@@ -20,7 +21,13 @@ const Header: FC = () => {
     return (
         <header className={styles.header}>
             <div className={styles.logoContainer}>
-                <img src="/logo.svg" alt="Logo" className={styles.logo} />
+                <Image
+                    src="/logo.svg"
+                    alt="Logo"
+                    className={styles.logo}
+                    width={100} // Specify a width
+                    height={100} // Specify a height
+                />
             </div>
             <LanguageSelect />
             <nav className={styles.navlist}>
