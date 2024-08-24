@@ -1,4 +1,13 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npm test
+echo "Running tests..."
+npm test -- --run
+
+if [ $? -ne 0 ]; then
+  echo "Tests failed. Aborting push."
+  exit 1
+fi
+
+echo "Tests passed. Proceeding with push."
+

@@ -11,7 +11,7 @@
         "prettier-fix": "prettier --write .",
         "prepare": "husky install",
         "test:coverage": "vitest run --coverage",
-        "test": "vitest"
+        "test": "vitest --run"
     },
     "dependencies": {
         "@emotion/react": "^11.13.3",
