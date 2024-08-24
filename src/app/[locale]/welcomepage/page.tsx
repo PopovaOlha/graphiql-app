@@ -1,7 +1,5 @@
 'use client';
 
-import Footer from '@/components/Footer/Footer';
-import Header from '@/components/Header/Header';
 import { auth } from '@/services/firebase';
 import styles from '@/styles/welcomepage.module.scss';
 import { Box, Button, Typography } from '@mui/material';
@@ -15,7 +13,6 @@ const WelcomePage: FC = () => {
 
     return (
         <div className={styles.container}>
-            <Header />
             <main>
                 {user ? (
                     <>
@@ -62,7 +59,6 @@ const WelcomePage: FC = () => {
                     </>
                 )}
             </main>
-            <Footer />
         </div>
     );
 };
