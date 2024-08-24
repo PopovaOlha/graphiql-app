@@ -15,7 +15,7 @@ export default async function initTranslations(
     i18nInst: i18n = createInstance(),
     resources?: Resource
 ): Promise<InitTranslationsReturn> {
-    let i18nInstance = i18nInst || createInstance();
+    const i18nInstance = i18nInst || createInstance();
 
     i18nInstance.use(initReactI18next);
 
