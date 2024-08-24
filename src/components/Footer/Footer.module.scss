@@ -1,0 +1,18 @@
+.footer {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-top: 1px solid #f1f1f1;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+
+    .icon {
+        width: 4rem;
+        height: 4rem;
+        outline: 2px solid #fff;
+        border-radius: 50%;
+    }
+}

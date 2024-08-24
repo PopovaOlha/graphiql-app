@@ -1,0 +1,32 @@
+import rsIcon from '@/assets/icons/rs.svg';
+import Image from 'next/image';
+import { FaGithub } from 'react-icons/fa';
+import styles from './Footer.module.scss';
+
+const Footer = () => {
+    const currentYear = new Date().getFullYear();
+
+    return (
+        <footer className={styles.footer}>
+            <a
+                href="https://github.com/rolling-scopes-school"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Rolling Scopes School organisation"
+            >
+                <FaGithub className={styles.icon} />
+            </a>
+            <p>&copy; {currentYear}</p>
+            <a
+                href="https://rs.school/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="RS School"
+            >
+                <Image src={rsIcon} alt="RS School" className={styles.icon} />
+            </a>
+        </footer>
+    );
+};
+
+export default Footer;
