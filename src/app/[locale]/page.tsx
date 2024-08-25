@@ -1,6 +1,6 @@
 import { TranslationsProvider } from '@/components/TranslationsProvider';
+import WelcomePage from '../../components/WelcomePage/WelcomePage';
 import initTranslations from '../i18n';
-import WelcomePage from './welcomepage/page';
 
 const i18nNamespaces: string[] = ['mainPage'];
 

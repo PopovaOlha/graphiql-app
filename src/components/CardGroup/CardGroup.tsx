@@ -1,11 +1,12 @@
 import { authors } from '@/utils/constants/authors';
+import { Typography } from '@mui/material';
 import ProfileCard from '../ProfileCard/ProfileCard';
 import styles from './CardGroup.module.scss';
 
 const CardGroup = () => {
     return (
         <section className={styles.sectionContainer}>
-            <h2>Authors</h2>
+            <Typography variant="h2">Authors</Typography>
             <div className={styles.cardContainer}>
                 {authors.map((author) => (
                     <ProfileCard
