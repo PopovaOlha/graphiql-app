@@ -1,13 +1,12 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import { i18nConfig } from '../../../i18nConfig';
 import './../globals.scss';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { dir } from 'i18next';
-
-const inter = Inter({ subsets: ['latin'] });
+import { ThemeProvider } from '@mui/material/styles';
+import theme from '@/theme';
 
 export function generateStaticParams() {
     return i18nConfig.locales.map((locale) => ({ locale }));
@@ -27,11 +26,13 @@ export default function RootLayout({
 }>) {
     return (
         <html lang={locale} dir={dir(locale)}>
-            <body className={inter.className}>
+            <body>
                 <AppRouterCacheProvider>
-                    <Header />
-                    {children}
-                    <Footer />
+                    <ThemeProvider theme={theme}>
+                        <Header />
+                        {children}
+                        <Footer />
+                    </ThemeProvider>
                 </AppRouterCacheProvider>
             </body>
         </html>
