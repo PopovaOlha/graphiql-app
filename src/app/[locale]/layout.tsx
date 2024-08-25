@@ -4,6 +4,8 @@ import { i18nConfig } from '../../../i18nConfig';
 import './../globals.scss';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+import { dir } from 'i18next';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,15 +20,19 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
     children,
+    params: { locale },
 }: Readonly<{
     children: React.ReactNode;
+    params: { locale: string };
 }>) {
     return (
-        <html lang="en">
+        <html lang={locale} dir={dir(locale)}>
             <body className={inter.className}>
-                <Header />
-                {children}
-                <Footer />
+                <AppRouterCacheProvider>
+                    <Header />
+                    {children}
+                    <Footer />
+                </AppRouterCacheProvider>
             </body>
         </html>
     );
