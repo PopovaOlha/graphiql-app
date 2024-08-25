@@ -12,7 +12,6 @@ const getTheme = (mode: 'light' | 'dark') =>
         typography: {
             fontFamily: inter.style.fontFamily,
             h1: {
-                width: 300,
                 color: 'inherit',
                 fontSize: '36px',
                 fontWeight: 500,

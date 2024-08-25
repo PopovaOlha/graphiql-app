@@ -14,9 +14,14 @@
     "login": "Login",
     "loginGoogle": "Login with Google",
     "accountTextSignIn": "Don't have an account?",
+    "accountTextSignUp": "Already have an account?",
     "now": "now",
     "password": "Password",
+    "passwordConfirm": "Confirm Password",
     "errorEmail": "Please enter a valid email address.",
     "errorPassword": "Password must contain at least 8 characters, including one letter, one digit, and one special character.",
-    "errorLogin": "Failed to log in. Please check your credentials."
+    "errorConfirmPass": "Passwords must match.",
+    "errorLogin": "Failed to log in. Please check your credentials.",
+    "errorSignUp": "Failed to sign up. Please try again.",
+    "userName": "User Name"
 }
