@@ -8,17 +8,17 @@ import {
     TextField,
     Button,
     Typography,
-    Box,
     CssBaseline,
-    Paper,
     Snackbar,
     Alert,
 } from '@mui/material';
 import styles from './SignUp.module.scss';
+import Link from 'next/link';
 
 const SignUp: React.FC = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [confirmPassword, setConfirmPassword] = useState<string>('');
     const [name, setName] = useState<string>('');
     const [user] = useAuthState(auth);
     const [error, setError] = useState<string | null>(null);
@@ -50,6 +50,10 @@ const SignUp: React.FC = () => {
             );
             return;
         }
+        if (password !== confirmPassword) {
+            setError('Passwords must match.');
+            return;
+        }
 
         try {
             await registerWithEmailAndPassword(name, email, password);
@@ -67,59 +71,80 @@ const SignUp: React.FC = () => {
     return (
         <Container component="main" maxWidth="xs" className={styles.signupContainer}>
             <CssBaseline />
-            <Paper elevation={3} className={styles.signupPaper}>
-                <Typography
-                    variant="h5"
-                    component="h1"
-                    className={styles.signupTitle}
+            <Typography
+                component="h1"
+                sx={{
+                    width: 300,
+                    color: 'inherit',
+                    fontSize: '36px',
+                    fontWeight: 500,
+                    textAlign: 'center',
+                }}
+            >
+                Sign Up
+            </Typography>
+            <form onSubmit={handleSignUp} className={styles.loginForm}>
+                <TextField
+                    variant="standard"
+                    margin="normal"
+                    fullWidth
+                    label="UserName"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                />
+                <TextField
+                    variant="standard"
+                    margin="normal"
+                    fullWidth
+                    label="E-mail Address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
+                <TextField
+                    variant="standard"
+                    margin="normal"
+                    fullWidth
+                    type="password"
+                    label="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+                <TextField
+                    variant="standard"
+                    margin="normal"
+                    fullWidth
+                    type="password"
+                    label="Confirm Password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                />
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    className={styles.signupButton}
+                    size="large"
+                    disableElevation
+                    disableRipple
+                    sx={{
+                        marginTop: '24px',
+                    }}
                 >
                     Sign Up
-                </Typography>
-                <form onSubmit={handleSignUp}>
-                    <Box display="flex" flexDirection="column" alignItems="center">
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            fullWidth
-                            label="Full Name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                        />
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            fullWidth
-                            label="E-mail Address"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            fullWidth
-                            type="password"
-                            label="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            fullWidth
-                            className={styles.signupButton}
-                        >
-                            Sign Up
-                        </Button>
-                    </Box>
-                </form>
-                <div>
-                    Already have an account? <a href="/signin">Log in</a> now.
-                </div>
-            </Paper>
+                </Button>
+            </form>
+            <Typography variant="body2" className={styles.loginText}>
+                Already have an account?{' '}
+                <Link className={styles.backlink} href="/signin">
+                    Log in
+                </Link>{' '}
+                now.
+            </Typography>
             <Snackbar
                 open={!!error}
                 autoHideDuration={6000}
