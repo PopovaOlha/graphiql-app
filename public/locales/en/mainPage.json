@@ -2,6 +2,7 @@
     "title": "Main Page",
     "languages": {
         "ru": "Russian",
-        "en": "English"
+        "en": "English",
+        "label": "Language"
     }
 }
