@@ -4,5 +4,11 @@
         "ru": "Russian",
         "en": "English",
         "label": "Language"
-    }
+    },
+    "authors": {
+        "title": "Authors"
+    },
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out"
 }
