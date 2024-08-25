@@ -65,17 +65,15 @@ const SignIn: React.FC = () => {
     };
 
     return (
-        <Container component="main" maxWidth="xs" className={styles.loginContainer}>
-            <Typography
-                component="h1"
-                sx={{
-                    width: 300,
-                    color: 'inherit',
-                    fontSize: '36px',
-                    fontWeight: 500,
-                    textAlign: 'center',
-                }}
-            >
+        <Container
+            component="main"
+            maxWidth="xs"
+            className={styles.loginContainer}
+            sx={{
+                display: 'flex',
+            }}
+        >
+            <Typography component="h1" variant="h1">
                 Sign In
             </Typography>
             <form onSubmit={handleLogin} className={styles.loginForm}>

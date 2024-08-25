@@ -11,6 +11,13 @@ const getTheme = (mode: 'light' | 'dark') =>
     createTheme({
         typography: {
             fontFamily: inter.style.fontFamily,
+            h1: {
+                width: 300,
+                color: 'inherit',
+                fontSize: '36px',
+                fontWeight: 500,
+                textAlign: 'center',
+            },
         },
         palette: {
             mode,
