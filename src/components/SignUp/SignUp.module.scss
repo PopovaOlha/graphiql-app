@@ -1,9 +1,11 @@
 .signupContainer {
     padding: 20px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    gap: 32px;
+    height: calc(100vh - 197px);
 }
 
 .signupPaper {
@@ -21,4 +23,19 @@
 
 .signupButton {
     margin: 10px 0;
+}
+
+.loginText {
+    text-align: center;
+}
+
+.loginForm {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.backlink {
+    color: #1976d2;
 }

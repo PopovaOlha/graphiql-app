@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import { i18nConfig } from '../../../i18nConfig';
 import './../globals.scss';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
-
-const inter = Inter({ subsets: ['latin'] });
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+import { dir } from 'i18next';
+import { AppThemeProvider } from '@/theme/AppThemeProvider';
 
 export function generateStaticParams() {
     return i18nConfig.locales.map((locale) => ({ locale }));
@@ -18,15 +18,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
     children,
+    params: { locale },
 }: Readonly<{
     children: React.ReactNode;
+    params: { locale: string };
 }>) {
     return (
-        <html lang="en">
-            <body className={inter.className}>
-                <Header />
-                {children}
-                <Footer />
+        <html lang={locale} dir={dir(locale)}>
+            <body>
+                <AppRouterCacheProvider>
+                    <AppThemeProvider>
+                        <Header />
+                        {children}
+                        <Footer />
+                    </AppThemeProvider>
+                </AppRouterCacheProvider>
             </body>
         </html>
     );
