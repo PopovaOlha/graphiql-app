@@ -13,12 +13,13 @@ import {
     Button,
     Typography,
     Box,
-    CssBaseline,
-    Paper,
     Snackbar,
     Alert,
+    CssBaseline,
 } from '@mui/material';
 import styles from './SignIn.module.scss';
+import Link from 'next/link';
+import { Google } from '@mui/icons-material';
 
 const SignIn: React.FC = () => {
     const [email, setEmail] = useState<string>('');
@@ -68,60 +69,73 @@ const SignIn: React.FC = () => {
     return (
         <Container component="main" maxWidth="xs" className={styles.loginContainer}>
             <CssBaseline />
-            <Paper elevation={3} className={styles.loginPaper}>
-                <Typography
-                    variant="h5"
-                    component="h1"
-                    className={styles.loginTitle}
+            <Typography
+                component="h1"
+                sx={{
+                    width: 300,
+                    color: 'inherit',
+                    fontSize: '36px',
+                    fontWeight: 500,
+                    textAlign: 'center',
+                }}
+            >
+                Sign In
+            </Typography>
+            <form onSubmit={handleLogin} className={styles.loginForm}>
+                <TextField
+                    variant="standard"
+                    margin="normal"
+                    fullWidth
+                    label="E-mail Address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
+                <TextField
+                    variant="standard"
+                    margin="normal"
+                    fullWidth
+                    type="password"
+                    label="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    className={styles.loginButton}
+                    size="large"
+                    disableElevation
+                    disableRipple
+                    sx={{
+                        marginTop: '24px',
+                    }}
                 >
-                    Sign In
-                </Typography>
-                <form onSubmit={handleLogin}>
-                    <Box display="flex" flexDirection="column" alignItems="center">
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            fullWidth
-                            label="E-mail Address"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            fullWidth
-                            type="password"
-                            label="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            fullWidth
-                            className={styles.loginButton}
-                        >
-                            Login
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="outlined"
-                            color="primary"
-                            fullWidth
-                            onClick={signInWithGoogle}
-                            className={styles.loginButton}
-                        >
-                            Login with Google
-                        </Button>
-                    </Box>
-                </form>
-                <Typography variant="body2" className={styles.loginText}>
-                    Don&apos;t have an account? <a href="/signup">Sign up</a> now.
-                </Typography>
-            </Paper>
+                    Login
+                </Button>
+                <Button
+                    type="button"
+                    variant="outlined"
+                    color="primary"
+                    fullWidth
+                    onClick={signInWithGoogle}
+                    className={styles.loginButton}
+                    startIcon={<Google />}
+                    size="large"
+                >
+                    Login with Google
+                </Button>
+            </form>
+            <Typography variant="body2" className={styles.loginText}>
+                Don&apos;t have an account?{' '}
+                <Link href="/signup" className={styles.backlink}>
+                    Sign up
+                </Link>{' '}
+                now.
+            </Typography>
             <Snackbar
                 open={!!error}
                 autoHideDuration={6000}
