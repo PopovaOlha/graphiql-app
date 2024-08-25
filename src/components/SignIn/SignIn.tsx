@@ -14,7 +14,6 @@ import {
     Typography,
     Snackbar,
     Alert,
-    CssBaseline,
 } from '@mui/material';
 import styles from './SignIn.module.scss';
 import Link from 'next/link';
@@ -67,7 +66,6 @@ const SignIn: React.FC = () => {
 
     return (
         <Container component="main" maxWidth="xs" className={styles.loginContainer}>
-            <CssBaseline />
             <Typography
                 component="h1"
                 sx={{

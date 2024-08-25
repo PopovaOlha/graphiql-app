@@ -5,8 +5,7 @@ import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { dir } from 'i18next';
-import { ThemeProvider } from '@mui/material/styles';
-import theme from '@/theme';
+import { AppThemeProvider } from '@/theme/AppThemeProvider';
 
 export function generateStaticParams() {
     return i18nConfig.locales.map((locale) => ({ locale }));
@@ -28,11 +27,11 @@ export default function RootLayout({
         <html lang={locale} dir={dir(locale)}>
             <body>
                 <AppRouterCacheProvider>
-                    <ThemeProvider theme={theme}>
+                    <AppThemeProvider>
                         <Header />
                         {children}
                         <Footer />
-                    </ThemeProvider>
+                    </AppThemeProvider>
                 </AppRouterCacheProvider>
             </body>
         </html>

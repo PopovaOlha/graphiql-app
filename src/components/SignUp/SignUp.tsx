@@ -8,7 +8,6 @@ import {
     TextField,
     Button,
     Typography,
-    CssBaseline,
     Snackbar,
     Alert,
 } from '@mui/material';
@@ -70,7 +69,6 @@ const SignUp: React.FC = () => {
 
     return (
         <Container component="main" maxWidth="xs" className={styles.signupContainer}>
-            <CssBaseline />
             <Typography
                 component="h1"
                 sx={{
