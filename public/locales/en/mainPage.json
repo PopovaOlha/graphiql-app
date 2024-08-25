@@ -10,5 +10,13 @@
     },
     "signIn": "Sign In",
     "signUp": "Sign Up",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "login": "Login",
+    "loginGoogle": "Login with Google",
+    "accountTextSignIn": "Don't have an account?",
+    "now": "now",
+    "password": "Password",
+    "errorEmail": "Please enter a valid email address.",
+    "errorPassword": "Password must contain at least 8 characters, including one letter, one digit, and one special character.",
+    "errorLogin": "Failed to log in. Please check your credentials."
 }
