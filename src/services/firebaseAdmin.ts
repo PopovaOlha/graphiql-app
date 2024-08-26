@@ -1,8 +1,5 @@
 import * as firebaseAdmin from 'firebase-admin';
 import serviceAccount from '../config/secret.json';
-import { ServiceAccount } from '../types/interfaces';
-
-const sa: ServiceAccount = serviceAccount as ServiceAccount;
 
 if (!firebaseAdmin.apps.length) {
     firebaseAdmin.initializeApp({
