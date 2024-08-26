@@ -17,3 +17,8 @@ export interface ServiceAccount {
 export interface ErrorBoundaryProps {
     children: ReactNode;
 }
+
+export interface ApiErrorProps {
+    errorCode: number;
+    errorMessage: string;
+}
