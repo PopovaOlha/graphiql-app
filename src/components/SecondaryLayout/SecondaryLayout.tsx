@@ -1,29 +1,64 @@
-import { FC, ReactNode } from 'react';
-import { Box } from '@mui/material';
+'use client';
+
+import { FC, ReactNode, useState } from 'react';
+import { Box, IconButton } from '@mui/material';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import Link from 'next/link';
 
-const containerStyles = {
-    display: 'grid',
-    gridTemplateColumns: '16rem 1fr',
-};
+import styles from './SecondaryLayout.module.scss';
+import { GraphIcon, HistoryIcon, RestIcon } from '../Icons';
 
 const SecondaryLayout: FC<{ children: ReactNode }> = ({ children }) => {
+    const [isExpanded, setIsExpanded] = useState(true);
+
+    const buttonTitle = isExpanded ? 'Collapse' : 'Expand';
+
     return (
-        <div style={containerStyles}>
+        <Box
+            component={'main'}
+            className={`${styles.container} ${isExpanded ? styles.expanded : ''}`}
+        >
             <Box
+                className={styles.panel}
                 sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '1rem',
-                    padding: '2rem',
+                    bgcolor: 'action.hover',
                 }}
             >
-                <Link href={'/restful'}>REST Client</Link>
-                <Link href={'/graphiql'}>GraphiQL Client</Link>
-                <Link href={'/history'}>History</Link>
+                <Link href={'/restful'} className={styles.panelLink}>
+                    <RestIcon />
+                    REST Client
+                </Link>
+                <Link href={'/graphiql'} className={styles.panelLink}>
+                    <GraphIcon />
+                    GraphiQL Client
+                </Link>
+                <Link href={'/history'} className={styles.panelLink}>
+                    <HistoryIcon />
+                    History
+                </Link>
+                <IconButton
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    title={buttonTitle}
+                    sx={{
+                        position: 'absolute',
+                        bottom: '1rem',
+                        right: '1rem',
+                        width: '3rem',
+                        height: '3rem',
+                    }}
+                    className={styles.panelButton}
+                >
+                    <ArrowBackIosNewIcon />
+                </IconButton>
             </Box>
-            {children}
-        </div>
+            <Box
+                sx={{
+                    p: 2,
+                }}
+            >
+                {children}
+            </Box>
+        </Box>
     );
 };
 
