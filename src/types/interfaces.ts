@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export interface ServiceAccount {
     type: string;
     project_id: string;
@@ -10,4 +12,8 @@ export interface ServiceAccount {
     auth_provider_x509_cert_url: string;
     client_x509_cert_url: string;
     universe_domain: string;
+}
+
+export interface ErrorBoundaryProps {
+    children: ReactNode;
 }
