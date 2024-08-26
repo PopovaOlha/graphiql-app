@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import styles from './SignUp.module.scss';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 
 const SignUp: React.FC = () => {
     const [email, setEmail] = useState<string>('');
@@ -22,6 +23,7 @@ const SignUp: React.FC = () => {
     const [user] = useAuthState(auth);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (user) {
@@ -39,18 +41,16 @@ const SignUp: React.FC = () => {
             /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
         if (!emailPattern.test(email)) {
-            setError('Please enter a valid email address.');
+            setError(t('errorEmail'));
             return;
         }
 
         if (!passwordPattern.test(password)) {
-            setError(
-                'Password must be at least 8 characters long, contain at least one letter, one number, and one special character.'
-            );
+            setError(t('errorPassword'));
             return;
         }
         if (password !== confirmPassword) {
-            setError('Passwords must match.');
+            setError(t('errorConfirmPass'));
             return;
         }
 
@@ -58,7 +58,7 @@ const SignUp: React.FC = () => {
             await registerWithEmailAndPassword(name, email, password);
             router.push('/');
         } catch (error) {
-            setError('Failed to sign up. Please try again.');
+            setError(t('errorSignUp'));
             console.error(error);
         }
     };
@@ -77,14 +77,14 @@ const SignUp: React.FC = () => {
             }}
         >
             <Typography component="h1" variant="h1">
-                Sign Up
+                {t('signUp')}
             </Typography>
             <form onSubmit={handleSignUp} className={styles.loginForm}>
                 <TextField
                     variant="standard"
                     margin="normal"
                     fullWidth
-                    label="UserName"
+                    label={t('userName')}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
@@ -93,7 +93,7 @@ const SignUp: React.FC = () => {
                     variant="standard"
                     margin="normal"
                     fullWidth
-                    label="E-mail Address"
+                    label="E-mail"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -103,7 +103,7 @@ const SignUp: React.FC = () => {
                     margin="normal"
                     fullWidth
                     type="password"
-                    label="Password"
+                    label={t('password')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -113,7 +113,7 @@ const SignUp: React.FC = () => {
                     margin="normal"
                     fullWidth
                     type="password"
-                    label="Confirm Password"
+                    label={t('passwordConfirm')}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
@@ -131,15 +131,15 @@ const SignUp: React.FC = () => {
                         marginTop: '24px',
                     }}
                 >
-                    Sign Up
+                    {t('signUp')}
                 </Button>
             </form>
             <Typography variant="body2" className={styles.loginText}>
-                Already have an account?{' '}
+                {t('accountTextSignUp')}{' '}
                 <Link className={styles.backlink} href="/signin">
-                    Log in
+                    {t('signIn')}
                 </Link>{' '}
-                now.
+                {t('now')}.
             </Typography>
             <Snackbar
                 open={!!error}
