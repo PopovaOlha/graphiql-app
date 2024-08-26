@@ -1,13 +1,15 @@
 'use client';
 
-import { Button } from '@mui/material';
-import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@mui/material';
+import { useRouter } from 'next/navigation';
+
 import { auth, logout } from '../../services/firebase';
 import { LanguageSelect } from '../LanguageSelect';
 import Logo from '../Logo/Logo';
+
 import styles from './Header.module.scss';
 
 const Header: FC = () => {
