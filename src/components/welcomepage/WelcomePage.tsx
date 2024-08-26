@@ -5,7 +5,7 @@ import { auth } from '@/services/firebase';
 import { Box, Button, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import styles from './WelcomePage.module.scss';
+import styles from './welcomepage.module.scss';
 
 const WelcomePage = () => {
     const [user] = useAuthState(auth);

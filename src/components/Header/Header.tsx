@@ -4,11 +4,11 @@ import { Button } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { useTranslation } from 'react-i18next';
 import { auth, logout } from '../../services/firebase';
 import { LanguageSelect } from '../LanguageSelect';
 import Logo from '../Logo/Logo';
 import styles from './Header.module.scss';
-import { useTranslation } from 'react-i18next';
 
 const Header: FC = () => {
     const router = useRouter();
@@ -43,13 +43,22 @@ const Header: FC = () => {
                             </Button>
                         </>
                     ) : (
-                        <Button
-                            className={styles.button}
-                            variant="outlined"
-                            onClick={handleSignOut}
-                        >
-                            {t('signOut')}
-                        </Button>
+                        <>
+                            <Button
+                                className={styles.button}
+                                variant="contained"
+                                onClick={() => router.push('/')}
+                            >
+                                {t('mainPage')}
+                            </Button>
+                            <Button
+                                className={styles.button}
+                                variant="outlined"
+                                onClick={handleSignOut}
+                            >
+                                {t('signOut')}
+                            </Button>
+                        </>
                     )}
                 </div>
             </nav>
