@@ -61,7 +61,6 @@ This project is the [final task](https://github.com/rolling-scopes-school/tasks/
     -   **ESLint** - a js linter for identifying and fixing code errors.
     -   **Prettier** - a code formatter.
     -   **husky** - running scripts before commits.
-    -   **lint-staged** - a tool used in conjunction with Git for running linters on staged files.
 
 ## Installation
 
