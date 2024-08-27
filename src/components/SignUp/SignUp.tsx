@@ -84,7 +84,10 @@ const SignUp: React.FC = () => {
                     variant="standard"
                     margin="normal"
                     fullWidth
+                    type="text"
                     label="UserName"
+                    name="name"
+                    autoComplete="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
@@ -93,7 +96,10 @@ const SignUp: React.FC = () => {
                     variant="standard"
                     margin="normal"
                     fullWidth
+                    type="email"
                     label="E-mail Address"
+                    name="email"
+                    autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -104,6 +110,8 @@ const SignUp: React.FC = () => {
                     fullWidth
                     type="password"
                     label="Password"
+                    name="new-password"
+                    autoComplete="new-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -114,6 +122,8 @@ const SignUp: React.FC = () => {
                     fullWidth
                     type="password"
                     label="Confirm Password"
+                    name="confirm-password"
+                    autoComplete="new-password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
