@@ -1,8 +1,8 @@
 'use client';
 
+import { useTranslation } from 'react-i18next';
 import { Box, Typography } from '@mui/material';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
 
 export default function NotFound() {
     const { t } = useTranslation();

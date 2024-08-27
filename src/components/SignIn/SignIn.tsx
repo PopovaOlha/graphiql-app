@@ -1,24 +1,26 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useTranslation } from 'react-i18next';
+import { Google } from '@mui/icons-material';
+import {
+    Alert,
+    Button,
+    Container,
+    Snackbar,
+    TextField,
+    Typography,
+} from '@mui/material';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+
 import {
     auth,
     logInWithEmailAndPassword,
     signInWithGoogle,
 } from '../../services/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import {
-    Container,
-    TextField,
-    Button,
-    Typography,
-    Snackbar,
-    Alert,
-} from '@mui/material';
+
 import styles from './SignIn.module.scss';
-import Link from 'next/link';
-import { Google } from '@mui/icons-material';
-import { useTranslation } from 'react-i18next';
 
 const SignIn: React.FC = () => {
     const [email, setEmail] = useState<string>('');

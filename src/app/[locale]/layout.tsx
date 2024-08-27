@@ -1,13 +1,16 @@
-import type { Metadata } from 'next';
-import { i18nConfig } from '../../../i18nConfig';
-import './../globals.scss';
-import Header from '@/components/Header/Header';
-import Footer from '@/components/Footer/Footer';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import { dir } from 'i18next';
-import { AppThemeProvider } from '@/theme/AppThemeProvider';
+import type { Metadata } from 'next';
+
+import Footer from '@/components/Footer/Footer';
+import Header from '@/components/Header/Header';
 import { TranslationsProvider } from '@/components/TranslationsProvider';
+import { AppThemeProvider } from '@/theme/AppThemeProvider';
+
+import { i18nConfig } from '../../../i18nConfig';
 import initTranslations from '../i18n';
+
+import './../globals.scss';
 
 export function generateStaticParams() {
     return i18nConfig.locales.map((locale) => ({ locale }));

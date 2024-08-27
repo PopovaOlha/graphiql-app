@@ -1,26 +1,26 @@
-import { Auth, updateProfile } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
+import { Auth, updateProfile } from 'firebase/auth';
 import {
-    GoogleAuthProvider,
-    getAuth,
-    signInWithPopup,
-    signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
+    getAuth,
+    GoogleAuthProvider,
     sendPasswordResetEmail,
+    signInWithEmailAndPassword,
+    signInWithPopup,
     signOut,
     User,
 } from 'firebase/auth';
-
 import {
+    addDoc,
+    collection,
+    DocumentData,
+    getDocs,
     getFirestore,
     query,
-    getDocs,
-    collection,
-    where,
-    addDoc,
-    DocumentData,
     QuerySnapshot,
+    where,
 } from 'firebase/firestore';
+
 import { firebaseConfig } from '@/lib/firebaseConfig';
 
 const app = initializeApp(firebaseConfig);

@@ -1,7 +1,8 @@
 'use client';
 
-import { ThemeProvider, CssBaseline, useMediaQuery } from '@mui/material';
 import { ReactNode } from 'react';
+import { CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
+
 import getTheme from './theme';
 
 const AppThemeProvider = ({ children }: { children: ReactNode }) => {
