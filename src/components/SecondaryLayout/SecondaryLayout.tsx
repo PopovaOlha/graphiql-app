@@ -2,13 +2,14 @@
 
 import { FC, ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, IconButton } from '@mui/material';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { Box, IconButton } from '@mui/material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import styles from './SecondaryLayout.module.scss';
 import { GraphIcon, HistoryIcon, RestIcon } from '../Icons';
+
+import styles from './SecondaryLayout.module.scss';
 
 const SecondaryLayout: FC<{ children: ReactNode }> = ({ children }) => {
     const [isExpanded, setIsExpanded] = useState(true);

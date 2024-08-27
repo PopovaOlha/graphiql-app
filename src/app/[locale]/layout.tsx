@@ -2,6 +2,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import { dir } from 'i18next';
 import type { Metadata } from 'next';
 
+import ErrorBoundary from '@/components/ErrorBoundary/ErrorBoundary';
 import Footer from '@/components/Footer/Footer';
 import Header from '@/components/Header/Header';
 import { TranslationsProvider } from '@/components/TranslationsProvider';
@@ -34,19 +35,21 @@ export default async function RootLayout({
     return (
         <html lang={locale} dir={dir(locale)}>
             <body>
-                <AppRouterCacheProvider>
-                    <AppThemeProvider>
-                        <TranslationsProvider
-                            namespaces={i18nNamespaces}
-                            locale={locale}
-                            resources={resources}
-                        >
-                            <Header />
-                            {children}
-                            <Footer />
-                        </TranslationsProvider>
-                    </AppThemeProvider>
-                </AppRouterCacheProvider>
+                <ErrorBoundary>
+                    <AppRouterCacheProvider>
+                        <AppThemeProvider>
+                            <TranslationsProvider
+                                namespaces={i18nNamespaces}
+                                locale={locale}
+                                resources={resources}
+                            >
+                                <Header />
+                                {children}
+                                <Footer />
+                            </TranslationsProvider>
+                        </AppThemeProvider>
+                    </AppRouterCacheProvider>
+                </ErrorBoundary>
             </body>
         </html>
     );

@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import CardGroup from '@/components/CardGroup/CardGroup';
 import { auth } from '@/services/firebase';
 
-import styles from './welcomepage.module.scss';
+import styles from '../../../styles/welcomepage.module.scss';
 
 const WelcomePage = () => {
     const [user] = useAuthState(auth);
