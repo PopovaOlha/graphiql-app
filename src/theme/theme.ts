@@ -28,6 +28,14 @@ const getTheme = (mode: 'light' | 'dark') =>
         palette: {
             mode,
         },
+        components: {
+            MuiButton: {
+                defaultProps: {
+                    disableRipple: true,
+                    disableElevation: true,
+                },
+            },
+        },
     });
 
 export default getTheme;
