@@ -1,4 +1,5 @@
 import * as firebaseAdmin from 'firebase-admin';
+
 import serviceAccount from '../config/secret.json';
 
 if (!firebaseAdmin.apps.length) {

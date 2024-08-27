@@ -1,4 +1,5 @@
 import { ApiErrorProps } from '@/types/interfaces';
+
 import styles from './ApiError.module.scss';
 
 const ApiError: React.FC<ApiErrorProps> = ({ errorCode, errorMessage }) => {

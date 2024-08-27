@@ -1,18 +1,21 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { auth, registerWithEmailAndPassword } from '../../services/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { useTranslation } from 'react-i18next';
 import {
-    Container,
-    TextField,
-    Button,
-    Typography,
-    Snackbar,
     Alert,
+    Button,
+    Container,
+    Snackbar,
+    TextField,
+    Typography,
 } from '@mui/material';
-import styles from './SignUp.module.scss';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
+import { auth, registerWithEmailAndPassword } from '../../services/firebase';
+
+import styles from './SignUp.module.scss';
 
 const SignUp: React.FC = () => {
     const [email, setEmail] = useState<string>('');
@@ -22,6 +25,7 @@ const SignUp: React.FC = () => {
     const [user] = useAuthState(auth);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (user) {
@@ -39,18 +43,16 @@ const SignUp: React.FC = () => {
             /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
         if (!emailPattern.test(email)) {
-            setError('Please enter a valid email address.');
+            setError(t('errorEmail'));
             return;
         }
 
         if (!passwordPattern.test(password)) {
-            setError(
-                'Password must be at least 8 characters long, contain at least one letter, one number, and one special character.'
-            );
+            setError(t('errorPassword'));
             return;
         }
         if (password !== confirmPassword) {
-            setError('Passwords must match.');
+            setError(t('errorConfirmPass'));
             return;
         }
 
@@ -58,7 +60,7 @@ const SignUp: React.FC = () => {
             await registerWithEmailAndPassword(name, email, password);
             router.push('/');
         } catch (error) {
-            setError('Failed to sign up. Please try again.');
+            setError(t('errorSignUp'));
             console.error(error);
         }
     };
@@ -77,7 +79,7 @@ const SignUp: React.FC = () => {
             }}
         >
             <Typography component="h1" variant="h1">
-                Sign Up
+                {t('signUp')}
             </Typography>
             <form onSubmit={handleSignUp} className={styles.loginForm}>
                 <TextField
@@ -85,7 +87,7 @@ const SignUp: React.FC = () => {
                     margin="normal"
                     fullWidth
                     type="text"
-                    label="UserName"
+                    label={t('userName')}
                     name="name"
                     autoComplete="name"
                     value={name}
@@ -97,7 +99,7 @@ const SignUp: React.FC = () => {
                     margin="normal"
                     fullWidth
                     type="email"
-                    label="E-mail Address"
+                    label="E-mail"
                     name="email"
                     autoComplete="email"
                     value={email}
@@ -109,7 +111,7 @@ const SignUp: React.FC = () => {
                     margin="normal"
                     fullWidth
                     type="password"
-                    label="Password"
+                    label={t('password')}
                     name="new-password"
                     autoComplete="new-password"
                     value={password}
@@ -121,7 +123,7 @@ const SignUp: React.FC = () => {
                     margin="normal"
                     fullWidth
                     type="password"
-                    label="Confirm Password"
+                    label={t('passwordConfirm')}
                     name="confirm-password"
                     autoComplete="new-password"
                     value={confirmPassword}
@@ -141,15 +143,15 @@ const SignUp: React.FC = () => {
                         marginTop: '24px',
                     }}
                 >
-                    Sign Up
+                    {t('signUp')}
                 </Button>
             </form>
             <Typography variant="body2" className={styles.loginText}>
-                Already have an account?{' '}
+                {t('accountTextSignUp')}{' '}
                 <Link className={styles.backlink} href="/signin">
-                    Log in
+                    {t('signIn')}
                 </Link>{' '}
-                now.
+                {t('now')}.
             </Typography>
             <Snackbar
                 open={!!error}
