@@ -1,6 +1,7 @@
 'use client';
 
 import { FC, ReactNode, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, IconButton } from '@mui/material';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import Link from 'next/link';
@@ -10,8 +11,9 @@ import { GraphIcon, HistoryIcon, RestIcon } from '../Icons';
 
 const SecondaryLayout: FC<{ children: ReactNode }> = ({ children }) => {
     const [isExpanded, setIsExpanded] = useState(true);
+    const { t } = useTranslation();
 
-    const buttonTitle = isExpanded ? 'Collapse' : 'Expand';
+    const buttonTitle = isExpanded ? t('clients.collapse') : t('clients.expand');
 
     return (
         <Box
@@ -26,15 +28,15 @@ const SecondaryLayout: FC<{ children: ReactNode }> = ({ children }) => {
             >
                 <Link href={'/restful'} className={styles.panelLink}>
                     <RestIcon />
-                    REST Client
+                    REST Api
                 </Link>
                 <Link href={'/graphiql'} className={styles.panelLink}>
                     <GraphIcon />
-                    GraphiQL Client
+                    GraphiQL
                 </Link>
                 <Link href={'/history'} className={styles.panelLink}>
                     <HistoryIcon />
-                    History
+                    {t('clients.history')}
                 </Link>
                 <IconButton
                     onClick={() => setIsExpanded(!isExpanded)}
