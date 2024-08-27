@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Box, IconButton } from '@mui/material';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import styles from './SecondaryLayout.module.scss';
 import { GraphIcon, HistoryIcon, RestIcon } from '../Icons';
@@ -12,6 +13,7 @@ import { GraphIcon, HistoryIcon, RestIcon } from '../Icons';
 const SecondaryLayout: FC<{ children: ReactNode }> = ({ children }) => {
     const [isExpanded, setIsExpanded] = useState(true);
     const { t } = useTranslation();
+    const pathname = usePathname();
 
     const buttonTitle = isExpanded ? t('clients.collapse') : t('clients.expand');
 
@@ -26,15 +28,24 @@ const SecondaryLayout: FC<{ children: ReactNode }> = ({ children }) => {
                     bgcolor: 'action.hover',
                 }}
             >
-                <Link href={'/restful'} className={styles.panelLink}>
+                <Link
+                    href={'/restful'}
+                    className={`${styles.panelLink} ${pathname === '/restful' ? styles.panelLinkActive : ''}`}
+                >
                     <RestIcon />
                     REST Api
                 </Link>
-                <Link href={'/graphiql'} className={styles.panelLink}>
+                <Link
+                    href={'/graphiql'}
+                    className={`${styles.panelLink} ${pathname === '/graphiql' ? styles.panelLinkActive : ''}`}
+                >
                     <GraphIcon />
                     GraphiQL
                 </Link>
-                <Link href={'/history'} className={styles.panelLink}>
+                <Link
+                    href={'/history'}
+                    className={`${styles.panelLink} ${pathname === '/history' ? styles.panelLinkActive : ''}`}
+                >
                     <HistoryIcon />
                     {t('clients.history')}
                 </Link>
