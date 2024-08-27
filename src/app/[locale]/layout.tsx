@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import { i18nConfig } from '../../../i18nConfig';
-import '@/globals.scss';
+import './../globals.scss';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
+import ErrorBoundary from '@/components/ErrorBoundary/ErrorBoundary';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { dir } from 'i18next';
 import { AppThemeProvider } from '@/theme/AppThemeProvider';
-import ErrorBoundary from '@/components/ErrorBoundary/ErrorBoundary';
 
 export function generateStaticParams() {
     return i18nConfig.locales.map((locale) => ({ locale }));
@@ -27,13 +27,15 @@ export default function RootLayout({
     return (
         <html lang={locale} dir={dir(locale)}>
             <body>
-                <AppRouterCacheProvider>
-                    <AppThemeProvider>
-                        <Header />
-                        <ErrorBoundary>{children}</ErrorBoundary>
-                        <Footer />
-                    </AppThemeProvider>
-                </AppRouterCacheProvider>
+                <ErrorBoundary>
+                    <AppRouterCacheProvider>
+                        <AppThemeProvider>
+                            <Header />
+                            {children}
+                            <Footer />
+                        </AppThemeProvider>
+                    </AppRouterCacheProvider>
+                </ErrorBoundary>
             </body>
         </html>
     );

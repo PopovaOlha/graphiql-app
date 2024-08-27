@@ -81,7 +81,10 @@ const SignIn: React.FC = () => {
                     variant="standard"
                     margin="normal"
                     fullWidth
+                    type="email"
                     label="E-mail Address"
+                    name="email"
+                    autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
