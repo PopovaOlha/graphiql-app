@@ -1,6 +1,8 @@
-import rsIcon from '@/assets/icons/rs.svg';
-import Image from 'next/image';
 import { FaGithub } from 'react-icons/fa';
+import Image from 'next/image';
+
+import rsIcon from '@/assets/icons/rs.svg';
+
 import styles from './Footer.module.scss';
 
 const Footer = () => {

@@ -1,29 +1,78 @@
-import { FC, ReactNode } from 'react';
-import { Box } from '@mui/material';
-import Link from 'next/link';
+'use client';
 
-const containerStyles = {
-    display: 'grid',
-    gridTemplateColumns: '16rem 1fr',
-};
+import { FC, ReactNode, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { Box, IconButton } from '@mui/material';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+import { GraphIcon, HistoryIcon, RestIcon } from '../Icons';
+
+import styles from './SecondaryLayout.module.scss';
 
 const SecondaryLayout: FC<{ children: ReactNode }> = ({ children }) => {
+    const [isExpanded, setIsExpanded] = useState(true);
+    const { t } = useTranslation();
+    const pathname = usePathname();
+
+    const buttonTitle = isExpanded ? t('clients.collapse') : t('clients.expand');
+
     return (
-        <div style={containerStyles}>
+        <Box
+            component={'main'}
+            className={`${styles.container} ${isExpanded ? styles.expanded : ''}`}
+        >
             <Box
+                className={styles.panel}
                 sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '1rem',
-                    padding: '2rem',
+                    bgcolor: 'action.hover',
                 }}
             >
-                <Link href={'/restful'}>REST Client</Link>
-                <Link href={'/graphiql'}>GraphiQL Client</Link>
-                <Link href={'/history'}>History</Link>
+                <Link
+                    href={'/restful'}
+                    className={`${styles.panelLink} ${pathname === '/restful' ? styles.panelLinkActive : ''}`}
+                >
+                    <RestIcon />
+                    REST Api
+                </Link>
+                <Link
+                    href={'/graphiql'}
+                    className={`${styles.panelLink} ${pathname === '/graphiql' ? styles.panelLinkActive : ''}`}
+                >
+                    <GraphIcon />
+                    GraphiQL
+                </Link>
+                <Link
+                    href={'/history'}
+                    className={`${styles.panelLink} ${pathname === '/history' ? styles.panelLinkActive : ''}`}
+                >
+                    <HistoryIcon />
+                    {t('clients.history')}
+                </Link>
+                <IconButton
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    title={buttonTitle}
+                    sx={{
+                        position: 'absolute',
+                        bottom: '1rem',
+                        right: '1rem',
+                        width: '3rem',
+                        height: '3rem',
+                    }}
+                    className={styles.panelButton}
+                >
+                    <ArrowBackIosNewIcon />
+                </IconButton>
             </Box>
-            {children}
-        </div>
+            <Box
+                sx={{
+                    p: 2,
+                }}
+            >
+                {children}
+            </Box>
+        </Box>
     );
 };
 

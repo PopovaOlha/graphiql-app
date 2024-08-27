@@ -5,7 +5,6 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    background-color: #fff;
     transition: all 0.3s ease;
     z-index: 1000;
     padding: 20px;
@@ -26,7 +25,8 @@
 
 .buttonContainer {
     display: flex;
-    gap: 10px;
+    align-items: center;
+    gap: 1rem;
 }
 
 .button {

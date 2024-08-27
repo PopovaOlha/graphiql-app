@@ -1,11 +1,13 @@
 'use client';
 
-import CardGroup from '@/components/CardGroup/CardGroup';
-import { auth } from '@/services/firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { Box, Button, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import styles from './WelcomePage.module.scss';
+
+import CardGroup from '@/components/CardGroup/CardGroup';
+import { auth } from '@/services/firebase';
+
+import styles from '../../../styles/welcomepage.module.scss';
 
 const WelcomePage = () => {
     const [user] = useAuthState(auth);

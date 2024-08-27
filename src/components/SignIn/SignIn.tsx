@@ -1,23 +1,26 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useTranslation } from 'react-i18next';
+import { Google } from '@mui/icons-material';
+import {
+    Alert,
+    Button,
+    Container,
+    Snackbar,
+    TextField,
+    Typography,
+} from '@mui/material';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+
 import {
     auth,
     logInWithEmailAndPassword,
     signInWithGoogle,
 } from '../../services/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import {
-    Container,
-    TextField,
-    Button,
-    Typography,
-    Snackbar,
-    Alert,
-} from '@mui/material';
+
 import styles from './SignIn.module.scss';
-import Link from 'next/link';
-import { Google } from '@mui/icons-material';
 
 const SignIn: React.FC = () => {
     const [email, setEmail] = useState<string>('');
@@ -25,6 +28,7 @@ const SignIn: React.FC = () => {
     const [user] = useAuthState(auth);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (user) {
@@ -40,14 +44,12 @@ const SignIn: React.FC = () => {
             /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
         if (!emailPattern.test(email)) {
-            setError('Please enter a valid email address.');
+            setError(t('errorEmail'));
             return;
         }
 
         if (!passwordPattern.test(password)) {
-            setError(
-                'Password must contain at least 8 characters, including one letter, one digit, and one special character.'
-            );
+            setError(t('errorPassword'));
             return;
         }
 
@@ -55,7 +57,7 @@ const SignIn: React.FC = () => {
             await logInWithEmailAndPassword(auth, email, password);
             router.push('/');
         } catch (error) {
-            setError('Failed to log in. Please check your credentials.');
+            setError(t('errorLogin'));
             console.error(error);
         }
     };
@@ -74,14 +76,17 @@ const SignIn: React.FC = () => {
             }}
         >
             <Typography component="h1" variant="h1">
-                Sign In
+                {t('signIn')}
             </Typography>
             <form onSubmit={handleLogin} className={styles.loginForm}>
                 <TextField
                     variant="standard"
                     margin="normal"
                     fullWidth
-                    label="E-mail Address"
+                    type="email"
+                    label="E-mail"
+                    name="email"
+                    autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -91,7 +96,7 @@ const SignIn: React.FC = () => {
                     margin="normal"
                     fullWidth
                     type="password"
-                    label="Password"
+                    label={t('password')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -109,7 +114,7 @@ const SignIn: React.FC = () => {
                         marginTop: '24px',
                     }}
                 >
-                    Login
+                    {t('login')}
                 </Button>
                 <Button
                     type="button"
@@ -121,15 +126,15 @@ const SignIn: React.FC = () => {
                     startIcon={<Google />}
                     size="large"
                 >
-                    Login with Google
+                    {t('loginGoogle')}
                 </Button>
             </form>
             <Typography variant="body2" className={styles.loginText}>
-                Don&apos;t have an account?{' '}
+                {t('accountTextSignIn')}{' '}
                 <Link href="/signup" className={styles.backlink}>
-                    Sign up
+                    {t('signUp')}
                 </Link>{' '}
-                now.
+                {t('now')}.
             </Typography>
             <Snackbar
                 open={!!error}
