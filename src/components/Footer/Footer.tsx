@@ -11,7 +11,7 @@ const Footer = () => {
     return (
         <footer className={styles.footer}>
             <a
-                href="https://github.com/rolling-scopes-school"
+                href="https://github.com/rolling-scopes-school/tasks/blob/master/react/modules/tasks/final.md"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Rolling Scopes School organisation"
@@ -20,7 +20,7 @@ const Footer = () => {
             </a>
             <p>&copy; {currentYear}</p>
             <a
-                href="https://rs.school/"
+                href="https://rs.school/courses/reactjs"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="RS School"
