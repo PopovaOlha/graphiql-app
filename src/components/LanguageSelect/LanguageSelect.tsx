@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FormControl, InputLabel, NativeSelect } from '@mui/material';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { i18nConfig } from '../../i18nConfig';
+import { i18nConfig } from '../../../i18nConfig';
 
 const LanguageSelect = () => {
     const router = useRouter();
