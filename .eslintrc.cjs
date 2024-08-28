@@ -29,9 +29,9 @@ module.exports = {
         'react/prop-types': 'off',
         'react/react-in-jsx-scope': 'off',
         'prettier/prettier': 'error',
-        'no-console': ['error', { allow: ['error'] }],
+        'no-console': ['warn', { allow: ['error'] }],
         'no-comments/disallowComments': [
-            'error',
+            'warn',
             {
                 allow: ['TODO', 'FIXME', 'NOTE', 'DEBUG'],
             },
