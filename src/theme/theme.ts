@@ -35,6 +35,16 @@ const getTheme = (mode: 'light' | 'dark') =>
                     disableElevation: true,
                 },
             },
+            MuiContainer: {
+                styleOverrides: {
+                    maxWidthXl: {
+                        maxWidth: '1920px',
+                        '@media (min-width: 1200px)': {
+                            maxWidth: '1920px',
+                        },
+                    },
+                },
+            },
         },
     });
 
