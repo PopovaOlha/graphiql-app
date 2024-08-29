@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { ResourceLanguage } from 'i18next';
 
 export interface Header {
     key: string;
@@ -19,7 +20,6 @@ export interface GraphiQLState {
     response: GraphQLResponse | null;
     statusCode: number;
 }
-
 
 export interface ServiceAccount {
     type: string;
@@ -42,4 +42,11 @@ export interface ErrorBoundaryProps {
 export interface ApiErrorProps {
     errorCode: number;
     errorMessage: string;
+}
+
+export interface ClientProviderProps {
+    children: ReactNode;
+    locale: string;
+    resources: Record<string, ResourceLanguage>;
+    i18nNamespaces: string[];
 }

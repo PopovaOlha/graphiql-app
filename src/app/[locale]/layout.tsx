@@ -5,8 +5,7 @@ import type { Metadata } from 'next';
 import ErrorBoundary from '@/components/ErrorBoundary/ErrorBoundary';
 import Footer from '@/components/Footer/Footer';
 import Header from '@/components/Header/Header';
-import { TranslationsProvider } from '@/components/TranslationsProvider';
-import { AppThemeProvider } from '@/theme/AppThemeProvider';
+import ClientProvider from '@/components/Providers/ClientProvider/ClientProvider';
 
 import { i18nConfig } from '../../../i18nConfig';
 import initTranslations from '../i18n';
@@ -37,17 +36,15 @@ export default async function RootLayout({
             <body>
                 <ErrorBoundary>
                     <AppRouterCacheProvider>
-                        <AppThemeProvider>
-                            <TranslationsProvider
-                                namespaces={i18nNamespaces}
-                                locale={locale}
-                                resources={resources}
-                            >
-                                <Header />
-                                {children}
-                                <Footer />
-                            </TranslationsProvider>
-                        </AppThemeProvider>
+                        <ClientProvider
+                            locale={locale}
+                            resources={resources}
+                            i18nNamespaces={i18nNamespaces}
+                        >
+                            <Header />
+                            {children}
+                            <Footer />
+                        </ClientProvider>
                     </AppRouterCacheProvider>
                 </ErrorBoundary>
             </body>

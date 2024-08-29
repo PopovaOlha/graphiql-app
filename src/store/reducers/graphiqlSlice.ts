@@ -1,5 +1,6 @@
-import { GraphiQLState, GraphQLResponse, Header } from '@/types/interfaces';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import { GraphiQLState, GraphQLResponse, Header } from '@/types/interfaces';
 
 const initialState: GraphiQLState = {
     endpointUrl: '',
@@ -42,5 +43,15 @@ const graphiqlSlice = createSlice({
     },
 });
 
-export const { setResponse } = graphiqlSlice.actions;
+export const {
+    setEndpointUrl,
+    setSdlUrl,
+    setQuery,
+    setVariables,
+    addHeader,
+    removeHeader,
+    setResponse,
+    setStatusCode,
+} = graphiqlSlice.actions;
+
 export default graphiqlSlice.reducer;
