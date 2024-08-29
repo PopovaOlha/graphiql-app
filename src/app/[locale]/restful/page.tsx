@@ -6,6 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import {
     Box,
     Button,
+    Container,
     FormControl,
     Grid,
     IconButton,
@@ -20,6 +21,7 @@ import {
 import { SelectChangeEvent } from '@mui/material';
 
 import useUnauthorizedRedirect from '@/hooks/useUnauthorizedRedirect';
+import { replaceVariablesInJson } from '@/utils/utils';
 
 interface RestfulPageState {
     method: 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -28,6 +30,11 @@ interface RestfulPageState {
 
 interface KeyValuePair {
     key: string;
+    value: string;
+}
+
+interface Variable {
+    name: string;
     value: string;
 }
 
@@ -79,6 +86,9 @@ const RestfulPage = () => {
     const [keyValuePairs, setKeyValuePairs] = useState<KeyValuePair[]>([
         { key: '', value: '' },
     ]);
+    const [variables, setVariables] = useState<Variable[]>([
+        { name: '', value: '' },
+    ]);
 
     const [jsonBody, setJsonBody] = useState<string>('');
 
@@ -129,6 +139,33 @@ const RestfulPage = () => {
         setKeyValuePairs(newKeyValuePairs);
     };
 
+    const handleNameChange = (
+        index: number,
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const newVariable = [...variables];
+        newVariable[index].name = event.target.value;
+        setVariables(newVariable);
+    };
+
+    const handleVarValueChange = (
+        index: number,
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const newVariable = [...variables];
+        newVariable[index].value = event.target.value;
+        setVariables(newVariable);
+    };
+
+    const handleAddVariable = () => {
+        setVariables([...variables, { name: '', value: '' }]);
+    };
+
+    const handleRemoveVariable = (index: number) => {
+        const newVariable = variables.filter((_, i) => i !== index);
+        setVariables(newVariable);
+    };
+
     const handleJsonBodyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setJsonBody(event.target.value);
     };
@@ -138,6 +175,7 @@ const RestfulPage = () => {
         console.log('URL:', state.url);
         console.log('Key-Value Pairs:', keyValuePairs);
         console.log('JSON Body:', jsonBody);
+        console.log('Variables:', variables);
 
         const headers: Record<string, string> = {};
         keyValuePairs.forEach((pair) => {
@@ -146,13 +184,28 @@ const RestfulPage = () => {
             }
         });
 
+        let finalJsonBody = jsonBody;
+        if (jsonBody && state.method !== 'GET' && state.method !== 'DELETE') {
+            try {
+                finalJsonBody = replaceVariablesInJson(jsonBody, variables);
+                const parsedJsonBody = JSON.parse(finalJsonBody);
+                finalJsonBody = JSON.stringify(parsedJsonBody);
+            } catch (error) {
+                console.error(
+                    'Error parsing or replacing variables in JSON Body:',
+                    error
+                );
+                return;
+            }
+        }
+
         try {
             const response = await fetch(state.url, {
                 method: state.method,
                 headers,
                 body:
                     state.method !== 'GET' && state.method !== 'DELETE'
-                        ? jsonBody
+                        ? finalJsonBody
                         : undefined,
             });
             const data = (await response.json()) as Record<string, unknown>;
@@ -163,116 +216,189 @@ const RestfulPage = () => {
     };
 
     return (
-        <Box sx={{ padding: 2 }}>
-            <Typography variant="h4" gutterBottom component="div">
-                REST Client
-            </Typography>
+        <Container maxWidth="xl">
+            <Box sx={{ padding: 2 }}>
+                <Typography variant="h4" gutterBottom component="div">
+                    REST Client
+                </Typography>
 
-            <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                    <FormControl fullWidth variant="outlined">
-                        <InputLabel>Method</InputLabel>
-                        <Select
-                            value={state.method}
-                            onChange={handleMethodChange}
-                            label="Method"
-                        >
-                            <MenuItem value="GET">GET</MenuItem>
-                            <MenuItem value="POST">POST</MenuItem>
-                            <MenuItem value="PUT">PUT</MenuItem>
-                            <MenuItem value="DELETE">DELETE</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        fullWidth
-                        label="Endpoint URL"
-                        type="url"
-                        placeholder="https://swapi.dev/api/films/"
-                        variant="outlined"
-                        value={state.url}
-                        onChange={handleUrlChange}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        type="submit"
-                        onClick={handleSubmit}
-                    >
-                        Submit
-                    </Button>
-                </Grid>
-            </Grid>
-
-            <Box sx={{ borderBottom: 1, borderColor: 'divider', marginTop: 2 }}>
-                <Tabs
-                    value={tabValue}
-                    onChange={handleTabChange}
-                    aria-label="basic tabs example"
+                <Grid
+                    container
+                    spacing={2}
+                    alignItems="center"
+                    sx={{ width: '100%' }}
                 >
-                    <Tab label="Headers" {...tabsProps(0)} />
-                    <Tab label="JSON Body" {...tabsProps(1)} />
-                </Tabs>
-            </Box>
-            <CustomTabPanel value={tabValue} index={0}>
-                {keyValuePairs.map((pair, index) => (
-                    <Grid container spacing={2} key={index} alignItems="center">
-                        <Grid item xs={5}>
-                            <TextField
-                                label="Key"
-                                placeholder="Key"
-                                variant="outlined"
-                                fullWidth
-                                value={pair.key}
-                                onChange={(event) => handleKeyChange(index, event)}
-                            />
-                        </Grid>
-                        <Grid item xs={5}>
-                            <TextField
-                                label="Value"
-                                placeholder="Value"
-                                variant="outlined"
-                                fullWidth
-                                value={pair.value}
-                                onChange={(event) => handleValueChange(index, event)}
-                            />
-                        </Grid>
-                        <Grid item xs={2}>
-                            <IconButton
-                                color="secondary"
-                                onClick={() => handleRemovePair(index)}
-                                aria-label="remove"
+                    <Grid item>
+                        <FormControl sx={{ minWidth: 120 }} variant="outlined">
+                            <InputLabel>Method</InputLabel>
+                            <Select
+                                value={state.method}
+                                onChange={handleMethodChange}
+                                label="Method"
                             >
-                                <DeleteIcon />
-                            </IconButton>
-                        </Grid>
+                                <MenuItem value="GET">GET</MenuItem>
+                                <MenuItem value="POST">POST</MenuItem>
+                                <MenuItem value="PUT">PUT</MenuItem>
+                                <MenuItem value="DELETE">DELETE</MenuItem>
+                            </Select>
+                        </FormControl>
                     </Grid>
-                ))}
-                <Button
-                    variant="outlined"
-                    startIcon={<AddIcon />}
-                    onClick={handleAddPair}
-                    sx={{ marginTop: 2 }}
-                >
-                    Add Header
-                </Button>
-            </CustomTabPanel>
-            <CustomTabPanel value={tabValue} index={1}>
-                <TextField
-                    label="JSON Body"
-                    placeholder="Enter text here"
-                    multiline
-                    fullWidth
-                    rows={10}
-                    variant="outlined"
-                    value={jsonBody}
-                    onChange={handleJsonBodyChange}
-                />
-            </CustomTabPanel>
-        </Box>
+                    <Grid item sx={{ flexGrow: 1 }}>
+                        <TextField
+                            fullWidth
+                            label="Endpoint URL"
+                            type="url"
+                            placeholder="https://swapi.dev/api/films/"
+                            variant="outlined"
+                            value={state.url}
+                            onChange={handleUrlChange}
+                        />
+                    </Grid>
+
+                    <Grid item>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            type="submit"
+                            onClick={handleSubmit}
+                            disabled={!state.url}
+                        >
+                            Submit
+                        </Button>
+                    </Grid>
+                </Grid>
+
+                <Box sx={{ borderBottom: 1, borderColor: 'divider', marginTop: 2 }}>
+                    <Tabs
+                        value={tabValue}
+                        onChange={handleTabChange}
+                        aria-label="basic tabs example"
+                    >
+                        <Tab label="Headers" {...tabsProps(0)} />
+                        <Tab label="JSON Body" {...tabsProps(1)} />
+                        <Tab label="Variables" {...tabsProps(3)} />
+                    </Tabs>
+                </Box>
+                <CustomTabPanel value={tabValue} index={0}>
+                    {keyValuePairs.map((pair, index) => (
+                        <Grid
+                            container
+                            spacing={2}
+                            sx={{ mb: 2 }}
+                            key={index}
+                            alignItems="center"
+                        >
+                            <Grid item xs={5}>
+                                <TextField
+                                    label="Key"
+                                    placeholder="Key"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={pair.key}
+                                    onChange={(event) =>
+                                        handleKeyChange(index, event)
+                                    }
+                                />
+                            </Grid>
+                            <Grid item xs={5}>
+                                <TextField
+                                    label="Value"
+                                    placeholder="Value"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={pair.value}
+                                    onChange={(event) =>
+                                        handleValueChange(index, event)
+                                    }
+                                />
+                            </Grid>
+                            <Grid item xs={2}>
+                                <IconButton
+                                    color="secondary"
+                                    onClick={() => handleRemovePair(index)}
+                                    aria-label="remove"
+                                >
+                                    <DeleteIcon />
+                                </IconButton>
+                            </Grid>
+                        </Grid>
+                    ))}
+                    <Button
+                        variant="outlined"
+                        startIcon={<AddIcon />}
+                        onClick={handleAddPair}
+                        sx={{ marginTop: 2 }}
+                    >
+                        Add Header
+                    </Button>
+                </CustomTabPanel>
+                <CustomTabPanel value={tabValue} index={1}>
+                    <TextField
+                        label="JSON Body"
+                        placeholder="Enter text here"
+                        multiline
+                        fullWidth
+                        rows={10}
+                        variant="outlined"
+                        value={jsonBody}
+                        onChange={handleJsonBodyChange}
+                    />
+                </CustomTabPanel>
+                <CustomTabPanel value={tabValue} index={2}>
+                    {variables.map((variable, index) => (
+                        <Grid
+                            container
+                            spacing={2}
+                            sx={{ mb: 2 }}
+                            key={index}
+                            alignItems="center"
+                        >
+                            <Grid item xs={5}>
+                                <TextField
+                                    label="Name"
+                                    placeholder="Name"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={variable.name}
+                                    onChange={(event) =>
+                                        handleNameChange(index, event)
+                                    }
+                                />
+                            </Grid>
+                            <Grid item xs={5}>
+                                <TextField
+                                    label="Value"
+                                    placeholder="Value"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={variable.value}
+                                    onChange={(event) =>
+                                        handleVarValueChange(index, event)
+                                    }
+                                />
+                            </Grid>
+                            <Grid item xs={2}>
+                                <IconButton
+                                    color="secondary"
+                                    onClick={() => handleRemoveVariable(index)}
+                                    aria-label="remove"
+                                >
+                                    <DeleteIcon />
+                                </IconButton>
+                            </Grid>
+                        </Grid>
+                    ))}
+                    <Button
+                        variant="outlined"
+                        startIcon={<AddIcon />}
+                        onClick={handleAddVariable}
+                        sx={{ marginTop: 2 }}
+                    >
+                        Add Variable
+                    </Button>
+                </CustomTabPanel>
+            </Box>
+        </Container>
     );
 };
 
