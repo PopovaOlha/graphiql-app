@@ -31,6 +31,11 @@ interface KeyValuePair {
     value: string;
 }
 
+interface Variable {
+    name: string;
+    value: string;
+}
+
 interface CustomTabPanelProps {
     children?: React.ReactNode;
     index: number;
@@ -78,6 +83,9 @@ const RestfulPage = () => {
     const [tabValue, setTabValue] = useState<number>(0);
     const [keyValuePairs, setKeyValuePairs] = useState<KeyValuePair[]>([
         { key: '', value: '' },
+    ]);
+    const [variables, setVariables] = useState<Variable[]>([
+        { name: '', value: '' },
     ]);
 
     const [jsonBody, setJsonBody] = useState<string>('');
@@ -129,6 +137,33 @@ const RestfulPage = () => {
         setKeyValuePairs(newKeyValuePairs);
     };
 
+    const handleNameChange = (
+        index: number,
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const newVariable = [...variables];
+        newVariable[index].name = event.target.value;
+        setVariables(newVariable);
+    };
+
+    const handleVarValueChange = (
+        index: number,
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const newVariable = [...variables];
+        newVariable[index].value = event.target.value;
+        setVariables(newVariable);
+    };
+
+    const handleAddVariable = () => {
+        setVariables([...variables, { name: '', value: '' }]);
+    };
+
+    const handleRemoveVariable = (index: number) => {
+        const newVariable = variables.filter((_, i) => i !== index);
+        setVariables(newVariable);
+    };
+
     const handleJsonBodyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setJsonBody(event.target.value);
     };
@@ -138,6 +173,7 @@ const RestfulPage = () => {
         console.log('URL:', state.url);
         console.log('Key-Value Pairs:', keyValuePairs);
         console.log('JSON Body:', jsonBody);
+        console.log('Variables:', variables);
 
         const headers: Record<string, string> = {};
         keyValuePairs.forEach((pair) => {
@@ -168,9 +204,9 @@ const RestfulPage = () => {
                 REST Client
             </Typography>
 
-            <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                    <FormControl fullWidth variant="outlined">
+            <Grid container spacing={2} alignItems="center" sx={{ width: '100%' }}>
+                <Grid item>
+                    <FormControl sx={{ minWidth: 120 }} variant="outlined">
                         <InputLabel>Method</InputLabel>
                         <Select
                             value={state.method}
@@ -184,7 +220,7 @@ const RestfulPage = () => {
                         </Select>
                     </FormControl>
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid item sx={{ flexGrow: 1 }}>
                     <TextField
                         fullWidth
                         label="Endpoint URL"
@@ -195,12 +231,14 @@ const RestfulPage = () => {
                         onChange={handleUrlChange}
                     />
                 </Grid>
-                <Grid item xs={12}>
+
+                <Grid item>
                     <Button
                         variant="contained"
                         color="primary"
                         type="submit"
                         onClick={handleSubmit}
+                        disabled={!state.url}
                     >
                         Submit
                     </Button>
@@ -215,11 +253,18 @@ const RestfulPage = () => {
                 >
                     <Tab label="Headers" {...tabsProps(0)} />
                     <Tab label="JSON Body" {...tabsProps(1)} />
+                    <Tab label="Variables" {...tabsProps(3)} />
                 </Tabs>
             </Box>
             <CustomTabPanel value={tabValue} index={0}>
                 {keyValuePairs.map((pair, index) => (
-                    <Grid container spacing={2} key={index} alignItems="center">
+                    <Grid
+                        container
+                        spacing={2}
+                        sx={{ mb: 2 }}
+                        key={index}
+                        alignItems="center"
+                    >
                         <Grid item xs={5}>
                             <TextField
                                 label="Key"
@@ -271,6 +316,57 @@ const RestfulPage = () => {
                     value={jsonBody}
                     onChange={handleJsonBodyChange}
                 />
+            </CustomTabPanel>
+            <CustomTabPanel value={tabValue} index={2}>
+                {variables.map((variable, index) => (
+                    <Grid
+                        container
+                        spacing={2}
+                        sx={{ mb: 2 }}
+                        key={index}
+                        alignItems="center"
+                    >
+                        <Grid item xs={5}>
+                            <TextField
+                                label="Name"
+                                placeholder="Name"
+                                variant="outlined"
+                                fullWidth
+                                value={variable.name}
+                                onChange={(event) => handleNameChange(index, event)}
+                            />
+                        </Grid>
+                        <Grid item xs={5}>
+                            <TextField
+                                label="Value"
+                                placeholder="Value"
+                                variant="outlined"
+                                fullWidth
+                                value={variable.value}
+                                onChange={(event) =>
+                                    handleVarValueChange(index, event)
+                                }
+                            />
+                        </Grid>
+                        <Grid item xs={2}>
+                            <IconButton
+                                color="secondary"
+                                onClick={() => handleRemoveVariable(index)}
+                                aria-label="remove"
+                            >
+                                <DeleteIcon />
+                            </IconButton>
+                        </Grid>
+                    </Grid>
+                ))}
+                <Button
+                    variant="outlined"
+                    startIcon={<AddIcon />}
+                    onClick={handleAddVariable}
+                    sx={{ marginTop: 2 }}
+                >
+                    Add Variable
+                </Button>
             </CustomTabPanel>
         </Box>
     );
