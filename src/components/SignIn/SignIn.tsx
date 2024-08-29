@@ -2,11 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useTranslation } from 'react-i18next';
-import { Google } from '@mui/icons-material';
+import { Google, Visibility, VisibilityOff } from '@mui/icons-material';
 import {
     Alert,
+    Box,
     Button,
     Container,
+    IconButton,
     Snackbar,
     TextField,
     Typography,
@@ -29,6 +31,7 @@ const SignIn: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
     const { t } = useTranslation();
+    const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -90,17 +93,37 @@ const SignIn: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    id="email"
                 />
-                <TextField
-                    variant="standard"
-                    margin="normal"
-                    fullWidth
-                    type="password"
-                    label={t('password')}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
+                <Box sx={{ position: 'relative' }}>
+                    <TextField
+                        variant="standard"
+                        margin="normal"
+                        fullWidth
+                        type={isVisible ? 'text' : 'password'}
+                        autoComplete="password"
+                        label={t('password')}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        id="password"
+                    />
+                    <IconButton
+                        sx={{
+                            position: 'absolute',
+                            right: '0',
+                            bottom: '10px',
+                        }}
+                        onClick={() => setIsVisible(!isVisible)}
+                        size="small"
+                    >
+                        {isVisible ? (
+                            <VisibilityOff fontSize="inherit" />
+                        ) : (
+                            <Visibility fontSize="inherit" />
+                        )}
+                    </IconButton>
+                </Box>
                 <Button
                     type="submit"
                     variant="contained"
