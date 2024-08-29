@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useTranslation } from 'react-i18next';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
     Alert,
     Box,
@@ -18,7 +19,6 @@ import { useRouter } from 'next/navigation';
 import { auth, registerWithEmailAndPassword } from '../../services/firebase';
 
 import styles from './SignUp.module.scss';
-import { VisibilityOff, Visibility } from '@mui/icons-material';
 
 const SignUp: React.FC = () => {
     const [email, setEmail] = useState<string>('');
