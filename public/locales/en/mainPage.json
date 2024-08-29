@@ -24,7 +24,7 @@
     "errorConfirmPass": "Passwords must match.",
     "errorLogin": "Failed to log in. Please check your credentials.",
     "errorSignUp": "Failed to sign up. Please try again.",
-    "userName": "User Name",
+    "userName": "Name",
     "clients": {
         "history": "History",
         "collapse": "Collapse",

@@ -4,8 +4,10 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { useTranslation } from 'react-i18next';
 import {
     Alert,
+    Box,
     Button,
     Container,
+    IconButton,
     Snackbar,
     TextField,
     Typography,
@@ -16,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import { auth, registerWithEmailAndPassword } from '../../services/firebase';
 
 import styles from './SignUp.module.scss';
+import { VisibilityOff, Visibility } from '@mui/icons-material';
 
 const SignUp: React.FC = () => {
     const [email, setEmail] = useState<string>('');
@@ -26,6 +29,7 @@ const SignUp: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
     const { t } = useTranslation();
+    const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -93,6 +97,7 @@ const SignUp: React.FC = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
+                    id="full_name"
                 />
                 <TextField
                     variant="standard"
@@ -105,31 +110,64 @@ const SignUp: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    id="email"
                 />
-                <TextField
-                    variant="standard"
-                    margin="normal"
-                    fullWidth
-                    type="password"
-                    label={t('password')}
-                    name="new-password"
-                    autoComplete="new-password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <TextField
-                    variant="standard"
-                    margin="normal"
-                    fullWidth
-                    type="password"
-                    label={t('passwordConfirm')}
-                    name="confirm-password"
-                    autoComplete="new-password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                />
+                <Box sx={{ position: 'relative' }}>
+                    <TextField
+                        variant="standard"
+                        margin="normal"
+                        fullWidth
+                        type={isVisible ? 'text' : 'password'}
+                        label={t('password')}
+                        name="new-password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                    <IconButton
+                        sx={{
+                            position: 'absolute',
+                            right: '0',
+                            bottom: '10px',
+                        }}
+                        onClick={() => setIsVisible(!isVisible)}
+                        size="small"
+                    >
+                        {isVisible ? (
+                            <VisibilityOff fontSize="inherit" />
+                        ) : (
+                            <Visibility fontSize="inherit" />
+                        )}
+                    </IconButton>
+                </Box>
+                <Box sx={{ position: 'relative' }}>
+                    <TextField
+                        variant="standard"
+                        margin="normal"
+                        fullWidth
+                        type={isVisible ? 'text' : 'password'}
+                        label={t('passwordConfirm')}
+                        name="confirm-password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                    />
+                    <IconButton
+                        sx={{
+                            position: 'absolute',
+                            right: '0',
+                            bottom: '10px',
+                        }}
+                        onClick={() => setIsVisible(!isVisible)}
+                        size="small"
+                    >
+                        {isVisible ? (
+                            <VisibilityOff fontSize="inherit" />
+                        ) : (
+                            <Visibility fontSize="inherit" />
+                        )}
+                    </IconButton>
+                </Box>
                 <Button
                     type="submit"
                     variant="contained"
