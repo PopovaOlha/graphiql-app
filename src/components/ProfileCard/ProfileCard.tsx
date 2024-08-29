@@ -1,6 +1,4 @@
 import { FaGithub } from 'react-icons/fa';
-import styles from './ProfileCard.module.scss';
-
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
     Accordion,
@@ -13,6 +11,8 @@ import {
     Link,
     Typography,
 } from '@mui/material';
+
+import styles from './ProfileCard.module.scss';
 
 interface ProfileCardProps {
     avatarUrl: string;

@@ -1,18 +1,24 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { auth, registerWithEmailAndPassword } from '../../services/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { useTranslation } from 'react-i18next';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
-    Container,
-    TextField,
-    Button,
-    Typography,
-    Snackbar,
     Alert,
+    Box,
+    Button,
+    Container,
+    IconButton,
+    Snackbar,
+    TextField,
+    Typography,
 } from '@mui/material';
-import styles from './SignUp.module.scss';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
+import { auth, registerWithEmailAndPassword } from '../../services/firebase';
+
+import styles from './SignUp.module.scss';
 
 const SignUp: React.FC = () => {
     const [email, setEmail] = useState<string>('');
@@ -22,6 +28,8 @@ const SignUp: React.FC = () => {
     const [user] = useAuthState(auth);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
+    const { t } = useTranslation();
+    const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -39,18 +47,16 @@ const SignUp: React.FC = () => {
             /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
         if (!emailPattern.test(email)) {
-            setError('Please enter a valid email address.');
+            setError(t('errorEmail'));
             return;
         }
 
         if (!passwordPattern.test(password)) {
-            setError(
-                'Password must be at least 8 characters long, contain at least one letter, one number, and one special character.'
-            );
+            setError(t('errorPassword'));
             return;
         }
         if (password !== confirmPassword) {
-            setError('Passwords must match.');
+            setError(t('errorConfirmPass'));
             return;
         }
 
@@ -58,7 +64,7 @@ const SignUp: React.FC = () => {
             await registerWithEmailAndPassword(name, email, password);
             router.push('/');
         } catch (error) {
-            setError('Failed to sign up. Please try again.');
+            setError(t('errorSignUp'));
             console.error(error);
         }
     };
@@ -77,47 +83,91 @@ const SignUp: React.FC = () => {
             }}
         >
             <Typography component="h1" variant="h1">
-                Sign Up
+                {t('signUp')}
             </Typography>
             <form onSubmit={handleSignUp} className={styles.loginForm}>
                 <TextField
                     variant="standard"
                     margin="normal"
                     fullWidth
-                    label="UserName"
+                    type="text"
+                    label={t('userName')}
+                    name="name"
+                    autoComplete="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
+                    id="full_name"
                 />
                 <TextField
                     variant="standard"
                     margin="normal"
                     fullWidth
-                    label="E-mail Address"
+                    type="email"
+                    label="E-mail"
+                    name="email"
+                    autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    id="email"
                 />
-                <TextField
-                    variant="standard"
-                    margin="normal"
-                    fullWidth
-                    type="password"
-                    label="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <TextField
-                    variant="standard"
-                    margin="normal"
-                    fullWidth
-                    type="password"
-                    label="Confirm Password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                />
+                <Box sx={{ position: 'relative' }}>
+                    <TextField
+                        variant="standard"
+                        margin="normal"
+                        fullWidth
+                        type={isVisible ? 'text' : 'password'}
+                        label={t('password')}
+                        name="new-password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                    <IconButton
+                        sx={{
+                            position: 'absolute',
+                            right: '0',
+                            bottom: '10px',
+                        }}
+                        onClick={() => setIsVisible(!isVisible)}
+                        size="small"
+                    >
+                        {isVisible ? (
+                            <VisibilityOff fontSize="inherit" />
+                        ) : (
+                            <Visibility fontSize="inherit" />
+                        )}
+                    </IconButton>
+                </Box>
+                <Box sx={{ position: 'relative' }}>
+                    <TextField
+                        variant="standard"
+                        margin="normal"
+                        fullWidth
+                        type={isVisible ? 'text' : 'password'}
+                        label={t('passwordConfirm')}
+                        name="confirm-password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                    />
+                    <IconButton
+                        sx={{
+                            position: 'absolute',
+                            right: '0',
+                            bottom: '10px',
+                        }}
+                        onClick={() => setIsVisible(!isVisible)}
+                        size="small"
+                    >
+                        {isVisible ? (
+                            <VisibilityOff fontSize="inherit" />
+                        ) : (
+                            <Visibility fontSize="inherit" />
+                        )}
+                    </IconButton>
+                </Box>
                 <Button
                     type="submit"
                     variant="contained"
@@ -131,15 +181,15 @@ const SignUp: React.FC = () => {
                         marginTop: '24px',
                     }}
                 >
-                    Sign Up
+                    {t('signUp')}
                 </Button>
             </form>
             <Typography variant="body2" className={styles.loginText}>
-                Already have an account?{' '}
+                {t('accountTextSignUp')}{' '}
                 <Link className={styles.backlink} href="/signin">
-                    Log in
+                    {t('signIn')}
                 </Link>{' '}
-                now.
+                {t('now')}.
             </Typography>
             <Snackbar
                 open={!!error}

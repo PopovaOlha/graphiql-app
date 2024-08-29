@@ -28,6 +28,24 @@ const getTheme = (mode: 'light' | 'dark') =>
         palette: {
             mode,
         },
+        components: {
+            MuiButton: {
+                defaultProps: {
+                    disableRipple: true,
+                    disableElevation: true,
+                },
+            },
+            MuiContainer: {
+                styleOverrides: {
+                    maxWidthXl: {
+                        maxWidth: '1920px',
+                        '@media (min-width: 1200px)': {
+                            maxWidth: '1920px',
+                        },
+                    },
+                },
+            },
+        },
     });
 
 export default getTheme;

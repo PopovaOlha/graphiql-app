@@ -10,9 +10,16 @@ module.exports = {
         'next',
         'next/core-web-vitals',
     ],
-    ignorePatterns: ['dist', '.eslintrc.cjs'],
+    ignorePatterns: ['dist', '.eslintrc.cjs', 'next-env.d.ts'],
     parser: '@typescript-eslint/parser',
-    plugins: ['react-refresh', 'react', 'react-hooks', 'prettier'],
+    plugins: [
+        'react-refresh',
+        'react',
+        'react-hooks',
+        'prettier',
+        'no-comments',
+        'simple-import-sort',
+    ],
     rules: {
         'react-refresh/only-export-components': [
             'warn',
@@ -22,6 +29,26 @@ module.exports = {
         'react/prop-types': 'off',
         'react/react-in-jsx-scope': 'off',
         'prettier/prettier': 'error',
+        'no-console': ['warn', { allow: ['error'] }],
+        'no-comments/disallowComments': [
+            'warn',
+            {
+                allow: ['TODO', 'FIXME', 'NOTE', 'DEBUG'],
+            },
+        ],
+        'simple-import-sort/imports': [
+            'error',
+            {
+                groups: [
+                    ['^react', '^@?\\w'],
+                    ['^(@|components)(/.*|$)'],
+                    ['^\\u0000'],
+                    ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
+                    ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
+                    ['^.+\\.?(css)$'],
+                ],
+            },
+        ],
     },
     settings: {
         react: {

@@ -1,7 +1,12 @@
+'use client';
+
+import { useTranslation } from 'react-i18next';
 import { Box, Typography } from '@mui/material';
 import Link from 'next/link';
 
 export default function NotFound() {
+    const { t } = useTranslation();
+
     return (
         <Box
             sx={{
@@ -9,7 +14,7 @@ export default function NotFound() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                height: '100svh',
+                minHeight: 'calc(100vh - 197px)',
             }}
         >
             <Typography
@@ -17,7 +22,7 @@ export default function NotFound() {
                 sx={{
                     fontSize: '96px',
                     fontWeight: '300',
-                    fontFamily: 'Inter, sans-serif',
+                    lineHeight: 'normal',
                 }}
             >
                 404
@@ -27,20 +32,17 @@ export default function NotFound() {
                     fontSize: '24px',
                     fontWeight: '500',
                     marginBottom: '50px',
-                    fontFamily: 'Inter, sans-serif',
                 }}
             >
-                This page does not exist
+                {t('errors:404.text')}
             </Typography>
             <Link
                 href={'/'}
                 style={{
                     textDecoration: 'underline',
-                    textUnderlineOffset: '6px',
-                    fontFamily: 'Inter, sans-serif',
                 }}
             >
-                Go to the main page
+                {t('errors:404.link')}
             </Link>
         </Box>
     );

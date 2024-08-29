@@ -1,6 +1,9 @@
-import { authors } from '@/utils/constants/authors';
 import { Typography } from '@mui/material';
+
+import { authors } from '@/utils/constants/authors';
+
 import ProfileCard from '../ProfileCard/ProfileCard';
+
 import styles from './CardGroup.module.scss';
 
 const CardGroup = () => {

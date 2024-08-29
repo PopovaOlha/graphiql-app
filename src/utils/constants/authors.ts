@@ -1,7 +1,7 @@
 export const authors = [
     {
         avatarUrl: '/avatars/kot-vmeshke.jpeg',
-        name: 'Anna Babay',
+        name: 'Hanna Babai',
         description:
             "With a strong background in graphic design, Anna switched into web design and soon discovered a passion for coding. Now, she's dedicated to web development, finding the process of building websites more engaging than creating visuals. She is fully committed to advancing her skills in this dynamic field.",
         githubUrl: 'https://github.com/kot-vmeshke',

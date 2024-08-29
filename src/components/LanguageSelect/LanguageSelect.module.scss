@@ -1,0 +1,31 @@
+.languageSelect {
+    width: 90px;
+    margin-right: 40px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    appearance: none;
+    cursor: pointer;
+    transition:
+        background-color 0.3s ease,
+        box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+        background-color: #0056b3;
+        box-shadow: 0 6px 12px rgba(0, 86, 179, 0.2);
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+    }
+
+    option {
+        background-color: #fff;
+        color: #333;
+    }
+}
