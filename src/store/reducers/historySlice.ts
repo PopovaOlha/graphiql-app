@@ -10,7 +10,7 @@ const historySlice = createSlice({
             state.push(action.payload);
         },
         removeFromHistory(state, action: PayloadAction<string>) {
-            state = state.filter((item) => item !== action.payload);
+            return state.filter((item) => item !== action.payload);
         },
     },
 });
