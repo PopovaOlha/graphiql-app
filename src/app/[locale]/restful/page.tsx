@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -78,13 +79,16 @@ const tabsProps = (index: number) => {
 
 const RestfulPage = () => {
     useUnauthorizedRedirect();
+    const { t } = useTranslation();
 
     const [state, setState] = useState<RestfulPageState>({
         method: 'GET',
         url: '',
     });
 
-    const [code, setCode] = useState<string>('// Response');
+    const [code, setCode] = useState<string>(
+        t('restClient:response.defaultEditorValue')
+    );
     const [responseCode, setResponseCode] = useState<number | null>(null);
     const [responseStatus, setResponseStatus] = useState<string>('');
     const [editorLang, setEditorLang] = useState<string>('json');
@@ -231,7 +235,7 @@ const RestfulPage = () => {
         <Container maxWidth="xl">
             <Box sx={{ padding: 2 }}>
                 <Typography variant="h4" gutterBottom component="div">
-                    REST Client
+                    {t('restClient:title')}
                 </Typography>
 
                 <Grid
@@ -242,11 +246,11 @@ const RestfulPage = () => {
                 >
                     <Grid item>
                         <FormControl sx={{ minWidth: 120 }} variant="outlined">
-                            <InputLabel>Method</InputLabel>
+                            <InputLabel>{t('restClient:methodLabel')}</InputLabel>
                             <Select
                                 value={state.method}
                                 onChange={handleMethodChange}
-                                label="Method"
+                                label={t('restClient:methodLabel')}
                             >
                                 <MenuItem value="GET">GET</MenuItem>
                                 <MenuItem value="POST">POST</MenuItem>
@@ -258,9 +262,9 @@ const RestfulPage = () => {
                     <Grid item sx={{ flexGrow: 1 }}>
                         <TextField
                             fullWidth
-                            label="Endpoint URL"
+                            label={t('restClient:urlLabel')}
                             type="url"
-                            placeholder="https://swapi.dev/api/films/"
+                            placeholder={t('restClient:urlPlaceholder')}
                             variant="outlined"
                             value={state.url}
                             onChange={handleUrlChange}
@@ -275,7 +279,7 @@ const RestfulPage = () => {
                             onClick={handleSubmit}
                             disabled={!state.url}
                         >
-                            Submit
+                            {t('restClient:submitButton')}
                         </Button>
                     </Grid>
                 </Grid>
@@ -286,11 +290,21 @@ const RestfulPage = () => {
                         onChange={handleTabChange}
                         aria-label="basic tabs example"
                     >
-                        <Tab label="Headers" {...tabsProps(0)} />
-                        <Tab label="JSON Body" {...tabsProps(1)} />
-                        <Tab label="Variables" {...tabsProps(3)} />
+                        <Tab
+                            label={t('restClient:tabs.headers')}
+                            {...tabsProps(0)}
+                        />
+                        <Tab
+                            label={t('restClient:tabs.jsonBody')}
+                            {...tabsProps(1)}
+                        />
+                        <Tab
+                            label={t('restClient:tabs.variables')}
+                            {...tabsProps(3)}
+                        />
                     </Tabs>
                 </Box>
+
                 <CustomTabPanel value={tabValue} index={0}>
                     {keyValuePairs.map((pair, index) => (
                         <Grid
@@ -302,8 +316,10 @@ const RestfulPage = () => {
                         >
                             <Grid item xs={5}>
                                 <TextField
-                                    label="Key"
-                                    placeholder="Key"
+                                    label={t('restClient:headers.keyPlaceholder')}
+                                    placeholder={t(
+                                        'restClient:headers.keyPlaceholder'
+                                    )}
                                     variant="outlined"
                                     fullWidth
                                     value={pair.key}
@@ -314,8 +330,10 @@ const RestfulPage = () => {
                             </Grid>
                             <Grid item xs={5}>
                                 <TextField
-                                    label="Value"
-                                    placeholder="Value"
+                                    label={t('restClient:headers.valuePlaceholder')}
+                                    placeholder={t(
+                                        'restClient:headers.valuePlaceholder'
+                                    )}
                                     variant="outlined"
                                     fullWidth
                                     value={pair.value}
@@ -328,7 +346,7 @@ const RestfulPage = () => {
                                 <IconButton
                                     color="secondary"
                                     onClick={() => handleRemovePair(index)}
-                                    aria-label="remove"
+                                    aria-label={t('restClient:headers.removeButton')}
                                 >
                                     <DeleteIcon />
                                 </IconButton>
@@ -341,13 +359,14 @@ const RestfulPage = () => {
                         onClick={handleAddPair}
                         sx={{ marginTop: 2 }}
                     >
-                        Add Header
+                        {t('restClient:headers.addHeaderButton')}
                     </Button>
                 </CustomTabPanel>
+
                 <CustomTabPanel value={tabValue} index={1}>
                     <FormControl sx={{ minWidth: 120 }} variant="standard">
                         <Select
-                            label="Language"
+                            label={t('restClient:jsonBody.languageLabel')}
                             value={editorLang}
                             onChange={(e: SelectChangeEvent<string>) =>
                                 setEditorLang(e.target.value)
@@ -363,14 +382,11 @@ const RestfulPage = () => {
                         defaultLanguage={editorLang}
                         value={jsonBody}
                         theme={mode === 'light' ? 'light' : 'vs-dark'}
-                        options={{
-                            minimap: {
-                                enabled: false,
-                            },
-                        }}
+                        options={{ minimap: { enabled: false } }}
                         onChange={(value) => setJsonBody(value)}
                     />
                 </CustomTabPanel>
+
                 <CustomTabPanel value={tabValue} index={2}>
                     {variables.map((variable, index) => (
                         <Grid
@@ -382,8 +398,10 @@ const RestfulPage = () => {
                         >
                             <Grid item xs={5}>
                                 <TextField
-                                    label="Name"
-                                    placeholder="Name"
+                                    label={t('restClient:variables.namePlaceholder')}
+                                    placeholder={t(
+                                        'restClient:variables.namePlaceholder'
+                                    )}
                                     variant="outlined"
                                     fullWidth
                                     value={variable.name}
@@ -394,8 +412,12 @@ const RestfulPage = () => {
                             </Grid>
                             <Grid item xs={5}>
                                 <TextField
-                                    label="Value"
-                                    placeholder="Value"
+                                    label={t(
+                                        'restClient:variables.valuePlaceholder'
+                                    )}
+                                    placeholder={t(
+                                        'restClient:variables.valuePlaceholder'
+                                    )}
                                     variant="outlined"
                                     fullWidth
                                     value={variable.value}
@@ -408,7 +430,9 @@ const RestfulPage = () => {
                                 <IconButton
                                     color="secondary"
                                     onClick={() => handleRemoveVariable(index)}
-                                    aria-label="remove"
+                                    aria-label={t(
+                                        'restClient:variables.removeButton'
+                                    )}
                                 >
                                     <DeleteIcon />
                                 </IconButton>
@@ -421,26 +445,26 @@ const RestfulPage = () => {
                         onClick={handleAddVariable}
                         sx={{ marginTop: 2 }}
                     >
-                        Add Variable
+                        {t('restClient:variables.addVariableButton')}
                     </Button>
                 </CustomTabPanel>
             </Box>
+
             <Box>
                 {responseCode && (
                     <Box>
-                        Response status: {responseCode} {responseStatus}
+                        {t('restClient:response.status')} {responseCode}{' '}
+                        {responseStatus}
                     </Box>
                 )}
                 <Editor
                     height="50vh"
                     defaultLanguage="javascript"
-                    defaultValue="// Response"
+                    defaultValue={t('restClient:response.defaultEditorValue')}
                     value={code}
                     theme={mode === 'light' ? 'light' : 'vs-dark'}
                     options={{
-                        minimap: {
-                            enabled: false,
-                        },
+                        minimap: { enabled: false },
                         readOnly: true,
                     }}
                 />
