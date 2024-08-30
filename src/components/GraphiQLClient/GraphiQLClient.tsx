@@ -1,20 +1,21 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-    setEndpointUrl,
-    setSdlUrl,
     setQuery,
     setVariables,
     addHeader,
     removeHeader,
     setResponse,
     setStatusCode,
+    setEndpointUrl,
+    setSdlUrl,
 } from '@/store/reducers/graphiqlSlice';
 import { RootState } from '@/store/store';
-import axios, { AxiosError } from 'axios';
+import { executeGraphQLQuery } from '@/services/graphiqlService';
 import { TextField, Button, Box } from '@mui/material';
+import React from 'react';
 
 const GraphiQLClient = () => {
     const dispatch = useDispatch();
@@ -25,59 +26,25 @@ const GraphiQLClient = () => {
     const [localSdlUrl, setLocalSdlUrl] = useState(sdlUrl);
 
     useEffect(() => {
+        // Если SDL URL пустой, заполняем его значением с добавленным "?sdl"
         if (!localSdlUrl) {
-            const newSdlUrl = `${localEndpointUrl}?sdl`;
-            setLocalSdlUrl(newSdlUrl);
-            dispatch(setSdlUrl(newSdlUrl));
+            const sdl = `${localEndpointUrl}?sdl`;
+            setLocalSdlUrl(sdl);
+            dispatch(setSdlUrl(sdl));
+        } else {
+            dispatch(setSdlUrl(localSdlUrl));
         }
-    }, [localEndpointUrl, dispatch]);
-
-    const handleEndpointUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newUrl = e.target.value;
-        setLocalEndpointUrl(newUrl);
-        dispatch(setEndpointUrl(newUrl));
-    };
-
-    const handleSdlUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newSdlUrl = e.target.value;
-        setLocalSdlUrl(newSdlUrl);
-        dispatch(setSdlUrl(newSdlUrl));
-    };
+    }, [localEndpointUrl, localSdlUrl, dispatch]);
 
     const handleQueryExecution = async () => {
-        try {
-            const headersObject = headers.reduce(
-                (acc, header) => {
-                    acc[header.key] = header.value;
-                    return acc;
-                },
-                {} as Record<string, string>
-            );
-
-            const response = await axios.post(
-                localEndpointUrl,
-                {
-                    query,
-                    variables: JSON.parse(variables || '{}'),
-                },
-                { headers: headersObject }
-            );
-
-            dispatch(setResponse(response.data));
-            dispatch(setStatusCode(response.status));
-        } catch (error) {
-            const axiosError = error as AxiosError;
-
-            const errorMessage = axiosError.response
-                ? axiosError.response.data
-                : { message: 'Unknown error occurred' };
-            const statusCode = axiosError.response
-                ? axiosError.response.status
-                : 500;
-
-            dispatch(setResponse(errorMessage));
-            dispatch(setStatusCode(statusCode));
-        }
+        const result = await executeGraphQLQuery(
+            localEndpointUrl,
+            query,
+            variables,
+            headers
+        );
+        dispatch(setResponse(result.response));
+        dispatch(setStatusCode(result.statusCode));
     };
 
     return (
@@ -85,17 +52,22 @@ const GraphiQLClient = () => {
             <TextField
                 label="Endpoint URL"
                 value={localEndpointUrl}
-                onChange={handleEndpointUrlChange}
+                onChange={(e) => {
+                    const value = e.target.value;
+                    setLocalEndpointUrl(value);
+                    dispatch(setEndpointUrl(value));
+                }}
                 fullWidth
                 margin="normal"
             />
             <TextField
                 label="SDL URL"
                 value={localSdlUrl}
-                onChange={handleSdlUrlChange}
+                onChange={(e) => setLocalSdlUrl(e.target.value)}
                 fullWidth
                 margin="normal"
             />
+            {/* Реализация редактора заголовков */}
             <Box my={2}>
                 <Button onClick={() => dispatch(addHeader({ key: '', value: '' }))}>
                     Add Header
@@ -134,6 +106,7 @@ const GraphiQLClient = () => {
                     </Box>
                 ))}
             </Box>
+            {/* Реализация редактора запросов */}
             <TextField
                 label="GraphQL Query"
                 value={query}
@@ -143,6 +116,7 @@ const GraphiQLClient = () => {
                 multiline
                 rows={6}
             />
+            {/* Редактор переменных */}
             <TextField
                 label="Variables (JSON format)"
                 value={variables}
@@ -155,6 +129,7 @@ const GraphiQLClient = () => {
             <Button variant="contained" onClick={handleQueryExecution}>
                 Execute
             </Button>
+            {/* Секция ответа */}
             <Box mt={4}>
                 <h3>Response</h3>
                 <p>Status Code: {statusCode}</p>
