@@ -1,21 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Box, Button, TextField } from '@mui/material';
+
+import { executeGraphQLQuery } from '@/services/graphiqlService';
 import {
-    setQuery,
-    setVariables,
     addHeader,
     removeHeader,
-    setResponse,
-    setStatusCode,
     setEndpointUrl,
+    setQuery,
+    setResponse,
     setSdlUrl,
+    setStatusCode,
+    setVariables,
 } from '@/store/reducers/graphiqlSlice';
 import { RootState } from '@/store/store';
-import { executeGraphQLQuery } from '@/services/graphiqlService';
-import { TextField, Button, Box } from '@mui/material';
-import React from 'react';
 
 const GraphiQLClient = () => {
     const dispatch = useDispatch();
@@ -26,15 +26,24 @@ const GraphiQLClient = () => {
     const [localSdlUrl, setLocalSdlUrl] = useState(sdlUrl);
 
     useEffect(() => {
-        // Если SDL URL пустой, заполняем его значением с добавленным "?sdl"
         if (!localSdlUrl) {
-            const sdl = `${localEndpointUrl}?sdl`;
-            setLocalSdlUrl(sdl);
-            dispatch(setSdlUrl(sdl));
-        } else {
-            dispatch(setSdlUrl(localSdlUrl));
+            const newSdlUrl = `${localEndpointUrl}?sdl`;
+            setLocalSdlUrl(newSdlUrl);
+            dispatch(setSdlUrl(newSdlUrl));
         }
-    }, [localEndpointUrl, localSdlUrl, dispatch]);
+    }, [localEndpointUrl, dispatch]);
+
+    const handleEndpointUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newUrl = e.target.value;
+        setLocalEndpointUrl(newUrl);
+        dispatch(setEndpointUrl(newUrl));
+    };
+
+    const handleSdlUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newSdlUrl = e.target.value;
+        setLocalSdlUrl(newSdlUrl);
+        dispatch(setSdlUrl(newSdlUrl));
+    };
 
     const handleQueryExecution = async () => {
         const result = await executeGraphQLQuery(
@@ -43,7 +52,7 @@ const GraphiQLClient = () => {
             variables,
             headers
         );
-        dispatch(setResponse(result.response));
+        dispatch(setResponse(result));
         dispatch(setStatusCode(result.statusCode));
     };
 
@@ -52,22 +61,17 @@ const GraphiQLClient = () => {
             <TextField
                 label="Endpoint URL"
                 value={localEndpointUrl}
-                onChange={(e) => {
-                    const value = e.target.value;
-                    setLocalEndpointUrl(value);
-                    dispatch(setEndpointUrl(value));
-                }}
+                onChange={handleEndpointUrlChange}
                 fullWidth
                 margin="normal"
             />
             <TextField
                 label="SDL URL"
                 value={localSdlUrl}
-                onChange={(e) => setLocalSdlUrl(e.target.value)}
+                onChange={handleSdlUrlChange}
                 fullWidth
                 margin="normal"
             />
-            {/* Реализация редактора заголовков */}
             <Box my={2}>
                 <Button onClick={() => dispatch(addHeader({ key: '', value: '' }))}>
                     Add Header
@@ -106,7 +110,6 @@ const GraphiQLClient = () => {
                     </Box>
                 ))}
             </Box>
-            {/* Реализация редактора запросов */}
             <TextField
                 label="GraphQL Query"
                 value={query}
@@ -116,7 +119,6 @@ const GraphiQLClient = () => {
                 multiline
                 rows={6}
             />
-            {/* Редактор переменных */}
             <TextField
                 label="Variables (JSON format)"
                 value={variables}
@@ -129,7 +131,6 @@ const GraphiQLClient = () => {
             <Button variant="contained" onClick={handleQueryExecution}>
                 Execute
             </Button>
-            {/* Секция ответа */}
             <Box mt={4}>
                 <h3>Response</h3>
                 <p>Status Code: {statusCode}</p>

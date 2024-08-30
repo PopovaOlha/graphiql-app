@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { Header } from '../types/interfaces';
 
 export const executeGraphQLQuery = async (

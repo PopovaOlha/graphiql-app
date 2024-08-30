@@ -6,13 +6,18 @@ export interface Header {
     value: string;
 }
 
+export interface GraphQLResponse {
+    statusCode: number;
+    response: unknown;
+}
+
 export interface GraphiQLState {
     endpointUrl: string;
     sdlUrl: string;
     query: string;
     variables: string;
     headers: Header[];
-    response: string;
+    response: GraphQLResponse | null;
     statusCode: number;
 }
 
