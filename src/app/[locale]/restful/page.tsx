@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Editor from '@monaco-editor/react';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
@@ -17,6 +18,7 @@ import {
     Tabs,
     TextField,
     Typography,
+    useTheme,
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
 
@@ -82,6 +84,11 @@ const RestfulPage = () => {
         url: '',
     });
 
+    const [code, setCode] = useState<string>('// Response');
+    const [responseCode, setResponseCode] = useState<number | null>(null);
+    const [responseStatus, setResponseStatus] = useState<string>('');
+    const [editorLang, setEditorLang] = useState<string>('json');
+
     const [tabValue, setTabValue] = useState<number>(0);
     const [keyValuePairs, setKeyValuePairs] = useState<KeyValuePair[]>([
         { key: '', value: '' },
@@ -90,7 +97,10 @@ const RestfulPage = () => {
         { name: '', value: '' },
     ]);
 
-    const [jsonBody, setJsonBody] = useState<string>('');
+    const theme = useTheme();
+    const mode = theme.palette.mode;
+
+    const [jsonBody, setJsonBody] = useState<string | undefined>('');
 
     const handleMethodChange = (
         event: SelectChangeEvent<'GET' | 'POST' | 'PUT' | 'DELETE'>
@@ -166,10 +176,6 @@ const RestfulPage = () => {
         setVariables(newVariable);
     };
 
-    const handleJsonBodyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setJsonBody(event.target.value);
-    };
-
     const handleSubmit = async () => {
         console.log('Method:', state.method);
         console.log('URL:', state.url);
@@ -209,7 +215,13 @@ const RestfulPage = () => {
                         : undefined,
             });
             const data = (await response.json()) as Record<string, unknown>;
+            console.log(response.status);
+            console.log(response.statusText);
             console.log('Response Data:', data);
+
+            setResponseStatus(response.statusText);
+            setResponseCode(response.status);
+            setCode(JSON.stringify(data, null, 2));
         } catch (error) {
             console.error('Error:', error);
         }
@@ -333,15 +345,30 @@ const RestfulPage = () => {
                     </Button>
                 </CustomTabPanel>
                 <CustomTabPanel value={tabValue} index={1}>
-                    <TextField
-                        label="JSON Body"
-                        placeholder="Enter text here"
-                        multiline
-                        fullWidth
-                        rows={10}
-                        variant="outlined"
+                    <FormControl sx={{ minWidth: 120 }} variant="standard">
+                        <Select
+                            label="Language"
+                            value={editorLang}
+                            onChange={(e: SelectChangeEvent<string>) =>
+                                setEditorLang(e.target.value)
+                            }
+                        >
+                            <MenuItem value="json">JSON</MenuItem>
+                            <MenuItem value="text">Text</MenuItem>
+                            <MenuItem value="xml">XML</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <Editor
+                        height="200px"
+                        defaultLanguage={editorLang}
                         value={jsonBody}
-                        onChange={handleJsonBodyChange}
+                        theme={mode === 'light' ? 'light' : 'vs-dark'}
+                        options={{
+                            minimap: {
+                                enabled: false,
+                            },
+                        }}
+                        onChange={(value) => setJsonBody(value)}
                     />
                 </CustomTabPanel>
                 <CustomTabPanel value={tabValue} index={2}>
@@ -397,6 +424,26 @@ const RestfulPage = () => {
                         Add Variable
                     </Button>
                 </CustomTabPanel>
+            </Box>
+            <Box>
+                {responseCode && (
+                    <Box>
+                        Response status: {responseCode} {responseStatus}
+                    </Box>
+                )}
+                <Editor
+                    height="50vh"
+                    defaultLanguage="javascript"
+                    defaultValue="// Response"
+                    value={code}
+                    theme={mode === 'light' ? 'light' : 'vs-dark'}
+                    options={{
+                        minimap: {
+                            enabled: false,
+                        },
+                        readOnly: true,
+                    }}
+                />
             </Box>
         </Container>
     );
