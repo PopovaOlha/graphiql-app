@@ -1,29 +1,35 @@
 'use client';
 
+import { useTranslation } from 'react-i18next';
 import { Delete } from '@mui/icons-material';
 import { Box, IconButton, styled, Typography } from '@mui/material';
 import Link from 'next/link';
 
 import useUnauthorizedRedirect from '@/hooks/useUnauthorizedRedirect';
 
-const CustomLink = styled(Box)({
+const CustomLink = styled(Box)(({ theme }) => ({
     textDecoration: 'none',
     display: 'inline',
+    color: theme.palette.primary.main,
     '&:hover': {
         textDecoration: 'underline',
         textUnderlineOffset: '2px',
     },
-});
+    'a:visited &': {
+        color: theme.palette.primary.main,
+    },
+}));
 
 const History = () => {
     useUnauthorizedRedirect();
+    const { t } = useTranslation();
 
     const history: string[] = [];
 
     return (
         <Box>
             <Typography component={'h1'} variant={'h1'}>
-                History
+                {t('history:title')}
             </Typography>
             {history.length ? (
                 history.map((item: string, index: number) => (
@@ -42,20 +48,20 @@ const History = () => {
                         margin: 'auto',
                     }}
                 >
-                    It&apos;s empty here.
-                    <br /> Try to use{' '}
+                    {t('history:empty')}
+                    <br /> {t('history:try')}{' '}
                     <Link href="/restful" style={{ textDecoration: 'none' }}>
                         <CustomLink color={'primary'} component={'span'}>
                             RESTFul
                         </CustomLink>
                     </Link>{' '}
-                    or{' '}
+                    {t('history:or')}{' '}
                     <Link href="/graphiql" style={{ textDecoration: 'none' }}>
                         <CustomLink color={'primary'} component={'span'}>
                             GraphQL
                         </CustomLink>
                     </Link>{' '}
-                    client for request
+                    {t('history:clients')}
                 </Typography>
             )}
         </Box>
