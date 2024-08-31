@@ -180,12 +180,29 @@ const RestfulPage = () => {
         setVariables(newVariable);
     };
 
+    const addToHistory = (data: Record<string, string>) => {
+        const key = 'RGC-history';
+        const existData = localStorage.getItem('RGC-history') || '';
+
+        const timestamp: number = Date.now();
+        const newData = existData.length
+            ? [...JSON.parse(existData), { ...data, timestamp }]
+            : [{ ...data, timestamp }];
+
+        console.log([{ [timestamp]: data }]);
+        console.log(JSON.stringify([{ [timestamp]: data }]));
+
+        localStorage.setItem(key, JSON.stringify(newData));
+    };
+
     const handleSubmit = async () => {
         console.log('Method:', state.method);
         console.log('URL:', state.url);
         console.log('Key-Value Pairs:', keyValuePairs);
         console.log('JSON Body:', jsonBody);
         console.log('Variables:', variables);
+
+        addToHistory({ method: state.method, url: state.url, path: '/restful' });
 
         const headers: Record<string, string> = {};
         keyValuePairs.forEach((pair) => {

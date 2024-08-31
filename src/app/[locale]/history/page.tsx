@@ -1,8 +1,7 @@
 'use client';
 
 import { useTranslation } from 'react-i18next';
-import { Delete } from '@mui/icons-material';
-import { Box, IconButton, styled, Typography } from '@mui/material';
+import { Box, styled, Typography } from '@mui/material';
 import Link from 'next/link';
 
 import useUnauthorizedRedirect from '@/hooks/useUnauthorizedRedirect';
@@ -20,11 +19,23 @@ const CustomLink = styled(Box)(({ theme }) => ({
     },
 }));
 
+interface HistoryItem {
+    method: string;
+    timestamp: number;
+    url: string;
+    path: string;
+}
+
 const History = () => {
     useUnauthorizedRedirect();
     const { t } = useTranslation();
 
-    const history: string[] = [];
+    const historyString = localStorage.getItem('RGC-history') || '';
+
+    let history: HistoryItem[] = [];
+    if (historyString.length) {
+        history = JSON.parse(historyString);
+    }
 
     return (
         <Box>
@@ -32,13 +43,19 @@ const History = () => {
                 {t('history:title')}
             </Typography>
             {history.length ? (
-                history.map((item: string, index: number) => (
-                    <Typography key={item + '-' + index}>
-                        {item}{' '}
-                        <IconButton onClick={() => console.log(item)}>
-                            <Delete />
-                        </IconButton>
-                    </Typography>
+                history.map((item: HistoryItem) => (
+                    <Link
+                        href={item.path}
+                        key={item.timestamp}
+                        style={{
+                            marginBottom: '20px',
+                            color: '#fff',
+                            display: 'block',
+                        }}
+                    >
+                        <div>Method: {item.method}</div>
+                        <div>URL: {item.url}</div>
+                    </Link>
                 ))
             ) : (
                 <Typography
