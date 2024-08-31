@@ -1,10 +1,13 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, TextField } from '@mui/material';
+import { GraphQLSchema } from 'graphql';
 
+import DocumentationViewer from '@/components/Graphiql/DocumentationViewer/DocumentationViewer';
 import { executeGraphQLQuery } from '@/services/graphiqlService';
+import { fetchGraphQLSchema } from '@/services/schemaService';
 import {
     addHeader,
     removeHeader,
@@ -24,14 +27,7 @@ const GraphiQLClient = () => {
 
     const [localEndpointUrl, setLocalEndpointUrl] = useState(endpointUrl);
     const [localSdlUrl, setLocalSdlUrl] = useState(sdlUrl);
-
-    useEffect(() => {
-        if (!localSdlUrl) {
-            const newSdlUrl = `${localEndpointUrl}?sdl`;
-            setLocalSdlUrl(newSdlUrl);
-            dispatch(setSdlUrl(newSdlUrl));
-        }
-    }, [localEndpointUrl, dispatch]);
+    const [schema, setSchema] = useState<GraphQLSchema | null>(null);
 
     const handleEndpointUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newUrl = e.target.value;
@@ -54,6 +50,21 @@ const GraphiQLClient = () => {
         );
         dispatch(setResponse(result));
         dispatch(setStatusCode(result.statusCode));
+    };
+
+    const handleFetchSchema = async () => {
+        const headersObject = headers.reduce(
+            (acc, header) => {
+                acc[header.key] = header.value;
+                return acc;
+            },
+            {} as Record<string, string>
+        );
+
+        const fetchedSchema = await fetchGraphQLSchema(localSdlUrl, headersObject);
+        if (fetchedSchema) {
+            setSchema(fetchedSchema);
+        }
     };
 
     return (
@@ -131,11 +142,19 @@ const GraphiQLClient = () => {
             <Button variant="contained" onClick={handleQueryExecution}>
                 Execute
             </Button>
+            <Button
+                variant="outlined"
+                onClick={handleFetchSchema}
+                style={{ marginLeft: 10 }}
+            >
+                Fetch Documentation
+            </Button>
             <Box mt={4}>
                 <h3>Response</h3>
                 <p>Status Code: {statusCode}</p>
                 <pre>{JSON.stringify(response, null, 2)}</pre>
             </Box>
+            {schema && <DocumentationViewer schema={schema} />}
         </Box>
     );
 };
