@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import GraphiQLClient from '@/components/GraphiQLClient/GraphiQLClient';
+import GraphiQLClient from '@/components/Graphiql/GraphiQLClient/GraphiQLClient';
 
 const GraphiqlPage: FC = () => {
     return (
