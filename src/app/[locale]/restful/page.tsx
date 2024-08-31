@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
 import Editor from '@monaco-editor/react';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -25,7 +24,6 @@ import {
 import { SelectChangeEvent } from '@mui/material';
 
 import useUnauthorizedRedirect from '@/hooks/useUnauthorizedRedirect';
-import { addToHistory } from '@/store/reducers/historySlice';
 import { replaceVariablesInJson } from '@/utils/utils';
 
 interface RestfulPageState {
@@ -82,7 +80,6 @@ const tabsProps = (index: number) => {
 const RestfulPage = () => {
     useUnauthorizedRedirect();
     const { t } = useTranslation();
-    const dispatch = useDispatch();
 
     const [state, setState] = useState<RestfulPageState>({
         method: 'GET',
@@ -189,8 +186,6 @@ const RestfulPage = () => {
         console.log('Key-Value Pairs:', keyValuePairs);
         console.log('JSON Body:', jsonBody);
         console.log('Variables:', variables);
-
-        dispatch(addToHistory(state.method));
 
         const headers: Record<string, string> = {};
         keyValuePairs.forEach((pair) => {

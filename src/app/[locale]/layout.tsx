@@ -6,7 +6,6 @@ import ErrorBoundary from '@/components/ErrorBoundary/ErrorBoundary';
 import Footer from '@/components/Footer/Footer';
 import Header from '@/components/Header/Header';
 import { TranslationsProvider } from '@/components/TranslationsProvider';
-import { ReduxProvider } from '@/store/ReduxProvider';
 import { AppThemeProvider } from '@/theme/AppThemeProvider';
 
 import { i18nConfig } from '../../../i18nConfig';
@@ -39,17 +38,15 @@ export default async function RootLayout({
                 <ErrorBoundary>
                     <AppRouterCacheProvider>
                         <AppThemeProvider>
-                            <ReduxProvider>
-                                <TranslationsProvider
-                                    namespaces={i18nNamespaces}
-                                    locale={locale}
-                                    resources={resources}
-                                >
-                                    <Header />
-                                    {children}
-                                    <Footer />
-                                </TranslationsProvider>
-                            </ReduxProvider>
+                            <TranslationsProvider
+                                namespaces={i18nNamespaces}
+                                locale={locale}
+                                resources={resources}
+                            >
+                                <Header />
+                                {children}
+                                <Footer />
+                            </TranslationsProvider>
                         </AppThemeProvider>
                     </AppRouterCacheProvider>
                 </ErrorBoundary>

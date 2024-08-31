@@ -1,13 +1,10 @@
 'use client';
 
-import { useDispatch, useSelector } from 'react-redux';
 import { Delete } from '@mui/icons-material';
 import { Box, IconButton, styled, Typography } from '@mui/material';
 import Link from 'next/link';
 
 import useUnauthorizedRedirect from '@/hooks/useUnauthorizedRedirect';
-import { removeFromHistory } from '@/store/reducers/historySlice';
-import { RootState } from '@/store/store';
 
 const CustomLink = styled(Box)({
     textDecoration: 'none',
@@ -21,8 +18,7 @@ const CustomLink = styled(Box)({
 const History = () => {
     useUnauthorizedRedirect();
 
-    const dispatch = useDispatch();
-    const history = useSelector((state: RootState) => state.history);
+    const history: string[] = [];
 
     return (
         <Box>
@@ -33,9 +29,7 @@ const History = () => {
                 history.map((item: string, index: number) => (
                     <Typography key={item + '-' + index}>
                         {item}{' '}
-                        <IconButton
-                            onClick={() => dispatch(removeFromHistory(item))}
-                        >
+                        <IconButton onClick={() => console.log(item)}>
                             <Delete />
                         </IconButton>
                     </Typography>
