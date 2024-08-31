@@ -2,7 +2,6 @@
     display: flex;
     align-items: stretch;
     padding: 0.5rem;
-    max-width: 28rem;
 
     .avatar {
         width: 6rem;
@@ -15,8 +14,9 @@
         flex-direction: column;
     }
 
-    .link {
+    .cardLink {
         text-decoration: none;
+        font-size: 1.25rem;
     }
 }
 

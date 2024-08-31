@@ -1,23 +1,30 @@
 'use client';
 
+import { useRef } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Box, Button, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 
 import CardGroup from '@/components/CardGroup/CardGroup';
+import RSSchoolReactCourse from '@/components/RSSchoolReactCourse/RSSchoolReactCourse';
+import ScrollButton from '@/components/ScrollButton/ScrollButton';
+import ScrollButtonTop from '@/components/ScrollButtonTop/ScrollButtonTop';
 import { auth } from '@/services/firebase';
-
-import styles from '../../../styles/welcomepage.module.scss';
+import styles from '@/styles/welcomepage.module.scss';
 
 const WelcomePage = () => {
     const [user] = useAuthState(auth);
     const router = useRouter();
 
+    const sectionWelcome = useRef<HTMLElement>(null);
+    const sectionAuthors = useRef<HTMLElement>(null);
+    const sectionCourse = useRef<HTMLElement>(null);
+
     return (
         <main className={styles.main}>
-            {user ? (
-                <>
-                    <div className="welcomeWrapper">
+            <section className={styles.section} ref={sectionWelcome}>
+                {user ? (
+                    <div className={styles.welcomeWrapper}>
                         <Typography variant="h1">
                             Welcome Back, {user.displayName}!
                         </Typography>
@@ -50,10 +57,8 @@ const WelcomePage = () => {
                             </Button>
                         </Box>
                     </div>
-                </>
-            ) : (
-                <>
-                    <div className="welcomeWrapper">
+                ) : (
+                    <div className={styles.welcomeWrapper}>
                         <Typography variant="h1">Welcome!</Typography>
                         <Typography variant="body1" className={styles.typography}>
                             Welcome to our multi-purpose API client application! This
@@ -78,9 +83,23 @@ const WelcomePage = () => {
                             </Button>
                         </Box>
                     </div>
-                </>
-            )}
-            <CardGroup />
+                )}
+                <div className={styles.scrollButton}>
+                    <ScrollButton title="Authors" targetRef={sectionAuthors} />
+                </div>
+            </section>
+            <section className={styles.section} ref={sectionAuthors}>
+                <CardGroup />
+                <div className={styles.scrollButton}>
+                    <ScrollButton title="RS School" targetRef={sectionCourse} />
+                </div>
+            </section>
+            <section className={styles.section} ref={sectionCourse}>
+                <RSSchoolReactCourse />
+                <div className={styles.scrollButton}>
+                    <ScrollButtonTop title="Top" targetRef={sectionWelcome} />
+                </div>
+            </section>
         </main>
     );
 };
