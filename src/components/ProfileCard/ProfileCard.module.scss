@@ -1,7 +1,7 @@
 .card {
     display: flex;
     align-items: stretch;
-    padding: 0.5rem;
+    padding: 0;
 
     .avatar {
         width: 6rem;
@@ -12,6 +12,7 @@
     .cardContent {
         flex: 1 0;
         flex-direction: column;
+        padding: 0.25rem;
     }
 
     .cardLink {

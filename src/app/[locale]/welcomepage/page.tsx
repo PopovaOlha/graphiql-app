@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { useTranslation } from 'react-i18next';
 import { Box, Button, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 
@@ -15,7 +16,7 @@ import styles from '@/styles/welcomepage.module.scss';
 const WelcomePage = () => {
     const [user] = useAuthState(auth);
     const router = useRouter();
-
+    const { t } = useTranslation();
     const sectionWelcome = useRef<HTMLElement>(null);
     const sectionAuthors = useRef<HTMLElement>(null);
     const sectionCourse = useRef<HTMLElement>(null);
@@ -26,12 +27,12 @@ const WelcomePage = () => {
                 {user ? (
                     <div className={styles.welcomeWrapper}>
                         <Typography variant="h1">
-                            Welcome Back, {user.displayName}!
+                            {t('welcomePage:welcomeBack', {
+                                name: user.displayName,
+                            })}
                         </Typography>
                         <Typography variant="body1" className={styles.typography}>
-                            Our application is designed to simplify your API
-                            interactions, making it easier to develop, test, and
-                            explore APIs in one place. We hope you enjoy it!
+                            {t('welcomePage:appDescriptionLoggedIn')}
                         </Typography>
                         <Box className={styles.buttonContainer}>
                             <Button
@@ -39,32 +40,31 @@ const WelcomePage = () => {
                                 className={styles.button}
                                 onClick={() => router.push('/restful')}
                             >
-                                REST Client
+                                {t('welcomePage:restClient')}
                             </Button>
                             <Button
                                 variant="contained"
                                 className={styles.button}
                                 onClick={() => router.push('/graphiql')}
                             >
-                                GraphiQL Client
+                                {t('welcomePage:graphiqlClient')}
                             </Button>
                             <Button
                                 variant="contained"
                                 className={styles.button}
                                 onClick={() => router.push('/history')}
                             >
-                                History
+                                {t('welcomePage:history')}
                             </Button>
                         </Box>
                     </div>
                 ) : (
                     <div className={styles.welcomeWrapper}>
-                        <Typography variant="h1">Welcome!</Typography>
+                        <Typography variant="h1">
+                            {t('welcomePage:welcome')}
+                        </Typography>
                         <Typography variant="body1" className={styles.typography}>
-                            Welcome to our multi-purpose API client application! This
-                            tool allows you to interact with any user-specified API,
-                            whether it&apos;s RESTful or GraphQL. To start using the
-                            application, please register or log in.
+                            {t('welcomePage:appDescriptionLoggedOut')}
                         </Typography>
                         <Box className={styles.buttonContainer}>
                             <Button
@@ -72,32 +72,41 @@ const WelcomePage = () => {
                                 className={styles.button}
                                 onClick={() => router.push('/signin')}
                             >
-                                Sign In
+                                {t('welcomePage:signIn')}
                             </Button>
                             <Button
                                 variant="outlined"
                                 className={styles.button}
                                 onClick={() => router.push('/signup')}
                             >
-                                Sign Up
+                                {t('welcomePage:signUp')}
                             </Button>
                         </Box>
                     </div>
                 )}
                 <div className={styles.scrollButton}>
-                    <ScrollButton title="Authors" targetRef={sectionAuthors} />
+                    <ScrollButton
+                        title={t('welcomePage:authors')}
+                        targetRef={sectionAuthors}
+                    />
                 </div>
             </section>
             <section className={styles.section} ref={sectionAuthors}>
                 <CardGroup />
                 <div className={styles.scrollButton}>
-                    <ScrollButton title="RS School" targetRef={sectionCourse} />
+                    <ScrollButton
+                        title={t('welcomePage:rsSchool')}
+                        targetRef={sectionCourse}
+                    />
                 </div>
             </section>
             <section className={styles.section} ref={sectionCourse}>
                 <RSSchoolReactCourse />
                 <div className={styles.scrollButton}>
-                    <ScrollButtonTop title="Top" targetRef={sectionWelcome} />
+                    <ScrollButtonTop
+                        title={t('welcomePage:top')}
+                        targetRef={sectionWelcome}
+                    />
                 </div>
             </section>
         </main>
