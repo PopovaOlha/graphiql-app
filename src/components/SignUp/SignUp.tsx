@@ -12,6 +12,7 @@ import {
     Snackbar,
     TextField,
     Typography,
+    useTheme,
 } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -30,6 +31,7 @@ const SignUp: React.FC = () => {
     const router = useRouter();
     const { t } = useTranslation();
     const [isVisible, setIsVisible] = useState(false);
+    const theme = useTheme();
 
     useEffect(() => {
         if (user) {
@@ -98,6 +100,12 @@ const SignUp: React.FC = () => {
                     onChange={(e) => setName(e.target.value)}
                     required
                     id="full_name"
+                    sx={{
+                        '.MuiInputBase-input:-webkit-autofill': {
+                            boxShadow: `inset 0 0 0 50px ${theme.palette.background.default}`,
+                            WebkitTextFillColor: `${theme.palette.text.primary} !important`,
+                        },
+                    }}
                 />
                 <TextField
                     variant="standard"
@@ -111,6 +119,12 @@ const SignUp: React.FC = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     id="email"
+                    sx={{
+                        '.MuiInputBase-input:-webkit-autofill': {
+                            boxShadow: `inset 0 0 0 50px ${theme.palette.background.default}`,
+                            WebkitTextFillColor: `${theme.palette.text.primary} !important`,
+                        },
+                    }}
                 />
                 <Box sx={{ position: 'relative' }}>
                     <TextField
@@ -123,6 +137,12 @@ const SignUp: React.FC = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        sx={{
+                            '.MuiInputBase-input:-webkit-autofill': {
+                                boxShadow: `inset 0 0 0 50px ${theme.palette.background.default}`,
+                                WebkitTextFillColor: `${theme.palette.text.primary} !important`,
+                            },
+                        }}
                     />
                     <IconButton
                         sx={{
@@ -151,6 +171,12 @@ const SignUp: React.FC = () => {
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
+                        sx={{
+                            '.MuiInputBase-input:-webkit-autofill': {
+                                boxShadow: `inset 0 0 0 50px ${theme.palette.background.default}`,
+                                WebkitTextFillColor: `${theme.palette.text.primary} !important`,
+                            },
+                        }}
                     />
                     <IconButton
                         sx={{
