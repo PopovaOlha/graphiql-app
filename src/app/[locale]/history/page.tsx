@@ -45,7 +45,7 @@ const History = () => {
             {history.length ? (
                 history.map((item: HistoryItem) => (
                     <Link
-                        href={item.path}
+                        href={`${item.path}/${item.method}`}
                         key={item.timestamp}
                         style={{
                             marginBottom: '20px',

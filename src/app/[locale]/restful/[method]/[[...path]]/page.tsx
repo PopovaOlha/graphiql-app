@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
 import AddIcon from '@mui/icons-material/Add';
@@ -22,9 +22,11 @@ import {
     useTheme,
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
+import { useParams, usePathname, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
-import useUnauthorizedRedirect from '@/hooks/useUnauthorizedRedirect';
-import { replaceVariablesInJson } from '@/utils/utils';
+import useUnauthorizedRedirect from '../../../../../hooks/useUnauthorizedRedirect';
+import { replaceVariablesInJson } from '../../../../../utils/utils';
 
 interface RestfulPageState {
     method: 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -78,11 +80,21 @@ const tabsProps = (index: number) => {
 };
 
 const RestfulPage = () => {
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+    const params = useParams();
+
+    const router = useRouter();
+
+    useEffect(() => {
+        console.log({ pathname, searchParams, params });
+    }, [pathname, searchParams, params]);
+
     useUnauthorizedRedirect();
     const { t } = useTranslation();
 
     const [state, setState] = useState<RestfulPageState>({
-        method: 'GET',
+        method: params.method as 'GET' | 'POST' | 'PUT' | 'DELETE',
         url: '',
     });
 
@@ -106,6 +118,10 @@ const RestfulPage = () => {
 
     const [jsonBody, setJsonBody] = useState<string | undefined>('');
 
+    useEffect(() => {
+        router.replace(`/restful/${state.method}`);
+    }, [state.method]);
+
     const handleMethodChange = (
         event: SelectChangeEvent<'GET' | 'POST' | 'PUT' | 'DELETE'>
     ) => {
@@ -120,6 +136,11 @@ const RestfulPage = () => {
             ...prevState,
             url: event.target.value,
         }));
+        window.history.pushState(
+            {},
+            '',
+            `/restful/${state.method}/${btoa(event.target.value)}`
+        );
     };
 
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
