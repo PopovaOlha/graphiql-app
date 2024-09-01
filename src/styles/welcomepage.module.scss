@@ -2,45 +2,57 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    top: 30px;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
-    min-height: 84vh;
-    margin: 0;
-    padding: 3rem 0 1rem;
+    max-width: 1920px;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 0 1rem;
     box-sizing: border-box;
+
+    .section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        min-height: calc(100vh - 6rem);
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-sizing: border-box;
+        position: relative;
+
+        .welcomeWrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scrollButton {
+            position: absolute;
+            bottom: 0.5rem;
+        }
+    }
 
     .typography {
         text-align: center;
         max-width: 28rem;
         margin: 0 auto;
     }
-}
 
-.welcomeWrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
+    .buttonContainer {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        justify-content: center;
+        margin: 2rem 0;
+    }
 
-.buttonContainer {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    justify-content: center;
-    margin: 2rem 0;
-}
-
-.button {
-    width: 10rem;
-    padding: 10px 0;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.typography {
-    text-align: center;
-    max-width: 28rem;
+    .button {
+        width: 10rem;
+        padding: 10px 0;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
 }
