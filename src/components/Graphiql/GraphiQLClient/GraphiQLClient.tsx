@@ -14,7 +14,6 @@ import {
     setEndpointUrl,
     setQuery,
     setResponse,
-    setSdlUrl,
     setStatusCode,
     setVariables,
 } from '@/store/reducers/graphiqlSlice';
@@ -22,23 +21,16 @@ import { RootState } from '@/store/store';
 
 const GraphiQLClient = () => {
     const dispatch = useDispatch();
-    const { endpointUrl, sdlUrl, query, variables, headers, response, statusCode } =
+    const { endpointUrl, query, variables, headers, response, statusCode } =
         useSelector((state: RootState) => state.graphiql);
 
     const [localEndpointUrl, setLocalEndpointUrl] = useState(endpointUrl);
-    const [localSdlUrl, setLocalSdlUrl] = useState(sdlUrl);
     const [schema, setSchema] = useState<GraphQLSchema | null>(null);
 
     const handleEndpointUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newUrl = e.target.value;
         setLocalEndpointUrl(newUrl);
         dispatch(setEndpointUrl(newUrl));
-    };
-
-    const handleSdlUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newSdlUrl = e.target.value;
-        setLocalSdlUrl(newSdlUrl);
-        dispatch(setSdlUrl(newSdlUrl));
     };
 
     const handleQueryExecution = async () => {
@@ -61,7 +53,10 @@ const GraphiQLClient = () => {
             {} as Record<string, string>
         );
 
-        const fetchedSchema = await fetchGraphQLSchema(localSdlUrl, headersObject);
+        const fetchedSchema = await fetchGraphQLSchema(
+            localEndpointUrl,
+            headersObject
+        );
         if (fetchedSchema) {
             setSchema(fetchedSchema);
         }
@@ -73,13 +68,6 @@ const GraphiQLClient = () => {
                 label="Endpoint URL"
                 value={localEndpointUrl}
                 onChange={handleEndpointUrlChange}
-                fullWidth
-                margin="normal"
-            />
-            <TextField
-                label="SDL URL"
-                value={localSdlUrl}
-                onChange={handleSdlUrlChange}
                 fullWidth
                 margin="normal"
             />
