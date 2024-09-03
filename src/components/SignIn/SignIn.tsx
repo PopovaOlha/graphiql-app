@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useTranslation } from 'react-i18next';
 import { Google, Visibility, VisibilityOff } from '@mui/icons-material';
@@ -17,19 +17,20 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import styles from '@/components/SignIn/SignIn.module.scss';
 import {
     auth,
     logInWithEmailAndPassword,
     signInWithGoogle,
-} from '../../services/firebase';
+} from '@/services/firebase';
 
-import styles from './SignIn.module.scss';
-
-const SignIn: React.FC = () => {
+const SignIn = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [user] = useAuthState(auth);
     const [error, setError] = useState<string | null>(null);
+    const [emailError, setEmailError] = useState<string | null>(null);
+    const [passwordError, setPasswordError] = useState<string | null>(null);
     const router = useRouter();
     const { t } = useTranslation();
     const [isVisible, setIsVisible] = useState(false);
@@ -44,17 +45,30 @@ const SignIn: React.FC = () => {
     const handleLogin = async (e: React.FormEvent): Promise<void> => {
         e.preventDefault();
 
+        setEmailError(null);
+        setPasswordError(null);
+
+        if (!email) {
+            setEmailError(t('errorEmpty'));
+            return;
+        }
+
+        if (!password) {
+            setPasswordError(t('errorEmpty'));
+            return;
+        }
+
         const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         const passwordPattern =
             /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
         if (!emailPattern.test(email)) {
-            setError(t('errorEmail'));
+            setEmailError(t('errorEmail'));
             return;
         }
 
         if (!passwordPattern.test(password)) {
-            setError(t('errorPassword'));
+            setPasswordError(t('errorPassword'));
             return;
         }
 
@@ -83,19 +97,21 @@ const SignIn: React.FC = () => {
             <Typography component="h1" variant="h1">
                 {t('signIn')}
             </Typography>
-            <form onSubmit={handleLogin} className={styles.loginForm}>
+            <form onSubmit={handleLogin} className={styles.loginForm} noValidate>
                 <TextField
                     variant="standard"
                     margin="normal"
                     fullWidth
                     type="email"
-                    label="E-mail"
+                    label={t('email')}
                     name="email"
                     autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     id="email"
+                    error={!!emailError}
+                    helperText={emailError}
                     sx={{
                         '.MuiInputBase-input:-webkit-autofill': {
                             boxShadow: `inset 0 0 0 50px ${theme.palette.background.default}`,
@@ -115,6 +131,8 @@ const SignIn: React.FC = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                         id="password"
+                        error={!!passwordError}
+                        helperText={passwordError}
                         sx={{
                             '.MuiInputBase-input:-webkit-autofill': {
                                 boxShadow: `inset 0 0 0 50px ${theme.palette.background.default}`,
@@ -177,6 +195,7 @@ const SignIn: React.FC = () => {
                 open={!!error}
                 autoHideDuration={6000}
                 onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >
                 <Alert onClose={handleCloseSnackbar} severity="error">
                     {error}
