@@ -17,17 +17,23 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { auth, registerWithEmailAndPassword } from '../../services/firebase';
+import styles from '@/components/SignUp/SignUp.module.scss';
+import { auth, registerWithEmailAndPassword } from '@/services/firebase';
 
-import styles from './SignUp.module.scss';
-
-const SignUp: React.FC = () => {
+const SignUp = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
     const [name, setName] = useState<string>('');
     const [user] = useAuthState(auth);
     const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
+    const [nameError, setNameError] = useState<string | null>(null);
+    const [emailError, setEmailError] = useState<string | null>(null);
+    const [passwordError, setPasswordError] = useState<string | null>(null);
+    const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(
+        null
+    );
     const router = useRouter();
     const { t } = useTranslation();
     const [isVisible, setIsVisible] = useState(false);
@@ -44,27 +50,55 @@ const SignUp: React.FC = () => {
     ): Promise<void> => {
         e.preventDefault();
 
+        setNameError(null);
+        setEmailError(null);
+        setPasswordError(null);
+        setConfirmPasswordError(null);
+
+        if (!name) {
+            setNameError(t('errorEmpty'));
+            return;
+        }
+        if (!email) {
+            setEmailError(t('errorEmpty'));
+            return;
+        }
+        if (!password) {
+            setPasswordError(t('errorEmpty'));
+            return;
+        }
+        if (!confirmPassword) {
+            setConfirmPasswordError(t('errorEmpty'));
+            return;
+        }
+        const namePattern = /^[a-zA-Zа-яА-Я0-9 _-]{3,16}$/;
         const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         const passwordPattern =
             /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
+        if (!namePattern.test(name)) {
+            setNameError(t('errorName'));
+            return;
+        }
+
         if (!emailPattern.test(email)) {
-            setError(t('errorEmail'));
+            setEmailError(t('errorEmail'));
             return;
         }
 
         if (!passwordPattern.test(password)) {
-            setError(t('errorPassword'));
+            setPasswordError(t('errorPassword'));
             return;
         }
         if (password !== confirmPassword) {
-            setError(t('errorConfirmPass'));
+            setConfirmPasswordError(t('errorConfirmPass'));
             return;
         }
 
         try {
             await registerWithEmailAndPassword(name, email, password);
             router.push('/');
+            setSuccess(t('successRegister'));
         } catch (error) {
             setError(t('errorSignUp'));
             console.error(error);
@@ -73,6 +107,7 @@ const SignUp: React.FC = () => {
 
     const handleCloseSnackbar = () => {
         setError(null);
+        setSuccess(null);
     };
 
     return (
@@ -87,7 +122,7 @@ const SignUp: React.FC = () => {
             <Typography component="h1" variant="h1">
                 {t('signUp')}
             </Typography>
-            <form onSubmit={handleSignUp} className={styles.loginForm}>
+            <form onSubmit={handleSignUp} className={styles.loginForm} noValidate>
                 <TextField
                     variant="standard"
                     margin="normal"
@@ -100,6 +135,8 @@ const SignUp: React.FC = () => {
                     onChange={(e) => setName(e.target.value)}
                     required
                     id="full_name"
+                    error={!!nameError}
+                    helperText={nameError}
                     sx={{
                         '.MuiInputBase-input:-webkit-autofill': {
                             boxShadow: `inset 0 0 0 50px ${theme.palette.background.default}`,
@@ -112,13 +149,15 @@ const SignUp: React.FC = () => {
                     margin="normal"
                     fullWidth
                     type="email"
-                    label="E-mail"
+                    label={t('email')}
                     name="email"
                     autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     id="email"
+                    error={!!emailError}
+                    helperText={emailError}
                     sx={{
                         '.MuiInputBase-input:-webkit-autofill': {
                             boxShadow: `inset 0 0 0 50px ${theme.palette.background.default}`,
@@ -137,6 +176,8 @@ const SignUp: React.FC = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        error={!!passwordError}
+                        helperText={passwordError}
                         sx={{
                             '.MuiInputBase-input:-webkit-autofill': {
                                 boxShadow: `inset 0 0 0 50px ${theme.palette.background.default}`,
@@ -171,6 +212,8 @@ const SignUp: React.FC = () => {
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
+                        error={!!confirmPasswordError}
+                        helperText={confirmPasswordError}
                         sx={{
                             '.MuiInputBase-input:-webkit-autofill': {
                                 boxShadow: `inset 0 0 0 50px ${theme.palette.background.default}`,
@@ -224,6 +267,15 @@ const SignUp: React.FC = () => {
             >
                 <Alert onClose={handleCloseSnackbar} severity="error">
                     {error}
+                </Alert>
+            </Snackbar>
+            <Snackbar
+                open={!!success}
+                autoHideDuration={3000}
+                onClose={handleCloseSnackbar}
+            >
+                <Alert onClose={handleCloseSnackbar} severity="success">
+                    {success}
                 </Alert>
             </Snackbar>
         </Container>
