@@ -1,47 +1,58 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { FC, useEffect, useState } from 'react';
 import { Box, Button, TextField } from '@mui/material';
 import { GraphQLSchema } from 'graphql';
+import prettier from 'prettier';
+import parserGraphql from 'prettier/parser-graphql';
 
 import DocumentationViewer from '@/components/Graphiql/DocumentationViewer/DocumentationViewer';
 import { executeGraphQLQuery } from '@/services/graphiqlService';
 import { fetchGraphQLSchema } from '@/services/schemaService';
-import {
-    addHeader,
-    removeHeader,
-    setEndpointUrl,
-    setQuery,
-    setResponse,
-    setStatusCode,
-    setVariables,
-} from '@/store/reducers/graphiqlSlice';
-import { RootState } from '@/store/store';
+import { GraphQLResponse } from '@/types/interfaces';
 
-const GraphiQLClient = () => {
-    const dispatch = useDispatch();
-    const { endpointUrl, query, variables, headers, response, statusCode } =
-        useSelector((state: RootState) => state.graphiql);
+const GraphiQLClient: FC = () => {
+    const [endpointUrl, setEndpointUrl] = useState('');
+    const [sdlUrl, setSdlUrl] = useState('');
+    const [query, setQuery] = useState('');
 
-    const [localEndpointUrl, setLocalEndpointUrl] = useState(endpointUrl);
+    const [variables, setVariables] = useState('');
+    const [headers, setHeaders] = useState<{ key: string; value: string }[]>([]);
+    const [response, setResponse] = useState<GraphQLResponse>();
+    const [statusCode, setStatusCode] = useState<number | null>(null);
     const [schema, setSchema] = useState<GraphQLSchema | null>(null);
 
-    const handleEndpointUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newUrl = e.target.value;
-        setLocalEndpointUrl(newUrl);
-        dispatch(setEndpointUrl(newUrl));
+    useEffect(() => {
+        setSdlUrl(`${endpointUrl}?sdl`);
+    }, [endpointUrl]);
+
+    const handlePrettifyQuery = async () => {
+        try {
+            const prettifiedQuery = prettier.format(query, {
+                parser: 'graphql',
+                plugins: [parserGraphql],
+            });
+            setQuery(await prettifiedQuery);
+        } catch (error) {
+            console.error('Error prettifying query:', error);
+        }
     };
 
     const handleQueryExecution = async () => {
         const result = await executeGraphQLQuery(
-            localEndpointUrl,
+            endpointUrl,
             query,
             variables,
             headers
         );
-        dispatch(setResponse(result));
-        dispatch(setStatusCode(result.statusCode));
+
+        setResponse(result);
+        setStatusCode(result.statusCode);
+
+        const encodedUrl =
+            `GRAPHQL/${btoa(endpointUrl)}/${btoa(query)}?` +
+            headers.map((header) => `${header.key}=${header.value}`).join('&');
+        window.history.pushState(null, '', encodedUrl);
     };
 
     const handleFetchSchema = async () => {
@@ -53,10 +64,7 @@ const GraphiQLClient = () => {
             {} as Record<string, string>
         );
 
-        const fetchedSchema = await fetchGraphQLSchema(
-            localEndpointUrl,
-            headersObject
-        );
+        const fetchedSchema = await fetchGraphQLSchema(sdlUrl, headersObject);
         if (fetchedSchema) {
             setSchema(fetchedSchema);
         }
@@ -66,13 +74,22 @@ const GraphiQLClient = () => {
         <Box p={2}>
             <TextField
                 label="Endpoint URL"
-                value={localEndpointUrl}
-                onChange={handleEndpointUrlChange}
+                value={endpointUrl}
+                onChange={(e) => setEndpointUrl(e.target.value)}
+                fullWidth
+                margin="normal"
+            />
+            <TextField
+                label="SDL URL"
+                value={sdlUrl}
+                onChange={(e) => setSdlUrl(e.target.value)}
                 fullWidth
                 margin="normal"
             />
             <Box my={2}>
-                <Button onClick={() => dispatch(addHeader({ key: '', value: '' }))}>
+                <Button
+                    onClick={() => setHeaders([...headers, { key: '', value: '' }])}
+                >
                     Add Header
                 </Button>
                 {headers.map((header, index) => (
@@ -86,8 +103,7 @@ const GraphiQLClient = () => {
                                     ...header,
                                     key: e.target.value,
                                 };
-                                dispatch(removeHeader(index));
-                                dispatch(addHeader(updatedHeaders[index]));
+                                setHeaders(updatedHeaders);
                             }}
                         />
                         <TextField
@@ -99,11 +115,17 @@ const GraphiQLClient = () => {
                                     ...header,
                                     value: e.target.value,
                                 };
-                                dispatch(removeHeader(index));
-                                dispatch(addHeader(updatedHeaders[index]));
+                                setHeaders(updatedHeaders);
                             }}
                         />
-                        <Button onClick={() => dispatch(removeHeader(index))}>
+                        <Button
+                            onClick={() => {
+                                const updatedHeaders = headers.filter(
+                                    (_, i) => i !== index
+                                );
+                                setHeaders(updatedHeaders);
+                            }}
+                        >
                             Remove
                         </Button>
                     </Box>
@@ -112,7 +134,7 @@ const GraphiQLClient = () => {
             <TextField
                 label="GraphQL Query"
                 value={query}
-                onChange={(e) => dispatch(setQuery(e.target.value))}
+                onChange={(e) => setQuery(e.target.value)}
                 fullWidth
                 margin="normal"
                 multiline
@@ -121,7 +143,7 @@ const GraphiQLClient = () => {
             <TextField
                 label="Variables (JSON format)"
                 value={variables}
-                onChange={(e) => dispatch(setVariables(e.target.value))}
+                onChange={(e) => setVariables(e.target.value)}
                 fullWidth
                 margin="normal"
                 multiline
@@ -129,6 +151,13 @@ const GraphiQLClient = () => {
             />
             <Button variant="contained" onClick={handleQueryExecution}>
                 Execute
+            </Button>
+            <Button
+                variant="outlined"
+                onClick={handlePrettifyQuery}
+                style={{ marginLeft: 10 }}
+            >
+                Prettify Query
             </Button>
             <Button
                 variant="outlined"
