@@ -1,0 +1,30 @@
+{
+    "title": "REST Client",
+    "methodLabel": "Method",
+    "urlLabel": "Endpoint URL",
+    "urlPlaceholder": "https://dummyjson.com/users",
+    "submitButton": "Send",
+    "tabs": {
+        "headers": "Headers",
+        "jsonBody": "JSON Body",
+        "variables": "Variables"
+    },
+    "headers": {
+        "keyPlaceholder": "Key",
+        "valuePlaceholder": "Value",
+        "addHeaderButton": "Add Header",
+        "removeButton": "Remove"
+    },
+    "jsonBody": {
+        "languageLabel": "Language"
+    },
+    "variables": {
+        "namePlaceholder": "Name",
+        "valuePlaceholder": "Value",
+        "addVariableButton": "Add Variable"
+    },
+    "response": {
+        "status": "Response status:",
+        "defaultEditorValue": "// Response"
+    }
+}
