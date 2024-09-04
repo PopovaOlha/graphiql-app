@@ -22,11 +22,11 @@ import {
     useTheme,
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
+import { Base64, decode } from 'js-base64';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
 
-import useUnauthorizedRedirect from '../../../../../hooks/useUnauthorizedRedirect';
-import { replaceVariablesInJson } from '../../../../../utils/utils';
+import useUnauthorizedRedirect from '@/hooks/useUnauthorizedRedirect';
+import { replaceVariablesInJson } from '@/utils/utils';
 
 interface RestfulPageState {
     method: 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -48,6 +48,8 @@ interface CustomTabPanelProps {
     index: number;
     value: number;
 }
+
+Base64.extendBuiltins();
 
 const CustomTabPanel = ({
     children,
@@ -79,12 +81,10 @@ const tabsProps = (index: number) => {
     };
 };
 
-const RestfulPage = () => {
+const RestClient = () => {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const params = useParams();
-
-    const router = useRouter();
 
     useEffect(() => {
         console.log({ pathname, searchParams, params });
@@ -95,7 +95,7 @@ const RestfulPage = () => {
 
     const [state, setState] = useState<RestfulPageState>({
         method: params.method as 'GET' | 'POST' | 'PUT' | 'DELETE',
-        url: '',
+        url: decode(params.url as string) || '',
     });
 
     const [code, setCode] = useState<string>(
@@ -119,7 +119,9 @@ const RestfulPage = () => {
     const [jsonBody, setJsonBody] = useState<string | undefined>('');
 
     useEffect(() => {
-        router.replace(`/restful/${state.method}`);
+        if (state.method !== params.method) {
+            window.history.pushState({}, '', `/restful/${state.method}`);
+        }
     }, [state.method]);
 
     const handleMethodChange = (
@@ -136,11 +138,6 @@ const RestfulPage = () => {
             ...prevState,
             url: event.target.value,
         }));
-        window.history.pushState(
-            {},
-            '',
-            `/restful/${state.method}/${btoa(event.target.value)}`
-        );
     };
 
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -223,7 +220,7 @@ const RestfulPage = () => {
         console.log('JSON Body:', jsonBody);
         console.log('Variables:', variables);
 
-        addToHistory({ method: state.method, url: state.url, path: '/restful' });
+        addToHistory({ method: state.method, url: state.url, path: pathname });
 
         const headers: Record<string, string> = {};
         keyValuePairs.forEach((pair) => {
@@ -306,6 +303,13 @@ const RestfulPage = () => {
                             variant="outlined"
                             value={state.url}
                             onChange={handleUrlChange}
+                            onBlur={(e) =>
+                                window.history.pushState(
+                                    {},
+                                    '',
+                                    `/restful/${state.method}/${e.target.value.toBase64URL()}`
+                                )
+                            }
                         />
                     </Grid>
 
@@ -511,4 +515,4 @@ const RestfulPage = () => {
     );
 };
 
-export default RestfulPage;
+export { RestClient };
