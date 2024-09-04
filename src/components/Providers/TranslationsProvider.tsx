@@ -4,7 +4,7 @@ import { FC, ReactNode } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { createInstance, Resource } from 'i18next';
 
-import initTranslations from '../app/i18n';
+import initTranslations from '../../app/i18n';
 
 export interface TranslationProviderProps {
     children: ReactNode;

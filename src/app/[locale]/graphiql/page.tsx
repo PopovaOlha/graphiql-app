@@ -1,12 +1,12 @@
-'use client';
+import { FC } from 'react';
 
-import { Typography } from '@mui/material';
+import GraphiQLClient from '@/components/Graphiql/GraphiQLClient/GraphiQLClient';
 
-import useUnauthorizedRedirect from '@/hooks/useUnauthorizedRedirect';
-
-const GraphQClient = () => {
-    useUnauthorizedRedirect();
-    return <Typography component={'h1'}>GraphQL Client</Typography>;
+const GraphiqlPage: FC = () => {
+    return (
+        <>
+            <GraphiQLClient />
+        </>
+    );
 };
-
-export default GraphQClient;
+export default GraphiqlPage;

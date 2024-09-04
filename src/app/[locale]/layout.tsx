@@ -6,8 +6,7 @@ import initTranslations from '@/app/i18n';
 import ErrorBoundary from '@/components/ErrorBoundary/ErrorBoundary';
 import Footer from '@/components/Footer/Footer';
 import Header from '@/components/Header/Header';
-import { TranslationsProvider } from '@/components/TranslationsProvider';
-import { AppThemeProvider } from '@/theme/AppThemeProvider';
+import ClientProvider from '@/components/Providers/ClientProvider/ClientProvider';
 
 import { i18nConfig } from '../../../i18nConfig';
 
@@ -43,17 +42,15 @@ export default async function RootLayout({
             <body>
                 <ErrorBoundary>
                     <AppRouterCacheProvider>
-                        <AppThemeProvider>
-                            <TranslationsProvider
-                                namespaces={i18nNamespaces}
-                                locale={locale}
-                                resources={resources}
-                            >
-                                <Header />
-                                {children}
-                                <Footer />
-                            </TranslationsProvider>
-                        </AppThemeProvider>
+                        <ClientProvider
+                            locale={locale}
+                            resources={resources}
+                            i18nNamespaces={i18nNamespaces}
+                        >
+                            <Header />
+                            {children}
+                            <Footer />
+                        </ClientProvider>
                     </AppRouterCacheProvider>
                 </ErrorBoundary>
             </body>
