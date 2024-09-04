@@ -95,7 +95,7 @@ const RestClient = () => {
 
     const [state, setState] = useState<RestfulPageState>({
         method: params.method as 'GET' | 'POST' | 'PUT' | 'DELETE',
-        url: decode(params.url as string) || '',
+        url: params && params.url ? decode(params.url as string) : '',
     });
 
     const [code, setCode] = useState<string>(
@@ -120,7 +120,11 @@ const RestClient = () => {
 
     useEffect(() => {
         if (state.method !== params.method) {
-            window.history.pushState({}, '', `/restful/${state.method}`);
+            window.history.pushState(
+                {},
+                '',
+                `/restful/${state.method}${params.url ? `/${params.url}` : ''}`
+            );
         }
     }, [state.method]);
 

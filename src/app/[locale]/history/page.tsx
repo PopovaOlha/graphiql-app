@@ -120,7 +120,7 @@ const History = () => {
                     >
                         {t('history:empty')}
                         <br /> {t('history:try')}{' '}
-                        <Link href="/restful" style={{ textDecoration: 'none' }}>
+                        <Link href="/restful/GET" style={{ textDecoration: 'none' }}>
                             <CustomLink color={'primary'} component={'span'}>
                                 RESTFul
                             </CustomLink>

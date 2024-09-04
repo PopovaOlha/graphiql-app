@@ -30,7 +30,7 @@ const WelcomePage = () => {
                             <Button
                                 variant="contained"
                                 className={styles.button}
-                                onClick={() => router.push('/restful')}
+                                onClick={() => router.push('/restful/GET')}
                             >
                                 REST Client
                             </Button>
