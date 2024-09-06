@@ -1,0 +1,21 @@
+{
+    "title": "Authors",
+    "kotvmeshke": {
+        "avatarUrl": "/avatars/kot-vmeshke.jpeg",
+        "name": "Hanna Babai",
+        "description": "With a strong background in graphic design, Hanna switched into web design and soon discovered a passion for coding. Now, she's dedicated to web development, finding the process of building websites more engaging than creating visuals. She is fully committed to advancing her skills in this dynamic field.",
+        "githubUrl": "https://github.com/kot-vmeshke"
+    },
+    "popovaolha": {
+        "avatarUrl": "/avatars/PopovaOlha.jpeg",
+        "name": "Olha Popova",
+        "description": "Passionate about programming, Olha has completed several training projects and is eager to contribute to real JavaScript projects. Now she is focused on mastering pure JavaScript and learning React. Eager to join open-source projects, she seeks opportunities to work under the guidance of an experienced developer to gain practical experience.",
+        "githubUrl": "https://github.com/PopovaOlha"
+    },
+    "svitlanag": {
+        "avatarUrl": "/avatars/SvitlanaG.png",
+        "name": "Svitlana Grytsai",
+        "description": "While studying computer science and economics at the University of Applied Sciences in Berlin, Svitlana began working on projects that sparked her passion for programming. This enthusiasm led her to choose a career as a front-end developer. She is currently focused on expanding her skills in this role.",
+        "githubUrl": "https://github.com/SvitlanaG"
+    }
+}

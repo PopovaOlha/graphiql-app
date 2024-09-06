@@ -1,0 +1,23 @@
+{
+    "welcomeBack": "Welcome Back, {{name}}!",
+    "appDescriptionLoggedIn": "Our application is designed to simplify your API interactions, making it easier to develop, test, and explore APIs in one place. We hope you enjoy it!",
+    "restClient": "REST Client",
+    "graphiqlClient": "GraphiQL Client",
+    "history": "History",
+    "welcome": "Welcome!",
+    "appDescriptionLoggedOut": "Welcome to our multi-purpose API client application! This tool allows you to interact with any user-specified API, whether it's RESTful or GraphQL. To start using the application, please register or log in.",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "authors": "Authors",
+    "rsSchool": "RS School",
+    "top": "Top",
+
+    "rsSchoolReactCourse": {
+        "title": "RS School React Course",
+        "description1": "The RS School React Course is a free, online program for students with solid JavaScript and TypeScript skills. It's perfect for those who have completed RS School Stage #2 or have equivalent experience.",
+        "description2": "The course includes comprehensive materials, access to a supportive community on Discord, and a certificate upon completion.",
+        "visitWebsite": "Visit RS School Website",
+        "joinDiscord": "Join Discord Community",
+        "imageAlt": "RS School React Course"
+    }
+}
