@@ -3,21 +3,21 @@
 import { FC, useEffect, useState } from 'react';
 import { Box, Button, TextField } from '@mui/material';
 import { GraphQLSchema } from 'graphql';
-import prettier from 'prettier';
-import parserGraphql from 'prettier/parser-graphql';
 
 import DocumentationViewer from '@/components/Graphiql/DocumentationViewer/DocumentationViewer';
 import { executeGraphQLQuery } from '@/services/graphiqlService';
 import { fetchGraphQLSchema } from '@/services/schemaService';
 import { GraphQLResponse } from '@/types/interfaces';
+import { prettifyQuery } from '@/utils/prettifyQuery';
 
 const GraphiQLClient: FC = () => {
     const [endpointUrl, setEndpointUrl] = useState('');
     const [sdlUrl, setSdlUrl] = useState('');
     const [query, setQuery] = useState('');
-
     const [variables, setVariables] = useState('');
-    const [headers, setHeaders] = useState<{ key: string; value: string }[]>([]);
+    const [headers, setHeaders] = useState<{ key: string; value: string }[]>([
+        { key: 'Content-Type', value: 'application/json' },
+    ]);
     const [response, setResponse] = useState<GraphQLResponse>();
     const [statusCode, setStatusCode] = useState<number | null>(null);
     const [schema, setSchema] = useState<GraphQLSchema | null>(null);
@@ -26,17 +26,15 @@ const GraphiQLClient: FC = () => {
         setSdlUrl(`${endpointUrl}?sdl`);
     }, [endpointUrl]);
 
-    const handlePrettifyQuery = async () => {
-        try {
-            const prettifiedQuery = prettier.format(query, {
-                parser: 'graphql',
-                plugins: [parserGraphql],
-            });
-            setQuery(await prettifiedQuery);
-        } catch (error) {
-            console.error('Error prettifying query:', error);
-        }
-    };
+    useEffect(() => {
+        const prettifyCurrentQuery = async () => {
+            if (query) {
+                const prettifiedQuery = await prettifyQuery(query);
+                setQuery(prettifiedQuery);
+            }
+        };
+        prettifyCurrentQuery();
+    }, [query]);
 
     const handleQueryExecution = async () => {
         const result = await executeGraphQLQuery(
@@ -48,6 +46,12 @@ const GraphiQLClient: FC = () => {
 
         setResponse(result);
         setStatusCode(result.statusCode);
+
+        const savedApis = JSON.parse(localStorage.getItem('savedApis') || '[]');
+        if (!savedApis.includes(endpointUrl)) {
+            savedApis.push(endpointUrl);
+            localStorage.setItem('savedApis', JSON.stringify(savedApis));
+        }
 
         const encodedUrl =
             `GRAPHQL/${btoa(endpointUrl)}/${btoa(query)}?` +
@@ -151,13 +155,6 @@ const GraphiQLClient: FC = () => {
             />
             <Button variant="contained" onClick={handleQueryExecution}>
                 Execute
-            </Button>
-            <Button
-                variant="outlined"
-                onClick={handlePrettifyQuery}
-                style={{ marginLeft: 10 }}
-            >
-                Prettify Query
             </Button>
             <Button
                 variant="outlined"
