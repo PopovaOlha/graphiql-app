@@ -1,10 +1,13 @@
 'use client';
 
 import { useTranslation } from 'react-i18next';
-import { Box, BoxProps, styled, Typography } from '@mui/material';
+import { Box, BoxProps, Button, styled, Typography } from '@mui/material';
 import Link from 'next/link';
 
 import useUnauthorizedRedirect from '@/hooks/useUnauthorizedRedirect';
+import { CalendarMonthOutlined } from '@mui/icons-material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useEffect, useState } from 'react';
 
 const CustomLink = styled(Box)(({ theme }) => ({
     textDecoration: 'none',
@@ -40,6 +43,8 @@ const MethodBox = styled(Box, {
 }));
 
 const HistoryItemLink = styled(Box)(({ theme }) => ({
+    position: 'relative',
+    color: theme.palette.text.primary,
     padding: '1rem',
     borderRadius: '0.5rem',
     backgroundColor: theme.palette.action.hover,
@@ -60,12 +65,17 @@ const History = () => {
     useUnauthorizedRedirect();
     const { t } = useTranslation();
 
-    const historyString = localStorage.getItem('RGC-history') || '';
+    const [history, setHistory] = useState<HistoryItem[]>([]);
 
-    let history: HistoryItem[] = [];
-    if (historyString.length) {
-        history = JSON.parse(historyString);
-    }
+    useEffect(() => {
+        const historyString = localStorage.getItem('RGC-history') || '';
+        if (historyString.length) setHistory(JSON.parse(historyString));
+    }, []);
+
+    const handleHistory = () => {
+        localStorage.removeItem('RGC-history');
+        setHistory([]);
+    };
 
     return (
         <Box>
@@ -79,8 +89,21 @@ const History = () => {
                     margin: '0 auto',
                 }}
             >
+                {!!history.length && (
+                    <Button
+                        variant="outlined"
+                        startIcon={<DeleteIcon />}
+                        sx={{
+                            margin: '0 auto 40px',
+                            display: 'flex',
+                        }}
+                        onClick={handleHistory}
+                    >
+                        Remove history
+                    </Button>
+                )}
                 {history.length ? (
-                    history.map((item: HistoryItem) => (
+                    history.reverse().map((item: HistoryItem) => (
                         <Link
                             href={item.path}
                             key={item.timestamp}
@@ -95,6 +118,26 @@ const History = () => {
                                 <MethodBox method={item.method.toLocaleLowerCase()}>
                                     {item.method}
                                 </MethodBox>
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        position: 'absolute',
+                                        top: '10px',
+                                        right: '10px',
+                                        color: 'inherit',
+                                        opacity: '0.7',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        lineHeight: 'normal',
+                                    }}
+                                >
+                                    <CalendarMonthOutlined
+                                        sx={{ fontSize: '16px' }}
+                                    />
+                                    {new Date(item.timestamp).toLocaleDateString()},{' '}
+                                    {new Date(item.timestamp).toLocaleTimeString()}
+                                </Typography>
                                 <Box
                                     color={'text.primary'}
                                     sx={{
