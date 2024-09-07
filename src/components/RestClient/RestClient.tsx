@@ -87,8 +87,15 @@ const RestClient = ({ body }: { body: string }) => {
     const params = useParams();
 
     useEffect(() => {
-        console.log({ pathname, searchParams, params });
-    }, [pathname, searchParams, params]);
+        const queries = [];
+        for (const [key, value] of searchParams.entries()) {
+            console.log(`${key}, ${value}`);
+            const newPair = { key: key, value: value };
+            queries.push(newPair);
+        }
+        setKeyValuePairs([...queries, ...keyValuePairs]);
+        console.log({ pathname, searchParams: queries, params });
+    }, []);
 
     useUnauthorizedRedirect();
     const { t } = useTranslation();
@@ -124,9 +131,21 @@ const RestClient = ({ body }: { body: string }) => {
         window.history.pushState(
             {},
             '',
-            `/restful/${state.method}/${state.url.toBase64URL()}${jsonBody?.length ? `/${JSON.stringify(jsonBody).toBase64URL()}` : ''}`
+            `/restful/${state.method}/${state.url.toBase64URL()}${jsonBody?.length ? `/${JSON.stringify(jsonBody).toBase64URL()}` : ''}?${searchParams.toString()}`
         );
     }, [state.method, state.url, jsonBody]);
+
+    useEffect(() => {
+        window.history.replaceState(null, '', pathname);
+
+        const newQueries = new URLSearchParams();
+        keyValuePairs.forEach((pair) => {
+            if (pair.key.length && pair.value.length) {
+                newQueries.set(pair.key, pair.value);
+            }
+        });
+        window.history.pushState({}, '', `${pathname}?${newQueries.toString()}`);
+    }, [keyValuePairs]);
 
     const handleMethodChange = (
         event: SelectChangeEvent<'GET' | 'POST' | 'PUT' | 'DELETE'>
@@ -171,6 +190,12 @@ const RestClient = ({ body }: { body: string }) => {
     };
 
     const handleRemovePair = (index: number) => {
+        const currentParams = new URLSearchParams(searchParams.toString());
+        currentParams.delete(keyValuePairs[index].key);
+        const newQuery = currentParams.toString();
+        const newUrl = newQuery ? `${pathname}?${newQuery}` : `${pathname}`;
+        window.history.pushState({}, '', newUrl);
+
         const newKeyValuePairs = keyValuePairs.filter((_, i) => i !== index);
         setKeyValuePairs(newKeyValuePairs);
     };
@@ -224,7 +249,11 @@ const RestClient = ({ body }: { body: string }) => {
         console.log('JSON Body:', jsonBody);
         console.log('Variables:', variables);
 
-        addToHistory({ method: state.method, url: state.url, path: pathname });
+        addToHistory({
+            method: state.method,
+            url: state.url,
+            path: window.location.href,
+        });
 
         const headers: Record<string, string> = {};
         keyValuePairs.forEach((pair) => {
