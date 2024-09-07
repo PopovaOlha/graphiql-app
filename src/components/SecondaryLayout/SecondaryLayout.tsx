@@ -31,7 +31,7 @@ const SecondaryLayout: FC<{ children: ReactNode }> = ({ children }) => {
             >
                 <Link
                     href={'/restful/GET'}
-                    className={`${styles.panelLink} ${pathname.includes('/restful') ? styles.panelLinkActive : ''}`}
+                    className={`${styles.panelLink} ${pathname?.includes('/restful') ? styles.panelLinkActive : ''}`}
                 >
                     <RestIcon />
                     REST Api

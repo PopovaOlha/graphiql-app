@@ -1,10 +1,23 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, Typography } from '@mui/material';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 
 export default function NotFound() {
+    const pathname = usePathname();
+    const router = useRouter();
+
+    useEffect(() => {
+        const segments = pathname.split('/').filter(Boolean);
+
+        if (segments.length === 1 && segments[0] === 'restful') {
+            router.replace('/restful/GET');
+        }
+    }, [router]);
+
     const { t } = useTranslation();
 
     return (

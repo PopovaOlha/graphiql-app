@@ -1,7 +1,12 @@
+'use client';
+
+import { useParams } from 'next/navigation';
+
 import { RestClient } from '@/components/RestClient/RestClient';
 
 const RestfulPage = () => {
-    return <RestClient />;
+    const params = useParams();
+    return <RestClient body={params.body[0]} />;
 };
 
 export default RestfulPage;

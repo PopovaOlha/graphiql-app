@@ -1,7 +1,7 @@
 import { RestClient } from '@/components/RestClient/RestClient';
 
 const RestfulPage = () => {
-    return <RestClient />;
+    return <RestClient body={''} />;
 };
 
 export default RestfulPage;

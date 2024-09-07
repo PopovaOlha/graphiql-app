@@ -81,7 +81,7 @@ const tabsProps = (index: number) => {
     };
 };
 
-const RestClient = () => {
+const RestClient = ({ body }: { body: string }) => {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const params = useParams();
@@ -116,17 +116,17 @@ const RestClient = () => {
     const theme = useTheme();
     const mode = theme.palette.mode;
 
-    const [jsonBody, setJsonBody] = useState<string | undefined>('');
+    const [jsonBody, setJsonBody] = useState<string | undefined>(
+        body.length ? JSON.parse(decode(body)) : ''
+    );
 
     useEffect(() => {
-        if (state.method !== params.method) {
-            window.history.pushState(
-                {},
-                '',
-                `/restful/${state.method}${params.url ? `/${params.url}` : ''}`
-            );
-        }
-    }, [state.method]);
+        window.history.pushState(
+            {},
+            '',
+            `/restful/${state.method}/${state.url.toBase64URL()}${jsonBody?.length ? `/${JSON.stringify(jsonBody).toBase64URL()}` : ''}`
+        );
+    }, [state.method, state.url, jsonBody]);
 
     const handleMethodChange = (
         event: SelectChangeEvent<'GET' | 'POST' | 'PUT' | 'DELETE'>
@@ -423,14 +423,23 @@ const RestClient = () => {
                             <MenuItem value="xml">XML</MenuItem>
                         </Select>
                     </FormControl>
-                    <Editor
-                        height="200px"
-                        defaultLanguage={editorLang}
-                        value={jsonBody}
-                        theme={mode === 'light' ? 'light' : 'vs-dark'}
-                        options={{ minimap: { enabled: false } }}
-                        onChange={(value) => setJsonBody(value)}
-                    />
+                    {state.url.length ? (
+                        <Editor
+                            height="200px"
+                            defaultLanguage={editorLang}
+                            value={jsonBody}
+                            theme={mode === 'light' ? 'light' : 'vs-dark'}
+                            options={{
+                                minimap: { enabled: false },
+                                readOnly: !state.url.length,
+                            }}
+                            onChange={(value) => setJsonBody(value)}
+                        />
+                    ) : (
+                        <Typography variant={'body1'}>
+                            {t('restClient:emptyURL')}
+                        </Typography>
+                    )}
                 </CustomTabPanel>
 
                 <CustomTabPanel value={tabValue} index={2}>

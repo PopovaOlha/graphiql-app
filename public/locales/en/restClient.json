@@ -26,5 +26,6 @@
     "response": {
         "status": "Response status:",
         "defaultEditorValue": "// Response"
-    }
+    },
+    "emptyURL": "Enter endpoint URL first"
 }
