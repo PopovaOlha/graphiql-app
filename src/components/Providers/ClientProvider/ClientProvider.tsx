@@ -6,6 +6,8 @@ import { TranslationsProvider } from '@/components/Providers/TranslationsProvide
 import { AppThemeProvider } from '@/theme/AppThemeProvider';
 import { ClientProviderProps } from '@/types/interfaces';
 
+import AuthProvider from '../authProvider';
+
 const ClientProvider: FC<ClientProviderProps> = ({
     children,
     locale,
@@ -14,13 +16,15 @@ const ClientProvider: FC<ClientProviderProps> = ({
 }) => {
     return (
         <AppThemeProvider>
-            <TranslationsProvider
-                namespaces={i18nNamespaces}
-                locale={locale}
-                resources={resources}
-            >
-                {children}
-            </TranslationsProvider>
+            <AuthProvider>
+                <TranslationsProvider
+                    namespaces={i18nNamespaces}
+                    locale={locale}
+                    resources={resources}
+                >
+                    {children}
+                </TranslationsProvider>
+            </AuthProvider>
         </AppThemeProvider>
     );
 };

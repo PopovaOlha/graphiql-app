@@ -50,3 +50,7 @@ export interface ClientProviderProps {
     resources: Record<string, ResourceLanguage>;
     i18nNamespaces: string[];
 }
+
+export interface IProps {
+    view: 'full' | 'mini';
+}

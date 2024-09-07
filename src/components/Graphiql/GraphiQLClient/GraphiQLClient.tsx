@@ -24,7 +24,9 @@ const GraphiQLClient: FC = () => {
     const [schema, setSchema] = useState<GraphQLSchema | null>(null);
 
     useEffect(() => {
-        setSdlUrl(`${endpointUrl}?sdl`);
+        if (endpointUrl) {
+            setSdlUrl(`${endpointUrl}?sdl`);
+        }
     }, [endpointUrl]);
 
     useEffect(() => {
@@ -54,11 +56,6 @@ const GraphiQLClient: FC = () => {
             variables,
             headers: JSON.stringify(headers),
         });
-
-        const encodedUrl =
-            `GRAPHQL/${btoa(endpointUrl)}/${btoa(query)}?` +
-            headers.map((header) => `${header.key}=${header.value}`).join('&');
-        window.history.pushState(null, '', encodedUrl);
     };
 
     const handleFetchSchema = async () => {
@@ -77,101 +74,105 @@ const GraphiQLClient: FC = () => {
     };
 
     return (
-        <Box p={2}>
-            <TextField
-                label="Endpoint URL"
-                value={endpointUrl}
-                onChange={(e) => setEndpointUrl(e.target.value)}
-                fullWidth
-                margin="normal"
-            />
-            <TextField
-                label="SDL URL"
-                value={sdlUrl}
-                onChange={(e) => setSdlUrl(e.target.value)}
-                fullWidth
-                margin="normal"
-            />
-            <Box my={2}>
-                <Button
-                    onClick={() => setHeaders([...headers, { key: '', value: '' }])}
-                >
-                    Add Header
+        <div>
+            <Box p={2}>
+                <TextField
+                    label="Endpoint URL"
+                    value={endpointUrl}
+                    onChange={(e) => setEndpointUrl(e.target.value)}
+                    fullWidth
+                    margin="normal"
+                />
+                <TextField
+                    label="SDL URL"
+                    value={sdlUrl}
+                    fullWidth
+                    margin="normal"
+                    disabled
+                />
+                <Box my={2}>
+                    <Button
+                        onClick={() =>
+                            setHeaders([...headers, { key: '', value: '' }])
+                        }
+                    >
+                        Add Header
+                    </Button>
+                    {headers.map((header, index) => (
+                        <Box key={index} display="flex" gap={1} my={1}>
+                            <TextField
+                                label="Header Key"
+                                value={header.key}
+                                onChange={(e) => {
+                                    const updatedHeaders = [...headers];
+                                    updatedHeaders[index] = {
+                                        ...header,
+                                        key: e.target.value,
+                                    };
+                                    setHeaders(updatedHeaders);
+                                }}
+                            />
+                            <TextField
+                                label="Header Value"
+                                value={header.value}
+                                onChange={(e) => {
+                                    const updatedHeaders = [...headers];
+                                    updatedHeaders[index] = {
+                                        ...header,
+                                        value: e.target.value,
+                                    };
+                                    setHeaders(updatedHeaders);
+                                }}
+                            />
+                            <Button
+                                onClick={() => {
+                                    const updatedHeaders = headers.filter(
+                                        (_, i) => i !== index
+                                    );
+                                    setHeaders(updatedHeaders);
+                                }}
+                            >
+                                Remove
+                            </Button>
+                        </Box>
+                    ))}
+                </Box>
+                <TextField
+                    label="GraphQL Query"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    fullWidth
+                    margin="normal"
+                    multiline
+                    rows={6}
+                />
+                <TextField
+                    label="Variables (JSON format)"
+                    value={variables}
+                    onChange={(e) => setVariables(e.target.value)}
+                    fullWidth
+                    margin="normal"
+                    multiline
+                    rows={4}
+                />
+                <Button variant="contained" onClick={handleQueryExecution}>
+                    Execute
                 </Button>
-                {headers.map((header, index) => (
-                    <Box key={index} display="flex" gap={1} my={1}>
-                        <TextField
-                            label="Header Key"
-                            value={header.key}
-                            onChange={(e) => {
-                                const updatedHeaders = [...headers];
-                                updatedHeaders[index] = {
-                                    ...header,
-                                    key: e.target.value,
-                                };
-                                setHeaders(updatedHeaders);
-                            }}
-                        />
-                        <TextField
-                            label="Header Value"
-                            value={header.value}
-                            onChange={(e) => {
-                                const updatedHeaders = [...headers];
-                                updatedHeaders[index] = {
-                                    ...header,
-                                    value: e.target.value,
-                                };
-                                setHeaders(updatedHeaders);
-                            }}
-                        />
-                        <Button
-                            onClick={() => {
-                                const updatedHeaders = headers.filter(
-                                    (_, i) => i !== index
-                                );
-                                setHeaders(updatedHeaders);
-                            }}
-                        >
-                            Remove
-                        </Button>
-                    </Box>
-                ))}
+                <Button
+                    variant="outlined"
+                    onClick={handleFetchSchema}
+                    style={{ marginLeft: 10 }}
+                >
+                    Fetch Documentation
+                </Button>
+                <Box mt={4}>
+                    <h3>Response</h3>
+                    <p>Status Code: {statusCode}</p>
+                    <pre>{JSON.stringify(response, null, 2)}</pre>
+                </Box>
+                {schema && <DocumentationViewer schema={schema} />}
             </Box>
-            <TextField
-                label="GraphQL Query"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                fullWidth
-                margin="normal"
-                multiline
-                rows={6}
-            />
-            <TextField
-                label="Variables (JSON format)"
-                value={variables}
-                onChange={(e) => setVariables(e.target.value)}
-                fullWidth
-                margin="normal"
-                multiline
-                rows={4}
-            />
-            <Button variant="contained" onClick={handleQueryExecution}>
-                Execute
-            </Button>
-            <Button
-                variant="outlined"
-                onClick={handleFetchSchema}
-                style={{ marginLeft: 10 }}
-            >
-                Fetch Documentation
-            </Button>
-            <Box mt={4}>
-                <h3>Response</h3>
-                <p>Status Code: {statusCode}</p>
-                <pre>{JSON.stringify(response, null, 2)}</pre>
-            </Box>
-            {schema && <DocumentationViewer schema={schema} />}
-        </Box>
+        </div>
     );
 };
 
