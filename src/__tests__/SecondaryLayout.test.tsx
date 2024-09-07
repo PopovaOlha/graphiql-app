@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import '@testing-library/jest-dom';
+import SecondaryLayout from '@/components/SecondaryLayout/SecondaryLayout';
 
-import SecondaryLayout from '../components/SecondaryLayout/SecondaryLayout';
+import '@testing-library/jest-dom';
 
 describe('Secondary Layout', () => {
     it('Should be rendered', () => {
