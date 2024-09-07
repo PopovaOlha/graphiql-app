@@ -1,62 +1,184 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { Box, Button, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { CalendarMonthOutlined } from '@mui/icons-material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, BoxProps, Button, styled, Typography } from '@mui/material';
+import Link from 'next/link';
 
 import useUnauthorizedRedirect from '@/hooks/useUnauthorizedRedirect';
-import { auth } from '@/services/firebase';
-import styles from '@/styles/history.module.scss';
+
+const CustomLink = styled(Box)(({ theme }) => ({
+    textDecoration: 'none',
+    display: 'inline',
+    color: theme.palette.primary.main,
+    '&:hover': {
+        textDecoration: 'underline',
+        textUnderlineOffset: '2px',
+    },
+    'a:visited &': {
+        color: theme.palette.primary.main,
+    },
+}));
+
+interface MethodBoxProps extends BoxProps {
+    method?: string;
+}
+
+const MethodBox = styled(Box, {
+    shouldForwardProp: (prop) => prop !== 'method',
+})<MethodBoxProps>(({ theme, method }) => ({
+    color: theme.palette.custom[method || 'get'],
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: '1rem',
+    padding: '0.25rem 0.5rem',
+    border: `1px solid ${theme.palette.custom[method || 'get']}`,
+    borderRadius: '0.25rem',
+    fontSize: '0.875rem',
+    lineHeight: 'normal',
+    fontWeight: 'bolder',
+}));
+
+const HistoryItemLink = styled(Box)(({ theme }) => ({
+    position: 'relative',
+    color: theme.palette.text.primary,
+    padding: '1rem',
+    borderRadius: '0.5rem',
+    backgroundColor: theme.palette.action.hover,
+    transition: 'background-color 0.5s',
+    '&:hover': {
+        backgroundColor: theme.palette.action.selected,
+    },
+}));
+
+interface HistoryItem {
+    method: string;
+    timestamp: number;
+    url: string;
+    path: string;
+}
 
 const History = () => {
     useUnauthorizedRedirect();
-    const [savedApis, setSavedApis] = useState<string[]>([]);
-    const [showSavedApis, setShowSavedApis] = useState(false);
-    const [user] = useAuthState(auth);
+    const { t } = useTranslation();
+
+    const [history, setHistory] = useState<HistoryItem[]>([]);
 
     useEffect(() => {
-        if (!user) {
-            localStorage.removeItem('savedApis');
-        } else {
-            const saved = JSON.parse(localStorage.getItem('savedApis') || '[]');
-            setSavedApis(saved);
-        }
-    }, [user]);
+        const historyString = localStorage.getItem('RGC-history') || '';
+        if (historyString.length) setHistory(JSON.parse(historyString));
+    }, []);
 
-    const handleShowApis = () => {
-        setShowSavedApis(true);
+    const handleHistory = () => {
+        localStorage.removeItem('RGC-history');
+        setHistory([]);
     };
 
     return (
-        <div>
-            <Box className={styles.container}>
-                <Typography className={styles.title}>
-                    History of Saved GraphQL APIs
-                </Typography>
-                <Button
-                    className={styles.button}
-                    variant="contained"
-                    onClick={handleShowApis}
-                >
-                    GraphQL
-                </Button>
-                {showSavedApis && (
-                    <Box className={styles.savedApisContainer}>
-                        {savedApis.length > 0 ? (
-                            savedApis.map((apiUrl, index) => (
-                                <Box key={index} className={styles.apiItem}>
-                                    <Typography>{apiUrl}</Typography>
+        <Box>
+            <Typography component={'h1'} variant={'h1'}>
+                {t('history:title')}
+            </Typography>
+            <Box
+                sx={{
+                    width: '100%',
+                    maxWidth: '50rem',
+                    margin: '0 auto',
+                }}
+            >
+                {!!history.length && (
+                    <Button
+                        variant="outlined"
+                        startIcon={<DeleteIcon />}
+                        sx={{
+                            margin: '0 auto 40px',
+                            display: 'flex',
+                        }}
+                        onClick={handleHistory}
+                    >
+                        Remove history
+                    </Button>
+                )}
+                {history.length ? (
+                    history.reverse().map((item: HistoryItem) => (
+                        <Link
+                            href={item.path}
+                            key={item.timestamp}
+                            style={{
+                                marginBottom: '20px',
+                                color: '#fff',
+                                display: 'block',
+                                textDecoration: 'none',
+                            }}
+                        >
+                            <HistoryItemLink>
+                                <MethodBox method={item.method.toLocaleLowerCase()}>
+                                    {item.method}
+                                </MethodBox>
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        position: 'absolute',
+                                        top: '10px',
+                                        right: '10px',
+                                        color: 'inherit',
+                                        opacity: '0.7',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        lineHeight: 'normal',
+                                    }}
+                                >
+                                    <CalendarMonthOutlined
+                                        sx={{ fontSize: '16px' }}
+                                    />
+                                    {new Date(item.timestamp).toLocaleDateString()},{' '}
+                                    {new Date(item.timestamp).toLocaleTimeString()}
+                                </Typography>
+                                <Box
+                                    color={'text.primary'}
+                                    sx={{
+                                        '& b': {
+                                            display: 'inline-block',
+                                            marginRight: '1rem',
+                                        },
+                                    }}
+                                >
+                                    <b>URL:</b>
+                                    {item.url}
                                 </Box>
-                            ))
-                        ) : (
-                            <Typography className={styles.noApis}>
-                                No saved APIs found.
-                            </Typography>
-                        )}
-                    </Box>
+                            </HistoryItemLink>
+                        </Link>
+                    ))
+                ) : (
+                    <Typography
+                        variant="body1"
+                        sx={{
+                            textAlign: 'center',
+                            margin: 'auto',
+                        }}
+                    >
+                        {t('history:empty')}
+                        <br /> {t('history:try')}{' '}
+                        <Link href="/restful/GET" style={{ textDecoration: 'none' }}>
+                            <CustomLink color={'primary'} component={'span'}>
+                                RESTFul
+                            </CustomLink>
+                        </Link>{' '}
+                        {t('history:or')}{' '}
+                        <Link href="/graphiql" style={{ textDecoration: 'none' }}>
+                            <CustomLink color={'primary'} component={'span'}>
+                                GraphQL
+                            </CustomLink>
+                        </Link>{' '}
+                        {t('history:clients')}
+                    </Typography>
                 )}
             </Box>
-        </div>
+        </Box>
     );
 };
 

@@ -6,6 +6,7 @@ import { GraphQLSchema } from 'graphql';
 
 import DocumentationViewer from '@/components/Graphiql/DocumentationViewer/DocumentationViewer';
 import { executeGraphQLQuery } from '@/services/graphiqlService';
+import { addToHistory } from '@/services/historyService';
 import { fetchGraphQLSchema } from '@/services/schemaService';
 import { GraphQLResponse } from '@/types/interfaces';
 import { prettifyQuery } from '@/utils/prettifyQuery';
@@ -47,11 +48,12 @@ const GraphiQLClient: FC = () => {
         setResponse(result);
         setStatusCode(result.statusCode);
 
-        const savedApis = JSON.parse(localStorage.getItem('savedApis') || '[]');
-        if (!savedApis.includes(endpointUrl)) {
-            savedApis.push(endpointUrl);
-            localStorage.setItem('savedApis', JSON.stringify(savedApis));
-        }
+        addToHistory({
+            endpointUrl,
+            query,
+            variables,
+            headers: JSON.stringify(headers),
+        });
 
         const encodedUrl =
             `GRAPHQL/${btoa(endpointUrl)}/${btoa(query)}?` +

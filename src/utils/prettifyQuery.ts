@@ -1,5 +1,5 @@
-import prettier from 'prettier';
-import parserGraphql from 'prettier/parser-graphql';
+import * as prettier from 'prettier';
+import * as parserGraphql from 'prettier/parser-graphql';
 
 export const prettifyQuery = async (query: string): Promise<string> => {
     try {
