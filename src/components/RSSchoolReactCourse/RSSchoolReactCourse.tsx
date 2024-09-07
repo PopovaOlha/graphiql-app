@@ -10,7 +10,7 @@ const RSSchoolReactCourse = () => {
 
     return (
         <Box className={styles.reactCourse}>
-            <Typography variant="h1" gutterBottom>
+            <Typography variant="h2" gutterBottom>
                 {t('welcomePage:rsSchoolReactCourse.title')}
             </Typography>
             <Box>
