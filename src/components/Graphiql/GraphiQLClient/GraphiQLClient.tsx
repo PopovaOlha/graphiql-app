@@ -1,8 +1,8 @@
 'use client';
 
+import { FC, useEffect, useState } from 'react';
 import { Box, Button, TextField } from '@mui/material';
 import { GraphQLSchema } from 'graphql';
-import { FC, useEffect, useState } from 'react';
 
 import DocumentationViewer from '@/components/Graphiql/DocumentationViewer/DocumentationViewer';
 import { executeGraphQLQuery } from '@/services/graphiqlService';
@@ -51,10 +51,9 @@ const GraphiQLClient: FC = () => {
         setStatusCode(result.statusCode);
 
         addToHistory({
-            endpointUrl,
-            query,
-            variables,
-            headers: JSON.stringify(headers),
+            method: 'GRAPHQL',
+            path: window.location.href,
+            url: endpointUrl,
         });
     };
 
