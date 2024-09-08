@@ -3,15 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
 import {
     Box,
     Button,
     Container,
     FormControl,
     Grid,
-    IconButton,
     InputLabel,
     MenuItem,
     Select,
@@ -35,7 +32,11 @@ import {
 } from '@/types/interfaces';
 import { replaceVariablesInJson } from '@/utils/utils';
 
-import { ResponseStatusIndicator, VariablesSection } from './RestClientComponents';
+import {
+    HeadersSection,
+    ResponseStatusIndicator,
+    VariablesSection,
+} from './RestClientComponents';
 
 Base64.extendBuiltins();
 
@@ -348,61 +349,13 @@ const RestClient = ({ body }: { body: string }) => {
                 </Box>
 
                 <CustomTabPanel value={tabValue} index={0}>
-                    {keyValuePairs.map((pair, index) => (
-                        <Grid
-                            container
-                            spacing={2}
-                            sx={{ mb: 2 }}
-                            key={index}
-                            alignItems="center"
-                        >
-                            <Grid item xs={5}>
-                                <TextField
-                                    label={t('restClient:headers.keyPlaceholder')}
-                                    placeholder={t(
-                                        'restClient:headers.keyPlaceholder'
-                                    )}
-                                    variant="outlined"
-                                    fullWidth
-                                    value={pair.key}
-                                    onChange={(event) =>
-                                        handleKeyChange(index, event)
-                                    }
-                                />
-                            </Grid>
-                            <Grid item xs={5}>
-                                <TextField
-                                    label={t('restClient:headers.valuePlaceholder')}
-                                    placeholder={t(
-                                        'restClient:headers.valuePlaceholder'
-                                    )}
-                                    variant="outlined"
-                                    fullWidth
-                                    value={pair.value}
-                                    onChange={(event) =>
-                                        handleValueChange(index, event)
-                                    }
-                                />
-                            </Grid>
-                            <Grid item xs={2}>
-                                <IconButton
-                                    color="secondary"
-                                    onClick={() => handleRemovePair(index)}
-                                    aria-label={t('restClient:headers.removeButton')}
-                                >
-                                    <DeleteIcon />
-                                </IconButton>
-                            </Grid>
-                        </Grid>
-                    ))}
-                    <Button
-                        variant="outlined"
-                        startIcon={<AddIcon />}
-                        onClick={handleAddPair}
-                        sx={{ marginTop: 2 }}
-                    >
-                        {t('restClient:headers.addHeaderButton')}
-                    </Button>
+                    <HeadersSection
+                        keyValuePairs={keyValuePairs}
+                        handleKeyChange={handleKeyChange}
+                        handleValueChange={handleValueChange}
+                        handleRemovePair={handleRemovePair}
+                        handleAddPair={handleAddPair}
+                    />
                 </CustomTabPanel>
 
                 <CustomTabPanel value={tabValue} index={1}>

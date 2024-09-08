@@ -1,39 +1,36 @@
-'use client';
-
 import { ChangeEvent, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, Grid, IconButton, TextField } from '@mui/material';
 
-import { Variable } from '@/types/interfaces';
+import { KeyValuePair } from '@/types/interfaces';
 
-interface VariablesSectionProps {
-    variables: Variable[];
-    handleAddVariable: () => void;
-    handleNameChange: (
+interface HeadersSectionProps {
+    keyValuePairs: KeyValuePair[];
+    handleKeyChange: (
         index: number,
         event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => void;
-    handleVarValueChange: (
+    handleValueChange: (
         index: number,
         event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => void;
-    handleRemoveVariable: (index: number) => void;
+    handleRemovePair: (index: number) => void;
+    handleAddPair: () => void;
 }
 
-const VariablesSection: FC<VariablesSectionProps> = ({
-    variables,
-    handleAddVariable,
-    handleNameChange,
-    handleVarValueChange,
-    handleRemoveVariable,
+const HeadersSection: FC<HeadersSectionProps> = ({
+    keyValuePairs,
+    handleKeyChange,
+    handleValueChange,
+    handleRemovePair,
+    handleAddPair,
 }) => {
     const { t } = useTranslation();
-
     return (
         <>
-            {variables.map((variable, index) => (
+            {keyValuePairs.map((pair, index) => (
                 <Grid
                     container
                     spacing={2}
@@ -43,29 +40,29 @@ const VariablesSection: FC<VariablesSectionProps> = ({
                 >
                     <Grid item xs={5}>
                         <TextField
-                            label={t('restClient:variables.namePlaceholder')}
-                            placeholder={t('restClient:variables.namePlaceholder')}
+                            label={t('restClient:headers.keyPlaceholder')}
+                            placeholder={t('restClient:headers.keyPlaceholder')}
                             variant="outlined"
                             fullWidth
-                            value={variable.name}
-                            onChange={(event) => handleNameChange(index, event)}
+                            value={pair.key}
+                            onChange={(event) => handleKeyChange(index, event)}
                         />
                     </Grid>
                     <Grid item xs={5}>
                         <TextField
-                            label={t('restClient:variables.valuePlaceholder')}
-                            placeholder={t('restClient:variables.valuePlaceholder')}
+                            label={t('restClient:headers.valuePlaceholder')}
+                            placeholder={t('restClient:headers.valuePlaceholder')}
                             variant="outlined"
                             fullWidth
-                            value={variable.value}
-                            onChange={(event) => handleVarValueChange(index, event)}
+                            value={pair.value}
+                            onChange={(event) => handleValueChange(index, event)}
                         />
                     </Grid>
                     <Grid item xs={2}>
                         <IconButton
                             color="secondary"
-                            onClick={() => handleRemoveVariable(index)}
-                            aria-label={t('restClient:variables.removeButton')}
+                            onClick={() => handleRemovePair(index)}
+                            aria-label={t('restClient:headers.removeButton')}
                         >
                             <DeleteIcon />
                         </IconButton>
@@ -75,13 +72,13 @@ const VariablesSection: FC<VariablesSectionProps> = ({
             <Button
                 variant="outlined"
                 startIcon={<AddIcon />}
-                onClick={handleAddVariable}
+                onClick={handleAddPair}
                 sx={{ marginTop: 2 }}
             >
-                {t('restClient:variables.addVariableButton')}
+                {t('restClient:headers.addHeaderButton')}
             </Button>
         </>
     );
 };
 
-export { VariablesSection };
+export { HeadersSection };
