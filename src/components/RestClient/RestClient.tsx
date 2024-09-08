@@ -30,7 +30,7 @@ const RestClient = ({ body }: { body: string }) => {
 
     return (
         <Container maxWidth="xl">
-            <Box>
+            <Box sx={{ marginBottom: '2rem' }}>
                 <Typography variant="h1">{t('restClient:title')}</Typography>
 
                 <RestForm
@@ -40,7 +40,7 @@ const RestClient = ({ body }: { body: string }) => {
                 />
             </Box>
 
-            <Box>
+            <Box sx={{ marginBottom: '2rem' }}>
                 {response?.code && (
                     <ResponseStatusIndicator
                         responseCode={response.code}

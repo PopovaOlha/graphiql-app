@@ -4,7 +4,7 @@ import { ChangeEvent, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Button, Grid, IconButton, TextField } from '@mui/material';
+import { Box, Button, IconButton, TextField, useTheme } from '@mui/material';
 
 import { Variable } from '@/types/interfaces';
 
@@ -30,53 +30,64 @@ const VariablesSection: FC<VariablesSectionProps> = ({
     handleRemoveVariable,
 }) => {
     const { t } = useTranslation();
+    const theme = useTheme();
 
     return (
         <>
             {variables.map((variable, index) => (
-                <Grid
-                    container
-                    spacing={2}
-                    sx={{ mb: 2 }}
+                <Box
+                    sx={{
+                        display: 'grid',
+                        gridTemplateColumns: '42% 42% 16%',
+                        marginBottom: '1rem',
+                    }}
                     key={index}
-                    alignItems="center"
                 >
-                    <Grid item xs={5}>
-                        <TextField
-                            label={t('restClient:variables.namePlaceholder')}
-                            placeholder={t('restClient:variables.namePlaceholder')}
-                            variant="outlined"
-                            fullWidth
-                            value={variable.name}
-                            onChange={(event) => handleNameChange(index, event)}
-                        />
-                    </Grid>
-                    <Grid item xs={5}>
-                        <TextField
-                            label={t('restClient:variables.valuePlaceholder')}
-                            placeholder={t('restClient:variables.valuePlaceholder')}
-                            variant="outlined"
-                            fullWidth
-                            value={variable.value}
-                            onChange={(event) => handleVarValueChange(index, event)}
-                        />
-                    </Grid>
-                    <Grid item xs={2}>
-                        <IconButton
-                            color="secondary"
-                            onClick={() => handleRemoveVariable(index)}
-                            aria-label={t('restClient:variables.removeButton')}
-                        >
-                            <DeleteIcon />
-                        </IconButton>
-                    </Grid>
-                </Grid>
+                    <TextField
+                        label={t('restClient:variables.namePlaceholder')}
+                        placeholder={t('restClient:variables.namePlaceholder')}
+                        variant="standard"
+                        fullWidth
+                        value={variable.name}
+                        onChange={(event) => handleNameChange(index, event)}
+                        sx={{
+                            pr: '1rem',
+                            '.MuiInputBase-input:-webkit-autofill': {
+                                boxShadow: `inset 0 0 0 50px ${theme.palette.background.default}`,
+                                WebkitTextFillColor: `${theme.palette.text.primary} !important`,
+                            },
+                        }}
+                    />
+                    <TextField
+                        label={t('restClient:variables.valuePlaceholder')}
+                        placeholder={t('restClient:variables.valuePlaceholder')}
+                        variant="standard"
+                        fullWidth
+                        value={variable.value}
+                        onChange={(event) => handleVarValueChange(index, event)}
+                        sx={{
+                            pr: '1rem',
+                            '.MuiInputBase-input:-webkit-autofill': {
+                                boxShadow: `inset 0 0 0 50px ${theme.palette.background.default}`,
+                                WebkitTextFillColor: `${theme.palette.text.primary} !important`,
+                            },
+                        }}
+                    />
+                    <IconButton
+                        color="secondary"
+                        onClick={() => handleRemoveVariable(index)}
+                        aria-label={t('restClient:variables.removeButton')}
+                        sx={{ justifySelf: 'start', aspectRatio: '1' }}
+                    >
+                        <DeleteIcon />
+                    </IconButton>
+                </Box>
             ))}
             <Button
                 variant="outlined"
                 startIcon={<AddIcon />}
                 onClick={handleAddVariable}
-                sx={{ marginTop: 2 }}
+                sx={{ marginTop: 4 }}
             >
                 {t('restClient:variables.addVariableButton')}
             </Button>

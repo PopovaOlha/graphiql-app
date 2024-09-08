@@ -4,7 +4,7 @@ import { ChangeEvent, FC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Button, Grid, IconButton, TextField } from '@mui/material';
+import { Box, Button, IconButton, TextField, useTheme } from '@mui/material';
 import { usePathname } from 'next/navigation';
 
 import { KeyValuePair } from '@/types/interfaces';
@@ -32,6 +32,7 @@ const HeadersSection: FC<HeadersSectionProps> = ({
 }) => {
     const { t } = useTranslation();
     const pathname = usePathname();
+    const theme = useTheme();
 
     useEffect(() => {
         window.history.replaceState(null, '', pathname);
@@ -48,49 +49,59 @@ const HeadersSection: FC<HeadersSectionProps> = ({
     return (
         <>
             {keyValuePairs.map((pair, index) => (
-                <Grid
-                    container
-                    spacing={2}
-                    sx={{ mb: 2 }}
+                <Box
+                    sx={{
+                        display: 'grid',
+                        gridTemplateColumns: '42% 42% 16%',
+                        marginBottom: '1rem',
+                    }}
                     key={index}
-                    alignItems="center"
                 >
-                    <Grid item xs={5}>
-                        <TextField
-                            label={t('restClient:headers.keyPlaceholder')}
-                            placeholder={t('restClient:headers.keyPlaceholder')}
-                            variant="outlined"
-                            fullWidth
-                            value={pair.key}
-                            onChange={(event) => handleKeyChange(index, event)}
-                        />
-                    </Grid>
-                    <Grid item xs={5}>
-                        <TextField
-                            label={t('restClient:headers.valuePlaceholder')}
-                            placeholder={t('restClient:headers.valuePlaceholder')}
-                            variant="outlined"
-                            fullWidth
-                            value={pair.value}
-                            onChange={(event) => handleValueChange(index, event)}
-                        />
-                    </Grid>
-                    <Grid item xs={2}>
-                        <IconButton
-                            color="secondary"
-                            onClick={() => handleRemovePair(index)}
-                            aria-label={t('restClient:headers.removeButton')}
-                        >
-                            <DeleteIcon />
-                        </IconButton>
-                    </Grid>
-                </Grid>
+                    <TextField
+                        label={t('restClient:headers.keyPlaceholder')}
+                        placeholder={t('restClient:headers.keyPlaceholder')}
+                        variant="standard"
+                        fullWidth
+                        value={pair.key}
+                        onChange={(event) => handleKeyChange(index, event)}
+                        sx={{
+                            pr: '1rem',
+                            '.MuiInputBase-input:-webkit-autofill': {
+                                boxShadow: `inset 0 0 0 50px ${theme.palette.background.default}`,
+                                WebkitTextFillColor: `${theme.palette.text.primary} !important`,
+                            },
+                        }}
+                    />
+                    <TextField
+                        label={t('restClient:headers.valuePlaceholder')}
+                        placeholder={t('restClient:headers.valuePlaceholder')}
+                        variant="standard"
+                        fullWidth
+                        value={pair.value}
+                        onChange={(event) => handleValueChange(index, event)}
+                        sx={{
+                            pr: '1rem',
+                            '.MuiInputBase-input:-webkit-autofill': {
+                                boxShadow: `inset 0 0 0 50px ${theme.palette.background.default}`,
+                                WebkitTextFillColor: `${theme.palette.text.primary} !important`,
+                            },
+                        }}
+                    />
+                    <IconButton
+                        color="secondary"
+                        onClick={() => handleRemovePair(index)}
+                        aria-label={t('restClient:headers.removeButton')}
+                        sx={{ justifySelf: 'start', aspectRatio: '1' }}
+                    >
+                        <DeleteIcon />
+                    </IconButton>
+                </Box>
             ))}
             <Button
                 variant="outlined"
                 startIcon={<AddIcon />}
                 onClick={handleAddPair}
-                sx={{ marginTop: 2 }}
+                sx={{ marginTop: 4 }}
             >
                 {t('restClient:headers.addHeaderButton')}
             </Button>

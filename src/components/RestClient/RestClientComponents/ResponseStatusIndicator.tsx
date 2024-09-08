@@ -13,7 +13,7 @@ const ResponseStatusIndicator: FC<IndicatorProps> = ({
 }) => {
     const { t } = useTranslation();
     return (
-        <Box>
+        <Box sx={{ padding: '1rem 0' }}>
             {t('restClient:response.status')} {responseCode} {responseStatus}
         </Box>
     );

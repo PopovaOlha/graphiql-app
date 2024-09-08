@@ -50,11 +50,7 @@ const CustomTabPanel = ({
             aria-labelledby={`simple-tab-${index}`}
             {...other}
         >
-            {value === index && (
-                <Box sx={{ p: 3 }}>
-                    <Typography component="div">{children}</Typography>
-                </Box>
-            )}
+            {value === index && <Box sx={{ py: 3 }}>{children}</Box>}
         </div>
     );
 };
@@ -248,9 +244,29 @@ const RestForm: FC<RestFormProps> = ({ body, sendAnswer, sendResponseStatus }) =
     };
     return (
         <>
-            <Grid container spacing={2} alignItems="center" sx={{ width: '100%' }}>
+            <Grid
+                container
+                spacing={2}
+                alignItems="center"
+                sx={{ width: '100%', marginBottom: '2rem' }}
+            >
                 <Grid item>
-                    <FormControl sx={{ minWidth: 120 }} variant="outlined">
+                    <FormControl
+                        sx={{
+                            minWidth: 120,
+                            '.MuiInputBase-root': {
+                                color: theme.palette.custom[
+                                    state.method.toLowerCase()
+                                ],
+                            },
+                            '.MuiOutlinedInput-notchedOutline': {
+                                borderColor:
+                                    theme.palette.custom[state.method.toLowerCase()],
+                            },
+                        }}
+                        variant="outlined"
+                        size={'small'}
+                    >
                         <InputLabel>{t('restClient:methodLabel')}</InputLabel>
                         <Select
                             value={state.method}
@@ -280,14 +296,26 @@ const RestForm: FC<RestFormProps> = ({ body, sendAnswer, sendResponseStatus }) =
                                 `/restful/${state.method}/${e.target.value.toBase64URL()}`
                             )
                         }
+                        size={'small'}
                     />
                 </Grid>
 
                 <Grid item>
                     <Button
-                        size="large"
+                        sx={{
+                            height: '40px',
+                            backgroundColor:
+                                theme.palette.custom[
+                                    state.method.toLocaleLowerCase()
+                                ],
+                            '&:hover': {
+                                backgroundColor:
+                                    theme.palette.custom[
+                                        state.method.toLocaleLowerCase()
+                                    ],
+                            },
+                        }}
                         variant="contained"
-                        color="primary"
                         type="submit"
                         onClick={handleSubmit}
                         disabled={!state.url}
