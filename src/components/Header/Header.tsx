@@ -63,6 +63,7 @@ const Header: FC = () => {
 
     const handleSignOut = () => {
         logout();
+        localStorage.removeItem('savedApis');
         router.push('/');
     };
 
