@@ -188,12 +188,6 @@ const RestForm: FC<RestFormProps> = ({ body, sendAnswer, sendResponseStatus }) =
     };
 
     const handleSubmit = async () => {
-        console.log('Method:', state.method);
-        console.log('URL:', state.url);
-        console.log('Key-Value Pairs:', keyValuePairs);
-        console.log('JSON Body:', jsonBody);
-        console.log('Variables:', variables);
-
         addToHistory({
             method: state.method,
             url: state.url,
@@ -223,21 +217,31 @@ const RestForm: FC<RestFormProps> = ({ body, sendAnswer, sendResponseStatus }) =
         }
 
         try {
-            const response = await fetch(state.url, {
+            const options: Record<string, string | object> = {
                 method: state.method,
-                headers,
-                body:
-                    state.method !== 'GET' && state.method !== 'DELETE'
-                        ? finalJsonBody
-                        : undefined,
-            });
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            };
+            if (state.method !== 'GET' && state.method !== 'DELETE') {
+                options.body = JSON.stringify({
+                    url: state.url,
+                    headers,
+                    body: finalJsonBody,
+                });
+            }
+            const response = await fetch(
+                `/api/restful${state.method === 'GET' || state.method === 'DELETE' ? `?url=${state.url}` : ''}`,
+                options
+            );
+
             const data = (await response.json()) as Record<string, unknown>;
+            sendAnswer(JSON.stringify(data, null, 2));
 
             sendResponseStatus({
                 code: response.status,
                 status: response.statusText,
             });
-            sendAnswer(JSON.stringify(data, null, 2));
         } catch (error) {
             console.error('Error:', error);
         }
