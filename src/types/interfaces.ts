@@ -71,3 +71,8 @@ export interface CustomTabPanelProps {
     index: number;
     value: number;
 }
+
+export interface ResponseStatus {
+    code: string | number;
+    status: string;
+}

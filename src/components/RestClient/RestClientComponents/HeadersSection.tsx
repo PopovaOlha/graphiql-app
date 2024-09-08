@@ -28,6 +28,7 @@ const HeadersSection: FC<HeadersSectionProps> = ({
     handleAddPair,
 }) => {
     const { t } = useTranslation();
+
     return (
         <>
             {keyValuePairs.map((pair, index) => (
