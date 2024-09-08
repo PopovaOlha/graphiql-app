@@ -7,8 +7,5 @@ export const addToHistory = (data: Record<string, string>) => {
         ? [...JSON.parse(existData), { ...data, timestamp }]
         : [{ ...data, timestamp }];
 
-    console.log([{ [timestamp]: data }]);
-    console.log(JSON.stringify([{ [timestamp]: data }]));
-
     localStorage.setItem(key, JSON.stringify(newData));
 };

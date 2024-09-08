@@ -26,28 +26,16 @@ import { Base64, decode } from 'js-base64';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 
 import useUnauthorizedRedirect from '@/hooks/useUnauthorizedRedirect';
+import { addToHistory } from '@/services/historyService';
+import {
+    CustomTabPanelProps,
+    KeyValuePair,
+    RestfulPageState,
+    Variable,
+} from '@/types/interfaces';
 import { replaceVariablesInJson } from '@/utils/utils';
 
-interface RestfulPageState {
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE';
-    url: string;
-}
-
-interface KeyValuePair {
-    key: string;
-    value: string;
-}
-
-interface Variable {
-    name: string;
-    value: string;
-}
-
-interface CustomTabPanelProps {
-    children?: React.ReactNode;
-    index: number;
-    value: number;
-}
+import { ResponseStatusIndicator, VariablesSection } from './RestClientComponents';
 
 Base64.extendBuiltins();
 
@@ -89,12 +77,10 @@ const RestClient = ({ body }: { body: string }) => {
     useEffect(() => {
         const queries = [];
         for (const [key, value] of searchParams.entries()) {
-            console.log(`${key}, ${value}`);
             const newPair = { key: key, value: value };
             queries.push(newPair);
         }
         setKeyValuePairs([...queries, ...keyValuePairs]);
-        console.log({ pathname, searchParams: queries, params });
     }, []);
 
     useUnauthorizedRedirect();
@@ -227,21 +213,6 @@ const RestClient = ({ body }: { body: string }) => {
         setVariables(newVariable);
     };
 
-    const addToHistory = (data: Record<string, string>) => {
-        const key = 'RGC-history';
-        const existData = localStorage.getItem('RGC-history') || '';
-
-        const timestamp: number = Date.now();
-        const newData = existData.length
-            ? [...JSON.parse(existData), { ...data, timestamp }]
-            : [{ ...data, timestamp }];
-
-        console.log([{ [timestamp]: data }]);
-        console.log(JSON.stringify([{ [timestamp]: data }]));
-
-        localStorage.setItem(key, JSON.stringify(newData));
-    };
-
     const handleSubmit = async () => {
         console.log('Method:', state.method);
         console.log('URL:', state.url);
@@ -252,7 +223,7 @@ const RestClient = ({ body }: { body: string }) => {
         addToHistory({
             method: state.method,
             url: state.url,
-            path: window.location.href,
+            path: window.location.href.replace(window.location.origin, ''),
         });
 
         const headers: Record<string, string> = {};
@@ -287,9 +258,6 @@ const RestClient = ({ body }: { body: string }) => {
                         : undefined,
             });
             const data = (await response.json()) as Record<string, unknown>;
-            console.log(response.status);
-            console.log(response.statusText);
-            console.log('Response Data:', data);
 
             setResponseStatus(response.statusText);
             setResponseCode(response.status);
@@ -302,9 +270,7 @@ const RestClient = ({ body }: { body: string }) => {
     return (
         <Container maxWidth="xl">
             <Box sx={{ padding: 2 }}>
-                <Typography variant="h4" gutterBottom component="div">
-                    {t('restClient:title')}
-                </Typography>
+                <Typography variant="h1">{t('restClient:title')}</Typography>
 
                 <Grid
                     container
@@ -348,6 +314,7 @@ const RestClient = ({ body }: { body: string }) => {
 
                     <Grid item>
                         <Button
+                            size="large"
                             variant="contained"
                             color="primary"
                             type="submit"
@@ -472,74 +439,22 @@ const RestClient = ({ body }: { body: string }) => {
                 </CustomTabPanel>
 
                 <CustomTabPanel value={tabValue} index={2}>
-                    {variables.map((variable, index) => (
-                        <Grid
-                            container
-                            spacing={2}
-                            sx={{ mb: 2 }}
-                            key={index}
-                            alignItems="center"
-                        >
-                            <Grid item xs={5}>
-                                <TextField
-                                    label={t('restClient:variables.namePlaceholder')}
-                                    placeholder={t(
-                                        'restClient:variables.namePlaceholder'
-                                    )}
-                                    variant="outlined"
-                                    fullWidth
-                                    value={variable.name}
-                                    onChange={(event) =>
-                                        handleNameChange(index, event)
-                                    }
-                                />
-                            </Grid>
-                            <Grid item xs={5}>
-                                <TextField
-                                    label={t(
-                                        'restClient:variables.valuePlaceholder'
-                                    )}
-                                    placeholder={t(
-                                        'restClient:variables.valuePlaceholder'
-                                    )}
-                                    variant="outlined"
-                                    fullWidth
-                                    value={variable.value}
-                                    onChange={(event) =>
-                                        handleVarValueChange(index, event)
-                                    }
-                                />
-                            </Grid>
-                            <Grid item xs={2}>
-                                <IconButton
-                                    color="secondary"
-                                    onClick={() => handleRemoveVariable(index)}
-                                    aria-label={t(
-                                        'restClient:variables.removeButton'
-                                    )}
-                                >
-                                    <DeleteIcon />
-                                </IconButton>
-                            </Grid>
-                        </Grid>
-                    ))}
-                    <Button
-                        variant="outlined"
-                        startIcon={<AddIcon />}
-                        onClick={handleAddVariable}
-                        sx={{ marginTop: 2 }}
-                    >
-                        {t('restClient:variables.addVariableButton')}
-                    </Button>
+                    <VariablesSection
+                        variables={variables}
+                        handleAddVariable={handleAddVariable}
+                        handleRemoveVariable={handleRemoveVariable}
+                        handleVarValueChange={handleVarValueChange}
+                        handleNameChange={handleNameChange}
+                    />
                 </CustomTabPanel>
             </Box>
 
             <Box>
                 {responseCode && (
-                    <Box>
-                        {t('restClient:response.status')} {responseCode}{' '}
-                        {responseStatus}
-                    </Box>
+                    <ResponseStatusIndicator
+                        responseCode={responseCode}
+                        responseStatus={responseStatus}
+                    />
                 )}
                 <Editor
                     height="50vh"
