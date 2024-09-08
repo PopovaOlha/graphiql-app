@@ -1,11 +1,8 @@
-.cardGroupContainer {
-    margin-top: 2rem;
-}
-
-.cardContainer {
+.reactCourse {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 2rem 0;
+    align-items: center;
     gap: 1rem;
+    max-width: 50rem;
 }
