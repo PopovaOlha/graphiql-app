@@ -1,8 +1,11 @@
-import { ChangeEvent, FC } from 'react';
+'use client';
+
+import { ChangeEvent, FC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, Grid, IconButton, TextField } from '@mui/material';
+import { usePathname } from 'next/navigation';
 
 import { KeyValuePair } from '@/types/interfaces';
 
@@ -28,6 +31,19 @@ const HeadersSection: FC<HeadersSectionProps> = ({
     handleAddPair,
 }) => {
     const { t } = useTranslation();
+    const pathname = usePathname();
+
+    useEffect(() => {
+        window.history.replaceState(null, '', pathname);
+
+        const newQueries = new URLSearchParams();
+        keyValuePairs.forEach((pair) => {
+            if (pair.key.length && pair.value.length) {
+                newQueries.set(pair.key, pair.value);
+            }
+        });
+        window.history.pushState({}, '', `${pathname}?${newQueries.toString()}`);
+    }, [keyValuePairs, pathname]);
 
     return (
         <>

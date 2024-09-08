@@ -1,3 +1,7 @@
+import { ReadonlyURLSearchParams } from 'next/navigation';
+
+import { KeyValuePair } from '@/types/interfaces';
+
 interface Variable {
     name: string;
     value: string;
@@ -25,4 +29,17 @@ const isValidJson = (str: string): boolean => {
     } catch {
         return false;
     }
+};
+
+export const updateQueryParams = (
+    params: ReadonlyURLSearchParams,
+    pairs: KeyValuePair[],
+    index: number,
+    path: string
+) => {
+    const currentParams = new URLSearchParams(params.toString());
+    currentParams.delete(pairs[index].key);
+    const newQuery = currentParams.toString();
+    const newUrl = newQuery ? `${path}?${newQuery}` : `${path}`;
+    window.history.pushState({}, '', newUrl);
 };

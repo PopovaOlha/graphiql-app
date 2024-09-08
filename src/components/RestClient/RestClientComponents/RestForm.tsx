@@ -21,7 +21,6 @@ import { SelectChangeEvent } from '@mui/material';
 import { Base64, decode } from 'js-base64';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 
-import useUnauthorizedRedirect from '@/hooks/useUnauthorizedRedirect';
 import { addToHistory } from '@/services/historyService';
 import {
     CustomTabPanelProps,
@@ -30,7 +29,7 @@ import {
     RestfulPageState,
     Variable,
 } from '@/types/interfaces';
-import { replaceVariablesInJson } from '@/utils/utils';
+import { replaceVariablesInJson, updateQueryParams } from '@/utils/utils';
 
 import { HeadersSection } from './HeadersSection';
 import { VariablesSection } from './VariablesSection';
@@ -78,6 +77,29 @@ const RestForm: FC<RestFormProps> = ({ body, sendAnswer, sendResponseStatus }) =
     const searchParams = useSearchParams();
     const params = useParams();
 
+    const { t } = useTranslation();
+
+    const theme = useTheme();
+    const mode = theme.palette.mode;
+
+    const [state, setState] = useState<RestfulPageState>({
+        method: params.method as 'GET' | 'POST' | 'PUT' | 'DELETE',
+        url: params && params.url ? decode(params.url as string) : '',
+    });
+    const [jsonBody, setJsonBody] = useState<string | undefined>(
+        body.length ? JSON.parse(decode(body)) : ''
+    );
+    const [keyValuePairs, setKeyValuePairs] = useState<KeyValuePair[]>([
+        { key: '', value: '' },
+    ]);
+    const [variables, setVariables] = useState<Variable[]>([
+        { name: '', value: '' },
+    ]);
+
+    const [editorLang, setEditorLang] = useState<string>('json');
+
+    const [tabValue, setTabValue] = useState<number>(0);
+
     useEffect(() => {
         const queries = [];
         for (const [key, value] of searchParams.entries()) {
@@ -87,50 +109,11 @@ const RestForm: FC<RestFormProps> = ({ body, sendAnswer, sendResponseStatus }) =
         setKeyValuePairs([...queries, ...keyValuePairs]);
     }, []);
 
-    useUnauthorizedRedirect();
-    const { t } = useTranslation();
-
-    const [state, setState] = useState<RestfulPageState>({
-        method: params.method as 'GET' | 'POST' | 'PUT' | 'DELETE',
-        url: params && params.url ? decode(params.url as string) : '',
-    });
-
-    const [editorLang, setEditorLang] = useState<string>('json');
-
-    const [tabValue, setTabValue] = useState<number>(0);
-    const [keyValuePairs, setKeyValuePairs] = useState<KeyValuePair[]>([
-        { key: '', value: '' },
-    ]);
-    const [variables, setVariables] = useState<Variable[]>([
-        { name: '', value: '' },
-    ]);
-
-    const theme = useTheme();
-    const mode = theme.palette.mode;
-
-    const [jsonBody, setJsonBody] = useState<string | undefined>(
-        body.length ? JSON.parse(decode(body)) : ''
-    );
-
     useEffect(() => {
-        window.history.pushState(
-            {},
-            '',
-            `/restful/${state.method}/${state.url.toBase64URL()}${jsonBody?.length ? `/${JSON.stringify(jsonBody).toBase64URL()}` : ''}?${searchParams.toString()}`
-        );
-    }, [state.method, state.url, jsonBody]);
+        const newPath = `/restful/${state.method}/${state.url.toBase64URL()}${jsonBody?.length ? `/${JSON.stringify(jsonBody).toBase64URL()}` : ''}?${searchParams.toString()}`;
 
-    useEffect(() => {
-        window.history.replaceState(null, '', pathname);
-
-        const newQueries = new URLSearchParams();
-        keyValuePairs.forEach((pair) => {
-            if (pair.key.length && pair.value.length) {
-                newQueries.set(pair.key, pair.value);
-            }
-        });
-        window.history.pushState({}, '', `${pathname}?${newQueries.toString()}`);
-    }, [keyValuePairs]);
+        window.history.pushState({}, '', newPath);
+    }, [state.method, state.url, jsonBody, searchParams]);
 
     const handleMethodChange = (
         event: SelectChangeEvent<'GET' | 'POST' | 'PUT' | 'DELETE'>
@@ -175,11 +158,7 @@ const RestForm: FC<RestFormProps> = ({ body, sendAnswer, sendResponseStatus }) =
     };
 
     const handleRemovePair = (index: number) => {
-        const currentParams = new URLSearchParams(searchParams.toString());
-        currentParams.delete(keyValuePairs[index].key);
-        const newQuery = currentParams.toString();
-        const newUrl = newQuery ? `${pathname}?${newQuery}` : `${pathname}`;
-        window.history.pushState({}, '', newUrl);
+        updateQueryParams(searchParams, keyValuePairs, index, pathname);
 
         const newKeyValuePairs = keyValuePairs.filter((_, i) => i !== index);
         setKeyValuePairs(newKeyValuePairs);
