@@ -27,6 +27,7 @@ const i18nNamespaces: string[] = [
     'restClient',
     'authors',
     'welcomePage',
+    'history',
 ];
 
 export default async function RootLayout({

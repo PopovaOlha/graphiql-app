@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
 import AddIcon from '@mui/icons-material/Add';
@@ -22,6 +22,8 @@ import {
     useTheme,
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
+import { Base64, decode } from 'js-base64';
+import { useParams, usePathname, useSearchParams } from 'next/navigation';
 
 import useUnauthorizedRedirect from '@/hooks/useUnauthorizedRedirect';
 import { replaceVariablesInJson } from '@/utils/utils';
@@ -46,6 +48,8 @@ interface CustomTabPanelProps {
     index: number;
     value: number;
 }
+
+Base64.extendBuiltins();
 
 const CustomTabPanel = ({
     children,
@@ -77,13 +81,28 @@ const tabsProps = (index: number) => {
     };
 };
 
-const RestfulPage = () => {
+const RestClient = ({ body }: { body: string }) => {
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+    const params = useParams();
+
+    useEffect(() => {
+        const queries = [];
+        for (const [key, value] of searchParams.entries()) {
+            console.log(`${key}, ${value}`);
+            const newPair = { key: key, value: value };
+            queries.push(newPair);
+        }
+        setKeyValuePairs([...queries, ...keyValuePairs]);
+        console.log({ pathname, searchParams: queries, params });
+    }, []);
+
     useUnauthorizedRedirect();
     const { t } = useTranslation();
 
     const [state, setState] = useState<RestfulPageState>({
-        method: 'GET',
-        url: '',
+        method: params.method as 'GET' | 'POST' | 'PUT' | 'DELETE',
+        url: params && params.url ? decode(params.url as string) : '',
     });
 
     const [code, setCode] = useState<string>(
@@ -104,7 +123,29 @@ const RestfulPage = () => {
     const theme = useTheme();
     const mode = theme.palette.mode;
 
-    const [jsonBody, setJsonBody] = useState<string | undefined>('');
+    const [jsonBody, setJsonBody] = useState<string | undefined>(
+        body.length ? JSON.parse(decode(body)) : ''
+    );
+
+    useEffect(() => {
+        window.history.pushState(
+            {},
+            '',
+            `/restful/${state.method}/${state.url.toBase64URL()}${jsonBody?.length ? `/${JSON.stringify(jsonBody).toBase64URL()}` : ''}?${searchParams.toString()}`
+        );
+    }, [state.method, state.url, jsonBody]);
+
+    useEffect(() => {
+        window.history.replaceState(null, '', pathname);
+
+        const newQueries = new URLSearchParams();
+        keyValuePairs.forEach((pair) => {
+            if (pair.key.length && pair.value.length) {
+                newQueries.set(pair.key, pair.value);
+            }
+        });
+        window.history.pushState({}, '', `${pathname}?${newQueries.toString()}`);
+    }, [keyValuePairs]);
 
     const handleMethodChange = (
         event: SelectChangeEvent<'GET' | 'POST' | 'PUT' | 'DELETE'>
@@ -149,6 +190,12 @@ const RestfulPage = () => {
     };
 
     const handleRemovePair = (index: number) => {
+        const currentParams = new URLSearchParams(searchParams.toString());
+        currentParams.delete(keyValuePairs[index].key);
+        const newQuery = currentParams.toString();
+        const newUrl = newQuery ? `${pathname}?${newQuery}` : `${pathname}`;
+        window.history.pushState({}, '', newUrl);
+
         const newKeyValuePairs = keyValuePairs.filter((_, i) => i !== index);
         setKeyValuePairs(newKeyValuePairs);
     };
@@ -180,12 +227,33 @@ const RestfulPage = () => {
         setVariables(newVariable);
     };
 
+    const addToHistory = (data: Record<string, string>) => {
+        const key = 'RGC-history';
+        const existData = localStorage.getItem('RGC-history') || '';
+
+        const timestamp: number = Date.now();
+        const newData = existData.length
+            ? [...JSON.parse(existData), { ...data, timestamp }]
+            : [{ ...data, timestamp }];
+
+        console.log([{ [timestamp]: data }]);
+        console.log(JSON.stringify([{ [timestamp]: data }]));
+
+        localStorage.setItem(key, JSON.stringify(newData));
+    };
+
     const handleSubmit = async () => {
         console.log('Method:', state.method);
         console.log('URL:', state.url);
         console.log('Key-Value Pairs:', keyValuePairs);
         console.log('JSON Body:', jsonBody);
         console.log('Variables:', variables);
+
+        addToHistory({
+            method: state.method,
+            url: state.url,
+            path: window.location.href,
+        });
 
         const headers: Record<string, string> = {};
         keyValuePairs.forEach((pair) => {
@@ -268,6 +336,13 @@ const RestfulPage = () => {
                             variant="outlined"
                             value={state.url}
                             onChange={handleUrlChange}
+                            onBlur={(e) =>
+                                window.history.pushState(
+                                    {},
+                                    '',
+                                    `/restful/${state.method}/${e.target.value.toBase64URL()}`
+                                )
+                            }
                         />
                     </Grid>
 
@@ -377,14 +452,23 @@ const RestfulPage = () => {
                             <MenuItem value="xml">XML</MenuItem>
                         </Select>
                     </FormControl>
-                    <Editor
-                        height="200px"
-                        defaultLanguage={editorLang}
-                        value={jsonBody}
-                        theme={mode === 'light' ? 'light' : 'vs-dark'}
-                        options={{ minimap: { enabled: false } }}
-                        onChange={(value) => setJsonBody(value)}
-                    />
+                    {state.url.length ? (
+                        <Editor
+                            height="200px"
+                            defaultLanguage={editorLang}
+                            value={jsonBody}
+                            theme={mode === 'light' ? 'light' : 'vs-dark'}
+                            options={{
+                                minimap: { enabled: false },
+                                readOnly: !state.url.length,
+                            }}
+                            onChange={(value) => setJsonBody(value)}
+                        />
+                    ) : (
+                        <Typography variant={'body1'}>
+                            {t('restClient:emptyURL')}
+                        </Typography>
+                    )}
                 </CustomTabPanel>
 
                 <CustomTabPanel value={tabValue} index={2}>
@@ -473,4 +557,4 @@ const RestfulPage = () => {
     );
 };
 
-export default RestfulPage;
+export { RestClient };

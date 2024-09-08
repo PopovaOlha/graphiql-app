@@ -133,6 +133,6 @@ describe('WelcomePage', () => {
         const restClientButton = screen.getByText('welcomePage:restClient');
         fireEvent.click(restClientButton);
 
-        expect(mockPush).toHaveBeenCalledWith('/restful');
+        expect(mockPush).toHaveBeenCalledWith('/restful/GET');
     });
 });
