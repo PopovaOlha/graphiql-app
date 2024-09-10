@@ -1,5 +1,3 @@
-import { vi } from 'vitest';
-
 export const mockAuth = {
     currentUser: {
         displayName: 'Mock User',

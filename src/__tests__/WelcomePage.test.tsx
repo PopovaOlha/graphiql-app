@@ -1,6 +1,5 @@
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
 
 import { mockAuth } from '@/__mocks__/firebase';
 import WelcomePage from '@/app/[locale]/welcomepage/page';
