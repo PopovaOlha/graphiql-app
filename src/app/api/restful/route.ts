@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
         const url = searchParams.get('url');
-        console.log(url);
+
         if (!url) {
             return NextResponse.json({ error: 'URL is required' }, { status: 400 });
         }
@@ -107,7 +107,7 @@ export async function DELETE(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
         const url = searchParams.get('url');
-        console.log(url);
+
         if (!url) {
             return NextResponse.json({ error: 'URL is required' }, { status: 400 });
         }
