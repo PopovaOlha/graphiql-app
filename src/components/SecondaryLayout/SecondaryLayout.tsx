@@ -3,13 +3,53 @@
 import { FC, ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import { Box, IconButton } from '@mui/material';
+import { Box, BoxProps, IconButton, styled } from '@mui/material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { GraphIcon, HistoryIcon, RestIcon } from '../Icons';
 
 import styles from './SecondaryLayout.module.scss';
+
+interface LayoutProps extends BoxProps {
+    isExpanded?: boolean;
+}
+
+const LayoutContainer = styled(Box, {
+    shouldForwardProp: (prop) => prop !== 'isExpanded',
+})<LayoutProps>(({ isExpanded }) => ({
+    position: 'relative',
+    display: 'grid',
+    gridTemplateColumns: isExpanded ? '16rem 1fr' : '5rem 1fr',
+    transition: 'all 0.5s',
+    flex: '1 1 100%',
+}));
+
+const Panel = styled(Box, {
+    shouldForwardProp: (prop) => prop !== 'isExpanded',
+})<LayoutProps>(({ theme, isExpanded }) => ({
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: isExpanded ? 'flex-start' : 'center',
+    gap: '1rem',
+    padding: '5rem 1rem 1rem',
+    backgroundColor: theme.palette.action.hover,
+}));
+
+const PanelButton = styled(IconButton, {
+    shouldForwardProp: (prop) => prop !== 'isExpanded',
+})<LayoutProps>(({ isExpanded }) => ({
+    position: 'absolute',
+    top: '1rem',
+    right: '1rem',
+    width: '3rem',
+    height: '3rem',
+    '& svg': {
+        transition: 'all 0.5s',
+        transform: isExpanded ? 'rotate(0deg)' : 'rotate(180deg)',
+    },
+}));
 
 const SecondaryLayout: FC<{ children: ReactNode }> = ({ children }) => {
     const [isExpanded, setIsExpanded] = useState(true);
@@ -19,16 +59,19 @@ const SecondaryLayout: FC<{ children: ReactNode }> = ({ children }) => {
     const buttonTitle = isExpanded ? t('clients.collapse') : t('clients.expand');
 
     return (
-        <Box
+        <LayoutContainer
             component={'main'}
-            className={`${styles.container} ${isExpanded ? styles.expanded : ''}`}
+            isExpanded={isExpanded}
+            className={isExpanded ? styles.expanded : ''}
         >
-            <Box
-                className={styles.panel}
-                sx={{
-                    bgcolor: 'action.hover',
-                }}
-            >
+            <Panel isExpanded={isExpanded}>
+                <PanelButton
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    title={buttonTitle}
+                    isExpanded={isExpanded}
+                >
+                    <ArrowBackIosNewIcon />
+                </PanelButton>
                 <Link
                     href={'/restful/GET'}
                     className={`${styles.panelLink} ${pathname?.includes('/restful') ? styles.panelLinkActive : ''}`}
@@ -50,29 +93,9 @@ const SecondaryLayout: FC<{ children: ReactNode }> = ({ children }) => {
                     <HistoryIcon />
                     {t('clients.history')}
                 </Link>
-                <IconButton
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    title={buttonTitle}
-                    sx={{
-                        position: 'absolute',
-                        bottom: '1rem',
-                        right: '1rem',
-                        width: '3rem',
-                        height: '3rem',
-                    }}
-                    className={styles.panelButton}
-                >
-                    <ArrowBackIosNewIcon />
-                </IconButton>
-            </Box>
-            <Box
-                sx={{
-                    p: 2,
-                }}
-            >
-                {children}
-            </Box>
-        </Box>
+            </Panel>
+            <Box>{children}</Box>
+        </LayoutContainer>
     );
 };
 

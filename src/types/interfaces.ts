@@ -50,3 +50,29 @@ export interface ClientProviderProps {
     resources: Record<string, ResourceLanguage>;
     i18nNamespaces: string[];
 }
+
+export interface RestfulPageState {
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+    url: string;
+}
+
+export interface KeyValuePair {
+    key: string;
+    value: string;
+}
+
+export interface Variable {
+    name: string;
+    value: string;
+}
+
+export interface CustomTabPanelProps {
+    children?: React.ReactNode;
+    index: number;
+    value: number;
+}
+
+export interface ResponseStatus {
+    code: string | number;
+    status: string;
+}
