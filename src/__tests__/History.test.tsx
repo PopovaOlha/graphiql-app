@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
 
 import PagesLayout from '@/app/[locale]/history/layout';
 import History from '@/app/[locale]/history/page';
