@@ -1,8 +1,8 @@
 'use client';
 
+import { FC, useEffect, useState } from 'react';
 import { Box, Button, TextField } from '@mui/material';
 import { GraphQLSchema } from 'graphql';
-import { FC, useEffect, useState } from 'react';
 
 import DocumentationViewer from '@/components/Graphiql/DocumentationViewer/DocumentationViewer';
 import { executeGraphQLQuery } from '@/services/graphiqlService';
@@ -11,11 +11,24 @@ import { fetchGraphQLSchema } from '@/services/schemaService';
 import { GraphQLResponse } from '@/types/interfaces';
 import { prettifyQuery } from '@/utils/prettifyQuery';
 
+interface Variable {
+    name: string;
+    value: string;
+}
+
+export const replaceVariablesInQuery = (query: string, vars: Variable[]): string => {
+    vars.forEach((variable) => {
+        const regex = new RegExp(`\\$${variable.name}`, 'g');
+        query = query.replace(regex, `"${variable.value}"`);
+    });
+    return query;
+};
+
 const GraphiQLClient: FC = () => {
     const [endpointUrl, setEndpointUrl] = useState('');
     const [sdlUrl, setSdlUrl] = useState('');
     const [query, setQuery] = useState('');
-    const [variables, setVariables] = useState('');
+    const [variables, setVariables] = useState<Variable[]>([]);
     const [headers, setHeaders] = useState<{ key: string; value: string }[]>([
         { key: 'Content-Type', value: 'application/json' },
     ]);
@@ -40,22 +53,28 @@ const GraphiQLClient: FC = () => {
     }, [query]);
 
     const handleQueryExecution = async () => {
-        const result = await executeGraphQLQuery(
-            endpointUrl,
-            query,
-            variables,
-            headers
-        );
+        let finalQuery = query;
+        try {
+            finalQuery = replaceVariablesInQuery(query, variables);
+            const variablesString = JSON.stringify(variables);
 
-        setResponse(result);
-        setStatusCode(result.statusCode);
-
-        addToHistory({
-            endpointUrl,
-            query,
-            variables,
-            headers: JSON.stringify(headers),
-        });
+            const result = await executeGraphQLQuery(
+                endpointUrl,
+                finalQuery,
+                variablesString,
+                headers
+            );
+            setResponse(result);
+            setStatusCode(result.statusCode);
+            addToHistory({
+                endpointUrl,
+                query: finalQuery,
+                variables: JSON.stringify(variables),
+                headers: JSON.stringify(headers),
+            });
+        } catch (error) {
+            console.error('Error executing GraphQL query:', error);
+        }
     };
 
     const handleFetchSchema = async () => {
@@ -71,6 +90,19 @@ const GraphiQLClient: FC = () => {
         if (fetchedSchema) {
             setSchema(fetchedSchema);
         }
+    };
+
+    const handleVariableChange = (
+        index: number,
+        field: 'name' | 'value',
+        value: string
+    ) => {
+        const updatedVariables = [...variables];
+        updatedVariables[index] = {
+            ...updatedVariables[index],
+            [field]: value,
+        };
+        setVariables(updatedVariables);
     };
 
     return (
@@ -146,17 +178,41 @@ const GraphiQLClient: FC = () => {
                     multiline
                     rows={6}
                 />
-                <TextField
-                    label="Variables (JSON format)"
-                    value={variables}
-                    onChange={(e) => setVariables(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                    multiline
-                    rows={4}
-                />
+                {variables.map((variable, index) => (
+                    <Box key={index} display="flex" gap={2} my={1}>
+                        <TextField
+                            label="Variable Name"
+                            value={variable.name}
+                            onChange={(e) =>
+                                handleVariableChange(index, 'name', e.target.value)
+                            }
+                        />
+                        <TextField
+                            label="Variable Value"
+                            value={variable.value}
+                            onChange={(e) =>
+                                handleVariableChange(index, 'value', e.target.value)
+                            }
+                        />
+                        <Button
+                            onClick={() =>
+                                setVariables(variables.filter((_, i) => i !== index))
+                            }
+                        >
+                            Remove
+                        </Button>
+                    </Box>
+                ))}
+                <Button
+                    variant="outlined"
+                    onClick={() =>
+                        setVariables([...variables, { name: '', value: '' }])
+                    }
+                >
+                    Add Variable
+                </Button>
                 <Button variant="contained" onClick={handleQueryExecution}>
-                    Execute
+                    Execute Query
                 </Button>
                 <Button
                     variant="outlined"
