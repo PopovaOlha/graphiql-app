@@ -28,22 +28,33 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
         params && params.url ? decode(params.url as string) : ''
     );
     const [sdlUrl, setSdlUrl] = useState('');
-    const [query, setQuery] = useState(body.length ? JSON.parse(decode(body)) : '');
+    const [query, setQuery] = useState('');
     const [variables, setVariables] = useState('');
-    const [headers, setHeaders] = useState<{ key: string; value: string }[]>([
-        { key: 'Content-Type', value: 'application/json' },
-    ]);
+    const [headers, setHeaders] = useState<{ key: string; value: string }[]>([]);
     const [response, setResponse] = useState<GraphQLResponse>();
     const [statusCode, setStatusCode] = useState<number | null>(null);
     const [schema, setSchema] = useState<GraphQLSchema | null>(null);
 
     useEffect(() => {
-        const queries = [];
-        for (const [key, value] of searchParams.entries()) {
-            const newPair = { key: key, value: value };
-            queries.push(newPair);
+        if (searchParams.toString().length > 0) {
+            const queries = [];
+            for (const [key, value] of searchParams.entries()) {
+                const newPair = { key: key, value: value };
+                queries.push(newPair);
+            }
+            setHeaders([...queries]);
+        } else {
+            setHeaders([{ key: 'Content-Type', value: 'application/json' }]);
         }
-        setHeaders([...queries, ...headers]);
+
+        if (body.length) {
+            const bodyObject = JSON.parse(decode(body));
+            const savedQuery = bodyObject.query;
+            const savedVariables = bodyObject.variables;
+
+            setQuery(savedQuery);
+            setVariables(savedVariables);
+        }
     }, []);
 
     useEffect(() => {
@@ -53,10 +64,10 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
     }, [endpointUrl]);
 
     useEffect(() => {
-        const newPath = `/graphiql/GRAPHQL/${endpointUrl.toBase64URL()}${query?.length ? `/${JSON.stringify(query).toBase64URL()}` : ''}?${searchParams.toString()}`;
+        const newPath = `/graphiql/GRAPHQL/${endpointUrl.toBase64URL()}${query?.length ? `/${JSON.stringify({ query, variables }).toBase64URL()}` : ''}?${searchParams.toString()}`;
 
         window.history.pushState({}, '', newPath);
-    }, [endpointUrl, searchParams, query]);
+    }, [endpointUrl, searchParams, query, variables]);
 
     useEffect(() => {
         window.history.replaceState(null, '', pathname);
@@ -81,6 +92,12 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
     }, [query]);
 
     const handleQueryExecution = async () => {
+        addToHistory({
+            method: 'GRAPHQL',
+            path: window.location.href.replace(window.location.origin, ''),
+            url: endpointUrl,
+        });
+
         const result = await executeGraphQLQuery(
             endpointUrl,
             query,
@@ -90,12 +107,6 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
 
         setResponse(result);
         setStatusCode(result.statusCode);
-
-        addToHistory({
-            method: 'GRAPHQL',
-            path: window.location.href.replace(window.location.origin, ''),
-            url: endpointUrl,
-        });
     };
 
     const handleFetchSchema = async () => {
