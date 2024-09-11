@@ -45,7 +45,7 @@ const WelcomePage = () => {
                             <Button
                                 variant="contained"
                                 className={styles.button}
-                                onClick={() => router.push('/graphiql')}
+                                onClick={() => router.push('/graphiql/GRAPHQL')}
                             >
                                 {t('welcomePage:graphiqlClient')}
                             </Button>

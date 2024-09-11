@@ -80,8 +80,8 @@ const SecondaryLayout: FC<{ children: ReactNode }> = ({ children }) => {
                     REST Api
                 </Link>
                 <Link
-                    href={'/graphiql'}
-                    className={`${styles.panelLink} ${pathname === '/graphiql' ? styles.panelLinkActive : ''}`}
+                    href={'/graphiql/GRAPHQL'}
+                    className={`${styles.panelLink} ${pathname?.includes('/graphiql') ? styles.panelLinkActive : ''}`}
                 >
                     <GraphIcon />
                     GraphiQL

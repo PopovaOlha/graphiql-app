@@ -1,8 +1,11 @@
 'use client';
 
 import { FC, useEffect, useState } from 'react';
-import { Box, Button, TextField } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { Box, Button, TextField, Typography } from '@mui/material';
 import { GraphQLSchema } from 'graphql';
+import { Base64, decode } from 'js-base64';
+import { useParams, usePathname, useSearchParams } from 'next/navigation';
 
 import DocumentationViewer from '@/components/Graphiql/DocumentationViewer/DocumentationViewer';
 import { executeGraphQLQuery } from '@/services/graphiqlService';
@@ -10,11 +13,22 @@ import { addToHistory } from '@/services/historyService';
 import { fetchGraphQLSchema } from '@/services/schemaService';
 import { GraphQLResponse } from '@/types/interfaces';
 import { prettifyQuery } from '@/utils/prettifyQuery';
+import { updateQueryParams } from '@/utils/utils';
 
-const GraphiQLClient: FC = () => {
-    const [endpointUrl, setEndpointUrl] = useState('');
+Base64.extendBuiltins();
+
+const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+    const params = useParams();
+
+    const { t } = useTranslation();
+
+    const [endpointUrl, setEndpointUrl] = useState(
+        params && params.url ? decode(params.url as string) : ''
+    );
     const [sdlUrl, setSdlUrl] = useState('');
-    const [query, setQuery] = useState('');
+    const [query, setQuery] = useState(body.length ? JSON.parse(decode(body)) : '');
     const [variables, setVariables] = useState('');
     const [headers, setHeaders] = useState<{ key: string; value: string }[]>([
         { key: 'Content-Type', value: 'application/json' },
@@ -24,10 +38,37 @@ const GraphiQLClient: FC = () => {
     const [schema, setSchema] = useState<GraphQLSchema | null>(null);
 
     useEffect(() => {
+        const queries = [];
+        for (const [key, value] of searchParams.entries()) {
+            const newPair = { key: key, value: value };
+            queries.push(newPair);
+        }
+        setHeaders([...queries, ...headers]);
+    }, []);
+
+    useEffect(() => {
         if (endpointUrl) {
             setSdlUrl(`${endpointUrl}?sdl`);
         }
     }, [endpointUrl]);
+
+    useEffect(() => {
+        const newPath = `/graphiql/GRAPHQL/${endpointUrl.toBase64URL()}${query?.length ? `/${JSON.stringify(query).toBase64URL()}` : ''}?${searchParams.toString()}`;
+
+        window.history.pushState({}, '', newPath);
+    }, [endpointUrl, searchParams, query]);
+
+    useEffect(() => {
+        window.history.replaceState(null, '', pathname);
+
+        const newQueries = new URLSearchParams();
+        headers.forEach((pair) => {
+            if (pair.key.length && pair.value.length) {
+                newQueries.set(pair.key, pair.value);
+            }
+        });
+        window.history.pushState({}, '', `${pathname}?${newQueries.toString()}`);
+    }, [headers, pathname]);
 
     useEffect(() => {
         const prettifyCurrentQuery = async () => {
@@ -52,7 +93,7 @@ const GraphiQLClient: FC = () => {
 
         addToHistory({
             method: 'GRAPHQL',
-            path: window.location.href,
+            path: window.location.href.replace(window.location.origin, ''),
             url: endpointUrl,
         });
     };
@@ -81,6 +122,13 @@ const GraphiQLClient: FC = () => {
                     onChange={(e) => setEndpointUrl(e.target.value)}
                     fullWidth
                     margin="normal"
+                    onBlur={(e) =>
+                        window.history.pushState(
+                            {},
+                            '',
+                            `/graphiql/GRAPHQL/${e.target.value.toBase64URL()}?${searchParams.toString()}`
+                        )
+                    }
                 />
                 <TextField
                     label="SDL URL"
@@ -125,6 +173,12 @@ const GraphiQLClient: FC = () => {
                             />
                             <Button
                                 onClick={() => {
+                                    updateQueryParams(
+                                        searchParams,
+                                        headers,
+                                        index,
+                                        pathname
+                                    );
                                     const updatedHeaders = headers.filter(
                                         (_, i) => i !== index
                                     );
@@ -136,15 +190,22 @@ const GraphiQLClient: FC = () => {
                         </Box>
                     ))}
                 </Box>
-                <TextField
-                    label="GraphQL Query"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                    multiline
-                    rows={6}
-                />
+                {endpointUrl.length ? (
+                    <TextField
+                        label="GraphQL Query"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        multiline
+                        rows={6}
+                    />
+                ) : (
+                    <Typography variant={'body1'}>
+                        {t('restClient:emptyURL')}
+                    </Typography>
+                )}
+
                 <TextField
                     label="Variables (JSON format)"
                     value={variables}

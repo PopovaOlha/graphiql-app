@@ -15,6 +15,8 @@ export default function NotFound() {
 
         if (segments.length === 1 && segments[0] === 'restful') {
             router.replace('/restful/GET');
+        } else if (segments.length === 1 && segments[0] === 'graphiql') {
+            router.replace('/graphiql/GRAPHQL');
         }
     }, [router]);
 
