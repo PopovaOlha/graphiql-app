@@ -297,7 +297,7 @@ const RestForm: FC<RestFormProps> = ({ body, sendAnswer, sendResponseStatus }) =
                             window.history.pushState(
                                 {},
                                 '',
-                                `/restful/${state.method}/${e.target.value.toBase64URL()}`
+                                `/restful/${state.method}/${e.target.value.toBase64URL()}?${searchParams.toString()}`
                             )
                         }
                         size={'small'}

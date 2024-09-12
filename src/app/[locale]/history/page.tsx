@@ -169,7 +169,10 @@ const History = () => {
                             </CustomLink>
                         </Link>{' '}
                         {t('history:or')}{' '}
-                        <Link href="/graphiql" style={{ textDecoration: 'none' }}>
+                        <Link
+                            href="/graphiql/GRAPHQL"
+                            style={{ textDecoration: 'none' }}
+                        >
                             <CustomLink color={'primary'} component={'span'}>
                                 GraphQL
                             </CustomLink>
