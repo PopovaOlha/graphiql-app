@@ -50,3 +50,12 @@ export interface ClientProviderProps {
     resources: Record<string, ResourceLanguage>;
     i18nNamespaces: string[];
 }
+export interface Variable {
+    name: string;
+    value: string;
+}
+
+export interface KeyValuePair {
+    key: string;
+    value: string;
+}

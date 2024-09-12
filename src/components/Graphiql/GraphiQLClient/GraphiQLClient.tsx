@@ -1,40 +1,37 @@
 'use client';
 
-import { FC, useEffect, useState } from 'react';
-import { Box, Button, TextField } from '@mui/material';
+import Editor from '@monaco-editor/react';
+import { Box, Button, Tab, Tabs, TextField, useTheme } from '@mui/material';
 import { GraphQLSchema } from 'graphql';
+import { ChangeEvent, FC, useEffect, useState } from 'react';
 
 import DocumentationViewer from '@/components/Graphiql/DocumentationViewer/DocumentationViewer';
+import { HeadersSection } from '@/components/Graphiql/HeadersSection/HeadersSection';
+import { VariablesSection } from '@/components/Graphiql/VariableSection/VariableSection';
 import { executeGraphQLQuery } from '@/services/graphiqlService';
 import { addToHistory } from '@/services/historyService';
 import { fetchGraphQLSchema } from '@/services/schemaService';
-import { GraphQLResponse } from '@/types/interfaces';
+import { GraphQLResponse, KeyValuePair, Variable } from '@/types/interfaces';
 import { prettifyQuery } from '@/utils/prettifyQuery';
-
-interface Variable {
-    name: string;
-    value: string;
-}
-
-export const replaceVariablesInQuery = (query: string, vars: Variable[]): string => {
-    vars.forEach((variable) => {
-        const regex = new RegExp(`\\$${variable.name}`, 'g');
-        query = query.replace(regex, `"${variable.value}"`);
-    });
-    return query;
-};
+import { replaceVariablesInJson } from '@/utils/utils';
 
 const GraphiQLClient: FC = () => {
     const [endpointUrl, setEndpointUrl] = useState('');
     const [sdlUrl, setSdlUrl] = useState('');
     const [query, setQuery] = useState('');
-    const [variables, setVariables] = useState<Variable[]>([]);
-    const [headers, setHeaders] = useState<{ key: string; value: string }[]>([
+    const [variables, setVariables] = useState<Variable[]>([
+        { name: '', value: '' },
+    ]);
+    const [headers, setHeaders] = useState<KeyValuePair[]>([
         { key: 'Content-Type', value: 'application/json' },
     ]);
-    const [response, setResponse] = useState<GraphQLResponse>();
+    const [response, setResponse] = useState<GraphQLResponse | null>(null);
     const [statusCode, setStatusCode] = useState<number | null>(null);
     const [schema, setSchema] = useState<GraphQLSchema | null>(null);
+    const [tabValue, setTabValue] = useState<number>(0);
+
+    const theme = useTheme();
+    const mode = theme.palette.mode;
 
     useEffect(() => {
         if (endpointUrl) {
@@ -53,27 +50,53 @@ const GraphiQLClient: FC = () => {
     }, [query]);
 
     const handleQueryExecution = async () => {
-        let finalQuery = query;
-        try {
-            finalQuery = replaceVariablesInQuery(query, variables);
-            const variablesString = JSON.stringify(variables);
+        const queryWithVariables = replaceVariablesInJson(query, variables);
 
+        const variablesObject = variables.reduce(
+            (acc, { name, value }) => {
+                acc[name] = isNaN(Number(value)) ? value : Number(value);
+                return acc;
+            },
+            {} as Record<string, unknown>
+        );
+
+        const headersObject = headers.reduce(
+            (acc, { key, value }) => {
+                acc[key] = value;
+                return acc;
+            },
+            {} as Record<string, string>
+        );
+
+        const headersArray: KeyValuePair[] = Object.entries(headersObject).map(
+            ([key, value]) => ({ key, value })
+        );
+
+        try {
             const result = await executeGraphQLQuery(
                 endpointUrl,
-                finalQuery,
-                variablesString,
-                headers
+                queryWithVariables,
+                JSON.stringify(variablesObject),
+                headersArray
             );
+
             setResponse(result);
             setStatusCode(result.statusCode);
             addToHistory({
-                endpointUrl,
-                query: finalQuery,
-                variables: JSON.stringify(variables),
-                headers: JSON.stringify(headers),
+                method: 'GRAPHQL',
+                path: window.location.href,
+                url: endpointUrl,
             });
         } catch (error) {
-            console.error('Error executing GraphQL query:', error);
+            if (error instanceof Error) {
+                console.error('Error executing query:', error.message);
+                setResponse(null);
+                setStatusCode(500);
+            } else {
+                console.error('Unknown error:', error);
+                setResponse(null);
+                setStatusCode(500);
+            }
         }
     };
 
@@ -92,17 +115,62 @@ const GraphiQLClient: FC = () => {
         }
     };
 
-    const handleVariableChange = (
+    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+        setTabValue(newValue);
+    };
+
+    const handleAddVariable = () => {
+        setVariables([...variables, { name: '', value: '' }]);
+    };
+
+    const handleNameChange = (
         index: number,
-        field: 'name' | 'value',
-        value: string
+        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const updatedVariables = [...variables];
-        updatedVariables[index] = {
-            ...updatedVariables[index],
-            [field]: value,
-        };
+        updatedVariables[index].name = event.target.value;
         setVariables(updatedVariables);
+    };
+
+    const handleVarValueChange = (
+        index: number,
+        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const updatedVariables = [...variables];
+        updatedVariables[index].value = event.target.value;
+        setVariables(updatedVariables);
+    };
+
+    const handleRemoveVariable = (index: number) => {
+        const updatedVariables = variables.filter((_, i) => i !== index);
+        setVariables(updatedVariables);
+    };
+
+    const handleKeyChange = (
+        index: number,
+        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const newHeaders = [...headers];
+        newHeaders[index].key = event.target.value;
+        setHeaders(newHeaders);
+    };
+
+    const handleValueChange = (
+        index: number,
+        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const newHeaders = [...headers];
+        newHeaders[index].value = event.target.value;
+        setHeaders(newHeaders);
+    };
+
+    const handleAddPair = () => {
+        setHeaders([...headers, { key: '', value: '' }]);
+    };
+
+    const handleRemovePair = (index: number) => {
+        const updatedHeaders = headers.filter((_, i) => i !== index);
+        setHeaders(updatedHeaders);
     };
 
     return (
@@ -122,97 +190,55 @@ const GraphiQLClient: FC = () => {
                     margin="normal"
                     disabled
                 />
+
                 <Box my={2}>
-                    <Button
-                        onClick={() =>
-                            setHeaders([...headers, { key: '', value: '' }])
-                        }
-                    >
-                        Add Header
-                    </Button>
-                    {headers.map((header, index) => (
-                        <Box key={index} display="flex" gap={1} my={1}>
-                            <TextField
-                                label="Header Key"
-                                value={header.key}
-                                onChange={(e) => {
-                                    const updatedHeaders = [...headers];
-                                    updatedHeaders[index] = {
-                                        ...header,
-                                        key: e.target.value,
-                                    };
-                                    setHeaders(updatedHeaders);
-                                }}
-                            />
-                            <TextField
-                                label="Header Value"
-                                value={header.value}
-                                onChange={(e) => {
-                                    const updatedHeaders = [...headers];
-                                    updatedHeaders[index] = {
-                                        ...header,
-                                        value: e.target.value,
-                                    };
-                                    setHeaders(updatedHeaders);
-                                }}
-                            />
-                            <Button
-                                onClick={() => {
-                                    const updatedHeaders = headers.filter(
-                                        (_, i) => i !== index
-                                    );
-                                    setHeaders(updatedHeaders);
-                                }}
-                            >
-                                Remove
-                            </Button>
-                        </Box>
-                    ))}
+                    <Tabs value={tabValue} onChange={handleTabChange}>
+                        <Tab label="GraphQL Query" />
+                        <Tab label="Variables" />
+                        <Tab label="Headers" />
+                    </Tabs>
                 </Box>
-                <TextField
-                    label="GraphQL Query"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                    multiline
-                    rows={6}
-                />
-                {variables.map((variable, index) => (
-                    <Box key={index} display="flex" gap={2} my={1}>
-                        <TextField
-                            label="Variable Name"
-                            value={variable.name}
-                            onChange={(e) =>
-                                handleVariableChange(index, 'name', e.target.value)
-                            }
+
+                <Box my={2}>
+                    {tabValue === 0 && (
+                        <Box>
+                            <Editor
+                                height="200px"
+                                defaultLanguage="graphql"
+                                value={query}
+                                theme={mode === 'light' ? 'light' : 'vs-dark'}
+                                onChange={(value) => setQuery(value || '')}
+                                options={{
+                                    minimap: { enabled: false },
+                                    fontSize: 14,
+                                }}
+                            />
+                        </Box>
+                    )}
+
+                    {tabValue === 1 && (
+                        <VariablesSection
+                            variables={variables}
+                            handleAddVariable={handleAddVariable}
+                            handleNameChange={handleNameChange}
+                            handleVarValueChange={handleVarValueChange}
+                            handleRemoveVariable={handleRemoveVariable}
                         />
-                        <TextField
-                            label="Variable Value"
-                            value={variable.value}
-                            onChange={(e) =>
-                                handleVariableChange(index, 'value', e.target.value)
-                            }
+                    )}
+
+                    {tabValue === 2 && (
+                        <HeadersSection
+                            keyValuePairs={headers}
+                            handleKeyChange={handleKeyChange}
+                            handleValueChange={handleValueChange}
+                            handleRemovePair={handleRemovePair}
+                            handleAddPair={handleAddPair}
                         />
-                        <Button
-                            onClick={() =>
-                                setVariables(variables.filter((_, i) => i !== index))
-                            }
-                        >
-                            Remove
-                        </Button>
-                    </Box>
-                ))}
-                <Button
-                    variant="outlined"
-                    onClick={() =>
-                        setVariables([...variables, { name: '', value: '' }])
-                    }
-                >
-                    Add Variable
-                </Button>
+                    )}
+                </Box>
+
                 <Button variant="contained" onClick={handleQueryExecution}>
-                    Execute Query
+                    Execute
                 </Button>
                 <Button
                     variant="outlined"
@@ -221,6 +247,7 @@ const GraphiQLClient: FC = () => {
                 >
                     Fetch Documentation
                 </Button>
+
                 <Box mt={4}>
                     <h3>Response</h3>
                     <p>Status Code: {statusCode}</p>
