@@ -38,14 +38,14 @@ const WelcomePage = () => {
                             <Button
                                 variant="contained"
                                 className={styles.button}
-                                onClick={() => router.push('/restful')}
+                                onClick={() => router.push('/restful/GET')}
                             >
                                 {t('welcomePage:restClient')}
                             </Button>
                             <Button
                                 variant="contained"
                                 className={styles.button}
-                                onClick={() => router.push('/graphiql')}
+                                onClick={() => router.push('/graphiql/GRAPHQL')}
                             >
                                 {t('welcomePage:graphiqlClient')}
                             </Button>

@@ -1,3 +1,4 @@
+import { blue, green, orange, purple, yellow } from '@mui/material/colors';
 import { createTheme } from '@mui/material/styles';
 import { Inter } from 'next/font/google';
 
@@ -6,6 +7,19 @@ const inter = Inter({
     subsets: ['latin'],
     display: 'swap',
 });
+
+declare module '@mui/material/styles/createPalette' {
+    interface Palette {
+        custom: {
+            [key: string]: string | undefined;
+        };
+    }
+    interface PaletteOptions {
+        custom: {
+            [key: string]: string | undefined;
+        };
+    }
+}
 
 const getTheme = (mode: 'light' | 'dark') =>
     createTheme({
@@ -27,6 +41,13 @@ const getTheme = (mode: 'light' | 'dark') =>
         },
         palette: {
             mode,
+            custom: {
+                get: green[500],
+                post: yellow[500],
+                put: blue[500],
+                delete: orange[500],
+                graphql: purple[500],
+            },
         },
         components: {
             MuiButton: {

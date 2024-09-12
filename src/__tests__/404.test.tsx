@@ -1,13 +1,18 @@
 import { render, screen } from '@testing-library/react';
 import * as nextNavigation from 'next/navigation';
-import { describe, expect, it, vi } from 'vitest';
 
 import NotFoundCatchAll from '../app/[locale]/[...not_found]/page';
 import NotFound from '../app/[locale]/not-found';
 
-vi.mock('next/navigation', () => ({
-    notFound: vi.fn(),
-}));
+vi.mock('next/navigation', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...(actual as object),
+        notFound: vi.fn(),
+        usePathname: vi.fn(() => ''),
+        useRouter: vi.fn(),
+    };
+});
 
 describe('Not Found page', () => {
     it('Page calls notFound', () => {

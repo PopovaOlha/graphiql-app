@@ -158,6 +158,7 @@ const SignUp = () => {
                     id="email"
                     error={!!emailError}
                     helperText={emailError}
+                    data-testid="email-input"
                     sx={{
                         '.MuiInputBase-input:-webkit-autofill': {
                             boxShadow: `inset 0 0 0 50px ${theme.palette.background.default}`,
@@ -178,6 +179,7 @@ const SignUp = () => {
                         required
                         error={!!passwordError}
                         helperText={passwordError}
+                        data-testid="password-input"
                         sx={{
                             '.MuiInputBase-input:-webkit-autofill': {
                                 boxShadow: `inset 0 0 0 50px ${theme.palette.background.default}`,
@@ -214,6 +216,7 @@ const SignUp = () => {
                         required
                         error={!!confirmPasswordError}
                         helperText={confirmPasswordError}
+                        data-testid="confirm-password-input"
                         sx={{
                             '.MuiInputBase-input:-webkit-autofill': {
                                 boxShadow: `inset 0 0 0 50px ${theme.palette.background.default}`,
@@ -239,6 +242,7 @@ const SignUp = () => {
                 </Box>
                 <Button
                     type="submit"
+                    data-testid="submit-btn"
                     variant="contained"
                     color="primary"
                     fullWidth

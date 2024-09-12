@@ -26,5 +26,6 @@
     "response": {
         "status": "Статус ответа:",
         "defaultEditorValue": "// Ответ"
-    }
+    },
+    "emptyURL": "Сначала введите адрес запроса"
 }
