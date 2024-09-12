@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { Auth, updateProfile } from 'firebase/auth';
 import {
+    Auth,
     createUserWithEmailAndPassword,
     getAuth,
     GoogleAuthProvider,
@@ -8,6 +8,7 @@ import {
     signInWithEmailAndPassword,
     signInWithPopup,
     signOut,
+    updateProfile,
     User,
 } from 'firebase/auth';
 import {
@@ -42,6 +43,7 @@ const signInWithGoogle = async (): Promise<void> => {
                 email: user.email,
             });
         }
+        startAutoLogout();
     } catch (err: unknown) {
         console.error(err);
         if (err instanceof Error) {
@@ -57,6 +59,7 @@ const logInWithEmailAndPassword = async (
 ): Promise<void> => {
     try {
         await signInWithEmailAndPassword(auth, email, password);
+        startAutoLogout();
     } catch (err: unknown) {
         console.error(err);
         if (err instanceof Error) {
@@ -84,6 +87,7 @@ const registerWithEmailAndPassword = async (
             authProvider: 'local',
             email,
         });
+        startAutoLogout();
     } catch (err: unknown) {
         console.error(err);
         if (err instanceof Error) {
@@ -106,14 +110,24 @@ const sendPasswordReset = async (email: string): Promise<void> => {
 
 const logout = (): void => {
     signOut(auth);
+    console.log('User logged out');
+};
+
+const startAutoLogout = (): void => {
+    setTimeout(
+        () => {
+            logout();
+        },
+        2 * 60 * 1000
+    );
 };
 
 export {
     auth,
     db,
-    signInWithGoogle,
     logInWithEmailAndPassword,
+    logout,
     registerWithEmailAndPassword,
     sendPasswordReset,
-    logout,
+    signInWithGoogle,
 };
