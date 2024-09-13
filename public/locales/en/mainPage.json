@@ -20,7 +20,7 @@
     "email": "E-mail",
     "password": "Password",
     "passwordConfirm": "Confirm Password",
-    "errorName": "Username must be 3 to 16 characters long and can contain letters, numbers, spaces, underscores, and hyphens.",
+    "errorName": "Username must be 3 to 20 characters long and can contain letters, numbers, spaces, underscores, and hyphens.",
     "errorEmail": "Please enter a valid email address (example@domain.com).",
     "errorPassword": "Password must contain at least 8 characters, including one letter, one digit, and one special character.",
     "errorConfirmPass": "Passwords must match.",
