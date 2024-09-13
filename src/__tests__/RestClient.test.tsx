@@ -48,7 +48,7 @@ describe('Rest Client', () => {
         );
     });
 
-    it('Response indicator shows right status', () => {
+    it('Response indicator shows correct status', () => {
         render(<ResponseStatusIndicator responseCode={200} responseStatus={''} />);
 
         expect(screen.getByTestId('indicator')).toBeInTheDocument();
@@ -57,7 +57,7 @@ describe('Rest Client', () => {
         );
     });
 
-    it('No body editor, if no URL', () => {
+    it('No body editor, if no URL', async () => {
         render(
             <AppThemeProvider>
                 <RestClient body={''} />
@@ -69,12 +69,8 @@ describe('Rest Client', () => {
 
         fireEvent.click(bodyTab);
 
-        waitFor(() => {
-            expect(
-                screen.getByText((content) =>
-                    content.includes('restClient:emptyURL')
-                )
-            ).toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.getByText('restClient:emptyURL')).toBeInTheDocument();
         });
     });
 
@@ -104,7 +100,7 @@ describe('Rest Client', () => {
         expect(submitButton).not.toBeDisabled();
     });
 
-    it('Rest Form send request to /api/restful when form is submitted', async () => {
+    it('Rest Form sends request to /api/restful when form is submitted', async () => {
         const mockSendAnswer = vi.fn();
         const mockSendResponseStatus = vi.fn();
         const mockFetch = vi.fn(() =>
@@ -161,6 +157,7 @@ describe('Rest Client', () => {
         fireEvent.blur(urlInput);
 
         expect(mockPushState).toHaveBeenCalled();
+        mockPushState.mockRestore();
     });
 
     it('VariablesSection renders variables correctly', () => {
