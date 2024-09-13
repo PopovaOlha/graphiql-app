@@ -33,6 +33,8 @@
     "clients": {
         "history": "История",
         "collapse": "Свернуть",
-        "expand": "Развернуть"
+        "expand": "Развернуть",
+        "rest": "REST API клиент",
+        "graph": "GraphQL клиент"
     }
 }

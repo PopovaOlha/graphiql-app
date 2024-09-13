@@ -33,6 +33,8 @@
     "clients": {
         "history": "History",
         "collapse": "Collapse",
-        "expand": "Expand"
+        "expand": "Expand",
+        "rest": "REST API Client",
+        "graph": "GraphQL Client"
     }
 }
