@@ -191,7 +191,7 @@ const SignUp = () => {
                         sx={{
                             position: 'absolute',
                             right: '0',
-                            bottom: '10px',
+                            top: '1.875rem',
                         }}
                         onClick={() => setIsVisible(!isVisible)}
                         size="small"
@@ -228,7 +228,7 @@ const SignUp = () => {
                         sx={{
                             position: 'absolute',
                             right: '0',
-                            bottom: '10px',
+                            top: '1.875rem',
                         }}
                         onClick={() => setIsVisible(!isVisible)}
                         size="small"
