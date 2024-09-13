@@ -82,9 +82,7 @@ const RestForm: FC<RestFormProps> = ({ body, sendAnswer, sendResponseStatus }) =
         method: params.method as 'GET' | 'POST' | 'PUT' | 'DELETE',
         url: params && params.url ? decode(params.url as string) : '',
     });
-    const [jsonBody, setJsonBody] = useState<string | undefined>(
-        body.length ? JSON.parse(decode(body)) : ''
-    );
+    const [jsonBody, setJsonBody] = useState<string | undefined>('');
     const [keyValuePairs, setKeyValuePairs] = useState<KeyValuePair[]>([
         { key: '', value: '' },
     ]);
@@ -103,13 +101,22 @@ const RestForm: FC<RestFormProps> = ({ body, sendAnswer, sendResponseStatus }) =
             queries.push(newPair);
         }
         setKeyValuePairs([...queries, ...keyValuePairs]);
+
+        if (body.length) {
+            const bodyObject = JSON.parse(decode(body));
+            const savedBody = bodyObject.jsonBody;
+            const savedVariables = bodyObject.variables;
+
+            setJsonBody(savedBody);
+            setVariables(savedVariables);
+        }
     }, []);
 
     useEffect(() => {
-        const newPath = `/restful/${state.method}/${state.url.toBase64URL()}${jsonBody?.length ? `/${JSON.stringify(jsonBody).toBase64URL()}` : ''}?${searchParams.toString()}`;
+        const newPath = `/restful/${state.method}/${state.url.toBase64URL()}${jsonBody?.length ? `/${JSON.stringify({ jsonBody, variables }).toBase64URL()}` : ''}?${searchParams.toString()}`;
 
         window.history.pushState({}, '', newPath);
-    }, [state.method, state.url, jsonBody, searchParams]);
+    }, [state.method, state.url, jsonBody, searchParams, variables]);
 
     const handleMethodChange = (
         event: SelectChangeEvent<'GET' | 'POST' | 'PUT' | 'DELETE'>
