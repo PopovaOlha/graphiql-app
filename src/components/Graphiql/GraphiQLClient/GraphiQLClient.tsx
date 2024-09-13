@@ -236,9 +236,9 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
     return (
         <Container maxWidth="xl">
             <Box sx={{ marginBottom: '2rem' }}>
-                <Typography variant="h1">GraphQL Client</Typography>
+                <Typography variant="h1">{t('graphqlClient:title')}</Typography>
                 <TextField
-                    label="Endpoint URL"
+                    label={t('graphqlClient:endpointUrl')}
                     value={endpointUrl}
                     onChange={(e) => setEndpointUrl(e.target.value)}
                     fullWidth
@@ -252,18 +252,18 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
                     }
                 />
                 <TextField
-                    label="SDL URL"
+                    label={t('graphqlClient:sdlUrl')}
                     value={sdlUrl}
                     fullWidth
                     margin="normal"
                     disabled
                 />
 
-                <Box my={2}>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider', marginTop: 2 }}>
                     <Tabs value={tabValue} onChange={handleTabChange}>
-                        <Tab label="GraphQL Query" />
-                        <Tab label="Variables" />
-                        <Tab label="Headers" />
+                        <Tab label={t('graphqlClient:query')} />
+                        <Tab label={t('graphqlClient:variables')} />
+                        <Tab label={t('graphqlClient:headers')} />
                     </Tabs>
                 </Box>
 
@@ -283,7 +283,7 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
                             />
                         ) : (
                             <Typography variant={'body1'} p={2}>
-                                {t('restClient:emptyURL')}
+                                {t('graphqlClient:emptyURL')}
                             </Typography>
                         ))}
 
@@ -309,14 +309,14 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
                 </Box>
 
                 <Button variant="contained" onClick={handleQueryExecution}>
-                    Execute
+                    {t('graphqlClient:execute')}
                 </Button>
                 <Button
                     variant="outlined"
                     onClick={handleFetchSchema}
                     style={{ marginLeft: 10 }}
                 >
-                    Fetch Documentation
+                    {t('graphqlClient:fetchDocs')}
                 </Button>
 
                 <Box mt={4}>
@@ -329,8 +329,11 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
                     <Editor
                         height="50vh"
                         defaultLanguage="javascript"
-                        defaultValue={t('restClient:response.defaultEditorValue')}
-                        value={JSON.stringify(response, null, 2)}
+                        value={
+                            response
+                                ? JSON.stringify(response, null, 2)
+                                : t('graphqlClient:defaultEditorValue')
+                        }
                         theme={mode === 'light' ? 'light' : 'vs-dark'}
                         options={{
                             minimap: { enabled: false },

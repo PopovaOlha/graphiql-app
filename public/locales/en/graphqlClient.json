@@ -1,0 +1,13 @@
+{
+    "title": "GraphQL Client",
+    "endpointUrl": "Endpoint URL",
+    "sdlUrl": "SDL URL",
+    "query": "GraphQL Query",
+    "variables": "Variables",
+    "headers": "Headers",
+    "emptyURL": "Enter endpoint URL first",
+    "execute": "Execute",
+    "fetchDocs": "Fetch Documentation",
+    "docs": "Documentation",
+    "defaultEditorValue": "// Response"
+}

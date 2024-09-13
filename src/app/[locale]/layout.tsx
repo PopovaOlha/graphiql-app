@@ -28,6 +28,7 @@ const i18nNamespaces: string[] = [
     'authors',
     'welcomePage',
     'history',
+    'graphqlClient',
 ];
 
 export default async function RootLayout({
