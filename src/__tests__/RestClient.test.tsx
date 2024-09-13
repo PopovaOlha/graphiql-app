@@ -34,35 +34,33 @@ vi.mock('next/navigation', async (importOriginal) => {
     };
 });
 
-describe('Rest Client', () => {
-    it('Client renders', () => {
-        render(
-            <AppThemeProvider>
-                <RestClient body={''} />
-            </AppThemeProvider>
-        );
+const renderWithThemeProvider = (ui: React.ReactElement) => {
+    return render(<AppThemeProvider>{ui}</AppThemeProvider>);
+};
 
-        expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
-        expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-            'restClient:title'
-        );
+describe('Rest Client', () => {
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    it('Client renders', () => {
+        renderWithThemeProvider(<RestClient body={''} />);
+        const heading = screen.getByRole('heading', { level: 1 });
+        expect(heading).toBeInTheDocument();
+        expect(heading).toHaveTextContent('restClient:title');
     });
 
     it('Response indicator shows correct status', () => {
-        render(<ResponseStatusIndicator responseCode={200} responseStatus={''} />);
-
-        expect(screen.getByTestId('indicator')).toBeInTheDocument();
-        expect(screen.getByTestId('indicator').textContent).toBe(
-            'restClient:response.status 200 '
+        renderWithThemeProvider(
+            <ResponseStatusIndicator responseCode={200} responseStatus={''} />
         );
+        const indicator = screen.getByTestId('indicator');
+        expect(indicator).toBeInTheDocument();
+        expect(indicator.textContent).toBe('restClient:response.status 200 ');
     });
 
-    it('No body editor, if no URL', async () => {
-        render(
-            <AppThemeProvider>
-                <RestClient body={''} />
-            </AppThemeProvider>
-        );
+    it('No body editor if no URL is provided', async () => {
+        renderWithThemeProvider(<RestClient body={''} />);
 
         const bodyTab = screen.getByLabelText('restClient:tabs.jsonBody');
         expect(bodyTab).toBeInTheDocument();
@@ -78,14 +76,12 @@ describe('Rest Client', () => {
         const mockSendAnswer = vi.fn();
         const mockSendResponseStatus = vi.fn();
 
-        render(
-            <AppThemeProvider>
-                <RestForm
-                    body={''}
-                    sendAnswer={mockSendAnswer}
-                    sendResponseStatus={mockSendResponseStatus}
-                />
-            </AppThemeProvider>
+        renderWithThemeProvider(
+            <RestForm
+                body={''}
+                sendAnswer={mockSendAnswer}
+                sendResponseStatus={mockSendResponseStatus}
+            />
         );
 
         const methodSelect = screen.getByDisplayValue('GET');
@@ -114,14 +110,12 @@ describe('Rest Client', () => {
         );
         global.fetch = mockFetch;
 
-        render(
-            <AppThemeProvider>
-                <RestForm
-                    body={''}
-                    sendAnswer={mockSendAnswer}
-                    sendResponseStatus={mockSendResponseStatus}
-                />
-            </AppThemeProvider>
+        renderWithThemeProvider(
+            <RestForm
+                body={''}
+                sendAnswer={mockSendAnswer}
+                sendResponseStatus={mockSendResponseStatus}
+            />
         );
 
         const urlInput = screen.getByPlaceholderText('restClient:urlPlaceholder');
@@ -132,6 +126,10 @@ describe('Rest Client', () => {
 
         await waitFor(() => {
             expect(mockFetch).toHaveBeenCalledTimes(1);
+            expect(mockFetch).toHaveBeenCalledWith(
+                expect.stringContaining('/api/restful'),
+                expect.any(Object)
+            );
         });
     });
 
@@ -140,20 +138,17 @@ describe('Rest Client', () => {
         const mockSendAnswer = vi.fn();
         const mockSendResponseStatus = vi.fn();
 
-        render(
-            <AppThemeProvider>
-                <RestForm
-                    body={''}
-                    sendAnswer={mockSendAnswer}
-                    sendResponseStatus={mockSendResponseStatus}
-                />
-            </AppThemeProvider>
+        renderWithThemeProvider(
+            <RestForm
+                body={''}
+                sendAnswer={mockSendAnswer}
+                sendResponseStatus={mockSendResponseStatus}
+            />
         );
 
         const urlInput = screen.getByPlaceholderText('restClient:urlPlaceholder');
 
         fireEvent.change(urlInput, { target: { value: 'https://test.com' } });
-
         fireEvent.blur(urlInput);
 
         expect(mockPushState).toHaveBeenCalled();
@@ -163,16 +158,14 @@ describe('Rest Client', () => {
     it('VariablesSection renders variables correctly', () => {
         const mockVariables = [{ name: 'testVar', value: 'testValue' }];
 
-        render(
-            <AppThemeProvider>
-                <VariablesSection
-                    variables={mockVariables}
-                    handleAddVariable={vi.fn()}
-                    handleNameChange={vi.fn()}
-                    handleVarValueChange={vi.fn()}
-                    handleRemoveVariable={vi.fn()}
-                />
-            </AppThemeProvider>
+        renderWithThemeProvider(
+            <VariablesSection
+                variables={mockVariables}
+                handleAddVariable={vi.fn()}
+                handleNameChange={vi.fn()}
+                handleVarValueChange={vi.fn()}
+                handleRemoveVariable={vi.fn()}
+            />
         );
 
         expect(screen.getByDisplayValue('testVar')).toBeInTheDocument();
