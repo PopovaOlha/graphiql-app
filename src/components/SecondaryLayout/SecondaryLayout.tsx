@@ -94,7 +94,7 @@ const SecondaryLayout: FC<{ children: ReactNode }> = ({ children }) => {
                     {t('clients.history')}
                 </Link>
             </Panel>
-            <Box>{children}</Box>
+            <Box sx={{ position: 'relative' }}>{children}</Box>
         </LayoutContainer>
     );
 };
