@@ -27,7 +27,6 @@ import { prettifyQuery } from '@/utils/prettifyQuery';
 
 Base64.extendBuiltins();
 import { ResponseStatusIndicator } from '@/components/RestClient/RestClientComponents';
-import { replaceVariablesInJson } from '@/utils/utils';
 
 const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
     const pathname = usePathname();
@@ -113,8 +112,6 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
     }, [query]);
 
     const handleQueryExecution = async () => {
-        const queryWithVariables = replaceVariablesInJson(query, variables);
-
         const variablesObject = variables.reduce(
             (acc, { name, value }) => {
                 acc[name] = isNaN(Number(value)) ? value : Number(value);
@@ -138,7 +135,7 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
         try {
             const result = await executeGraphQLQuery(
                 endpointUrl,
-                queryWithVariables,
+                query,
                 JSON.stringify(variablesObject),
                 headersArray
             );
