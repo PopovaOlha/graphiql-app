@@ -12,7 +12,7 @@ describe('Secondary Layout', () => {
             </SecondaryLayout>
         );
 
-        expect(screen.getByText('GraphiQL')).toBeInTheDocument();
+        expect(screen.getByText('clients.graph')).toBeInTheDocument();
     });
     it('Should renders children', () => {
         render(

@@ -77,14 +77,14 @@ const SecondaryLayout: FC<{ children: ReactNode }> = ({ children }) => {
                     className={`${styles.panelLink} ${pathname?.includes('/restful') ? styles.panelLinkActive : ''}`}
                 >
                     <RestIcon />
-                    REST Api
+                    {t('clients.rest')}
                 </Link>
                 <Link
                     href={'/graphiql/GRAPHQL'}
                     className={`${styles.panelLink} ${pathname?.includes('/graphiql') ? styles.panelLinkActive : ''}`}
                 >
                     <GraphIcon />
-                    GraphiQL
+                    {t('clients.graph')}
                 </Link>
                 <Link
                     href={'/history'}
