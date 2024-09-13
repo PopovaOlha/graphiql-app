@@ -103,56 +103,65 @@ const History = () => {
                     </Button>
                 )}
                 {history.length ? (
-                    history.reverse().map((item: HistoryItem) => (
-                        <Link
-                            href={item.path}
-                            key={item.timestamp}
-                            style={{
-                                marginBottom: '20px',
-                                color: '#fff',
-                                display: 'block',
-                                textDecoration: 'none',
-                            }}
-                        >
-                            <HistoryItemLink>
-                                <MethodBox method={item.method.toLocaleLowerCase()}>
-                                    {item.method}
-                                </MethodBox>
-                                <Typography
-                                    variant="body2"
-                                    sx={{
-                                        position: 'absolute',
-                                        top: '10px',
-                                        right: '10px',
-                                        color: 'inherit',
-                                        opacity: '0.7',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '8px',
-                                        lineHeight: 'normal',
-                                    }}
-                                >
-                                    <CalendarMonthOutlined
-                                        sx={{ fontSize: '16px' }}
-                                    />
-                                    {new Date(item.timestamp).toLocaleDateString()},{' '}
-                                    {new Date(item.timestamp).toLocaleTimeString()}
-                                </Typography>
-                                <Box
-                                    color={'text.primary'}
-                                    sx={{
-                                        '& b': {
-                                            display: 'inline-block',
-                                            marginRight: '1rem',
-                                        },
-                                    }}
-                                >
-                                    <b>URL:</b>
-                                    {item.url}
-                                </Box>
-                            </HistoryItemLink>
-                        </Link>
-                    ))
+                    history
+                        .sort((a, b) => b.timestamp - a.timestamp)
+                        .map((item: HistoryItem) => (
+                            <Link
+                                href={item.path}
+                                key={item.timestamp}
+                                style={{
+                                    marginBottom: '20px',
+                                    color: '#fff',
+                                    display: 'block',
+                                    textDecoration: 'none',
+                                }}
+                            >
+                                <HistoryItemLink>
+                                    <MethodBox
+                                        method={item.method.toLocaleLowerCase()}
+                                    >
+                                        {item.method}
+                                    </MethodBox>
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            position: 'absolute',
+                                            top: '10px',
+                                            right: '10px',
+                                            color: 'inherit',
+                                            opacity: '0.7',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                            lineHeight: 'normal',
+                                        }}
+                                    >
+                                        <CalendarMonthOutlined
+                                            sx={{ fontSize: '16px' }}
+                                        />
+                                        {new Date(
+                                            item.timestamp
+                                        ).toLocaleDateString()}
+                                        ,{' '}
+                                        {new Date(
+                                            item.timestamp
+                                        ).toLocaleTimeString()}
+                                    </Typography>
+                                    <Box
+                                        color={'text.primary'}
+                                        sx={{
+                                            '& b': {
+                                                display: 'inline-block',
+                                                marginRight: '1rem',
+                                            },
+                                        }}
+                                    >
+                                        <b>URL:</b>
+                                        {item.url}
+                                    </Box>
+                                </HistoryItemLink>
+                            </Link>
+                        ))
                 ) : (
                     <Typography
                         variant="body1"
