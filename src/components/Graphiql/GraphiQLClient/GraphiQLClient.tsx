@@ -1,21 +1,32 @@
 'use client';
-
-import { FC, useEffect, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import Editor from '@monaco-editor/react';
+import {
+    Box,
+    Button,
+    Container,
+    Tab,
+    Tabs,
+    TextField,
+    Typography,
+    useTheme,
+} from '@mui/material';
 import { GraphQLSchema } from 'graphql';
 import { Base64, decode } from 'js-base64';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 
 import DocumentationViewer from '@/components/Graphiql/DocumentationViewer/DocumentationViewer';
+import { HeadersSection } from '@/components/Graphiql/HeadersSection/HeadersSection';
+import { VariablesSection } from '@/components/Graphiql/VariableSection/VariableSection';
 import { executeGraphQLQuery } from '@/services/graphiqlService';
 import { addToHistory } from '@/services/historyService';
 import { fetchGraphQLSchema } from '@/services/schemaService';
-import { GraphQLResponse } from '@/types/interfaces';
+import { GraphQLResponse, KeyValuePair, Variable } from '@/types/interfaces';
 import { prettifyQuery } from '@/utils/prettifyQuery';
-import { updateQueryParams } from '@/utils/utils';
 
 Base64.extendBuiltins();
+import { ResponseStatusIndicator } from '@/components/RestClient/RestClientComponents';
 
 const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
     const pathname = usePathname();
@@ -29,10 +40,14 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
     );
     const [sdlUrl, setSdlUrl] = useState('');
     const [query, setQuery] = useState('');
-    const [variables, setVariables] = useState('');
-    const [headers, setHeaders] = useState<{ key: string; value: string }[]>([]);
-    const [response, setResponse] = useState<GraphQLResponse>();
-    const [statusCode, setStatusCode] = useState<number | null>(null);
+    const [variables, setVariables] = useState<Variable[]>([
+        { name: '', value: '' },
+    ]);
+    const [headers, setHeaders] = useState<KeyValuePair[]>([
+        { key: 'Content-Type', value: 'application/json' },
+    ]);
+    const [response, setResponse] = useState<GraphQLResponse | null>(null);
+    const [statusCode, setStatusCode] = useState<number | string>('');
     const [schema, setSchema] = useState<GraphQLSchema | null>(null);
 
     useEffect(() => {
@@ -56,6 +71,11 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
             setVariables(savedVariables);
         }
     }, []);
+
+    const [tabValue, setTabValue] = useState<number>(0);
+
+    const theme = useTheme();
+    const mode = theme.palette.mode;
 
     useEffect(() => {
         if (endpointUrl) {
@@ -92,21 +112,52 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
     }, [query]);
 
     const handleQueryExecution = async () => {
-        addToHistory({
-            method: 'GRAPHQL',
-            path: window.location.href.replace(window.location.origin, ''),
-            url: endpointUrl,
-        });
-
-        const result = await executeGraphQLQuery(
-            endpointUrl,
-            query,
-            variables,
-            headers
+        const variablesObject = variables.reduce(
+            (acc, { name, value }) => {
+                acc[name] = isNaN(Number(value)) ? value : Number(value);
+                return acc;
+            },
+            {} as Record<string, unknown>
         );
 
-        setResponse(result);
-        setStatusCode(result.statusCode);
+        const headersObject = headers.reduce(
+            (acc, { key, value }) => {
+                acc[key] = value;
+                return acc;
+            },
+            {} as Record<string, string>
+        );
+
+        const headersArray: KeyValuePair[] = Object.entries(headersObject).map(
+            ([key, value]) => ({ key, value })
+        );
+
+        try {
+            const result = await executeGraphQLQuery(
+                endpointUrl,
+                query,
+                JSON.stringify(variablesObject),
+                headersArray
+            );
+
+            setResponse(result);
+            setStatusCode(result.statusCode);
+            addToHistory({
+                method: 'GRAPHQL',
+                path: window.location.href.replace(window.location.origin, ''),
+                url: endpointUrl,
+            });
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error('Error executing query:', error.message);
+                setResponse(null);
+                setStatusCode(500);
+            } else {
+                console.error('Unknown error:', error);
+                setResponse(null);
+                setStatusCode(500);
+            }
+        }
     };
 
     const handleFetchSchema = async () => {
@@ -124,9 +175,68 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
         }
     };
 
+    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+        setTabValue(newValue);
+    };
+
+    const handleAddVariable = () => {
+        setVariables([...variables, { name: '', value: '' }]);
+    };
+
+    const handleNameChange = (
+        index: number,
+        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const updatedVariables = [...variables];
+        updatedVariables[index].name = event.target.value;
+        setVariables(updatedVariables);
+    };
+
+    const handleVarValueChange = (
+        index: number,
+        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const updatedVariables = [...variables];
+        updatedVariables[index].value = event.target.value;
+        setVariables(updatedVariables);
+    };
+
+    const handleRemoveVariable = (index: number) => {
+        const updatedVariables = variables.filter((_, i) => i !== index);
+        setVariables(updatedVariables);
+    };
+
+    const handleKeyChange = (
+        index: number,
+        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const newHeaders = [...headers];
+        newHeaders[index].key = event.target.value;
+        setHeaders(newHeaders);
+    };
+
+    const handleValueChange = (
+        index: number,
+        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const newHeaders = [...headers];
+        newHeaders[index].value = event.target.value;
+        setHeaders(newHeaders);
+    };
+
+    const handleAddPair = () => {
+        setHeaders([...headers, { key: '', value: '' }]);
+    };
+
+    const handleRemovePair = (index: number) => {
+        const updatedHeaders = headers.filter((_, i) => i !== index);
+        setHeaders(updatedHeaders);
+    };
+
     return (
-        <div>
-            <Box p={2}>
+        <Container maxWidth="xl">
+            <Box sx={{ marginBottom: '2rem' }}>
+                <Typography variant="h1">GraphQL Client</Typography>
                 <TextField
                     label="Endpoint URL"
                     value={endpointUrl}
@@ -148,84 +258,56 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
                     margin="normal"
                     disabled
                 />
-                <Box my={2}>
-                    <Button
-                        onClick={() =>
-                            setHeaders([...headers, { key: '', value: '' }])
-                        }
-                    >
-                        Add Header
-                    </Button>
-                    {headers.map((header, index) => (
-                        <Box key={index} display="flex" gap={1} my={1}>
-                            <TextField
-                                label="Header Key"
-                                value={header.key}
-                                onChange={(e) => {
-                                    const updatedHeaders = [...headers];
-                                    updatedHeaders[index] = {
-                                        ...header,
-                                        key: e.target.value,
-                                    };
-                                    setHeaders(updatedHeaders);
-                                }}
-                            />
-                            <TextField
-                                label="Header Value"
-                                value={header.value}
-                                onChange={(e) => {
-                                    const updatedHeaders = [...headers];
-                                    updatedHeaders[index] = {
-                                        ...header,
-                                        value: e.target.value,
-                                    };
-                                    setHeaders(updatedHeaders);
-                                }}
-                            />
-                            <Button
-                                onClick={() => {
-                                    updateQueryParams(
-                                        searchParams,
-                                        headers,
-                                        index,
-                                        pathname
-                                    );
-                                    const updatedHeaders = headers.filter(
-                                        (_, i) => i !== index
-                                    );
-                                    setHeaders(updatedHeaders);
-                                }}
-                            >
-                                Remove
-                            </Button>
-                        </Box>
-                    ))}
-                </Box>
-                {endpointUrl.length ? (
-                    <TextField
-                        label="GraphQL Query"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        fullWidth
-                        margin="normal"
-                        multiline
-                        rows={6}
-                    />
-                ) : (
-                    <Typography variant={'body1'}>
-                        {t('restClient:emptyURL')}
-                    </Typography>
-                )}
 
-                <TextField
-                    label="Variables (JSON format)"
-                    value={variables}
-                    onChange={(e) => setVariables(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                    multiline
-                    rows={4}
-                />
+                <Box my={2}>
+                    <Tabs value={tabValue} onChange={handleTabChange}>
+                        <Tab label="GraphQL Query" />
+                        <Tab label="Variables" />
+                        <Tab label="Headers" />
+                    </Tabs>
+                </Box>
+
+                <Box my={2}>
+                    {tabValue === 0 &&
+                        (endpointUrl.length ? (
+                            <Editor
+                                height="200px"
+                                defaultLanguage="graphql"
+                                value={query}
+                                theme={mode === 'light' ? 'light' : 'vs-dark'}
+                                onChange={(value) => setQuery(value || '')}
+                                options={{
+                                    minimap: { enabled: false },
+                                    fontSize: 14,
+                                }}
+                            />
+                        ) : (
+                            <Typography variant={'body1'} p={2}>
+                                {t('restClient:emptyURL')}
+                            </Typography>
+                        ))}
+
+                    {tabValue === 1 && (
+                        <VariablesSection
+                            variables={variables}
+                            handleAddVariable={handleAddVariable}
+                            handleNameChange={handleNameChange}
+                            handleVarValueChange={handleVarValueChange}
+                            handleRemoveVariable={handleRemoveVariable}
+                        />
+                    )}
+
+                    {tabValue === 2 && (
+                        <HeadersSection
+                            keyValuePairs={headers}
+                            handleKeyChange={handleKeyChange}
+                            handleValueChange={handleValueChange}
+                            handleRemovePair={handleRemovePair}
+                            handleAddPair={handleAddPair}
+                        />
+                    )}
+                </Box>
+
                 <Button variant="contained" onClick={handleQueryExecution}>
                     Execute
                 </Button>
@@ -236,14 +318,29 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
                 >
                     Fetch Documentation
                 </Button>
+
                 <Box mt={4}>
-                    <h3>Response</h3>
-                    <p>Status Code: {statusCode}</p>
-                    <pre>{JSON.stringify(response, null, 2)}</pre>
+                    {response && (
+                        <ResponseStatusIndicator
+                            responseCode={statusCode}
+                            responseStatus={''}
+                        />
+                    )}
+                    <Editor
+                        height="50vh"
+                        defaultLanguage="javascript"
+                        defaultValue={t('restClient:response.defaultEditorValue')}
+                        value={JSON.stringify(response, null, 2)}
+                        theme={mode === 'light' ? 'light' : 'vs-dark'}
+                        options={{
+                            minimap: { enabled: false },
+                            readOnly: true,
+                        }}
+                    />
                 </Box>
                 {schema && <DocumentationViewer schema={schema} />}
             </Box>
-        </div>
+        </Container>
     );
 };
 
