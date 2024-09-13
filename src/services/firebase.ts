@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import { initializeApp } from 'firebase/app';
 import { Auth, updateProfile } from 'firebase/auth';
 import {
@@ -22,13 +23,14 @@ import {
 } from 'firebase/firestore';
 
 import { firebaseConfig } from '@/lib/firebaseConfig';
+import { showApiError } from '@/utils/showApiError';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
-const signInWithGoogle = async (): Promise<void> => {
+const signInWithGoogle = async (t: (key: string) => string): Promise<void> => {
     try {
         const res = await signInWithPopup(auth, googleProvider);
         const user: User = res.user;
@@ -45,12 +47,13 @@ const signInWithGoogle = async (): Promise<void> => {
     } catch (err: unknown) {
         console.error(err);
         if (err instanceof Error) {
-            alert(err.message);
+            showApiError('auth/google-sign-in-error', t);
         }
     }
 };
 
 const logInWithEmailAndPassword = async (
+    t: (key: string) => string,
     auth: Auth,
     email: string,
     password: string
@@ -60,12 +63,13 @@ const logInWithEmailAndPassword = async (
     } catch (err: unknown) {
         console.error(err);
         if (err instanceof Error) {
-            alert(err.message);
+            showApiError('auth/login-error', t);
         }
     }
 };
 
 const registerWithEmailAndPassword = async (
+    t: (key: string) => string,
     name: string,
     email: string,
     password: string
@@ -87,19 +91,22 @@ const registerWithEmailAndPassword = async (
     } catch (err: unknown) {
         console.error(err);
         if (err instanceof Error) {
-            alert(err.message);
+            showApiError('auth/register-error', t);
         }
     }
 };
 
-const sendPasswordReset = async (email: string): Promise<void> => {
+const sendPasswordReset = async (
+    t: (key: string) => string,
+    email: string
+): Promise<void> => {
     try {
         await sendPasswordResetEmail(auth, email);
-        alert('Password reset link sent!');
+        toast.success(t('auth/password-reset-success'));
     } catch (err: unknown) {
         console.error(err);
         if (err instanceof Error) {
-            alert(err.message);
+            showApiError('auth/password-reset-error', t);
         }
     }
 };

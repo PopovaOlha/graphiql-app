@@ -39,11 +39,6 @@ export interface ErrorBoundaryProps {
     children: ReactNode;
 }
 
-export interface ApiErrorProps {
-    errorCode: number;
-    errorMessage: string;
-}
-
 export interface ClientProviderProps {
     children: ReactNode;
     locale: string;

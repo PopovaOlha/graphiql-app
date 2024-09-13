@@ -1,3 +1,4 @@
+import { ToastContainer } from 'react-toastify';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import { dir } from 'i18next';
 import type { Metadata } from 'next';
@@ -49,6 +50,7 @@ export default async function RootLayout({
                             i18nNamespaces={i18nNamespaces}
                         >
                             <Header />
+                            <ToastContainer />
                             {children}
                             <Footer />
                         </ClientProvider>
