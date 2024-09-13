@@ -5,6 +5,7 @@ import Editor from '@monaco-editor/react';
 import {
     Box,
     Button,
+    Container,
     Tab,
     Tabs,
     TextField,
@@ -25,6 +26,7 @@ import { GraphQLResponse, KeyValuePair, Variable } from '@/types/interfaces';
 import { prettifyQuery } from '@/utils/prettifyQuery';
 
 Base64.extendBuiltins();
+import { ResponseStatusIndicator } from '@/components/RestClient/RestClientComponents';
 import { replaceVariablesInJson } from '@/utils/utils';
 
 const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
@@ -46,7 +48,7 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
         { key: 'Content-Type', value: 'application/json' },
     ]);
     const [response, setResponse] = useState<GraphQLResponse | null>(null);
-    const [statusCode, setStatusCode] = useState<number | null>(null);
+    const [statusCode, setStatusCode] = useState<number | string>('');
     const [schema, setSchema] = useState<GraphQLSchema | null>(null);
 
     useEffect(() => {
@@ -70,6 +72,7 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
             setVariables(savedVariables);
         }
     }, []);
+
     const [tabValue, setTabValue] = useState<number>(0);
 
     const theme = useTheme();
@@ -234,8 +237,9 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
     };
 
     return (
-        <div>
-            <Box p={2}>
+        <Container maxWidth="xl">
+            <Box sx={{ marginBottom: '2rem' }}>
+                <Typography variant="h1">GraphQL Client</Typography>
                 <TextField
                     label="Endpoint URL"
                     value={endpointUrl}
@@ -267,8 +271,8 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
                 </Box>
 
                 <Box my={2}>
-                    {tabValue === 0 && (
-                        <Box>
+                    {tabValue === 0 &&
+                        (endpointUrl.length ? (
                             <Editor
                                 height="200px"
                                 defaultLanguage="graphql"
@@ -280,8 +284,11 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
                                     fontSize: 14,
                                 }}
                             />
-                        </Box>
-                    )}
+                        ) : (
+                            <Typography variant={'body1'} p={2}>
+                                {t('restClient:emptyURL')}
+                            </Typography>
+                        ))}
 
                     {tabValue === 1 && (
                         <VariablesSection
@@ -303,21 +310,7 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
                         />
                     )}
                 </Box>
-                {endpointUrl.length ? (
-                    <TextField
-                        label="GraphQL Query"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        fullWidth
-                        margin="normal"
-                        multiline
-                        rows={6}
-                    />
-                ) : (
-                    <Typography variant={'body1'}>
-                        {t('restClient:emptyURL')}
-                    </Typography>
-                )}
+
                 <Button variant="contained" onClick={handleQueryExecution}>
                     Execute
                 </Button>
@@ -330,13 +323,27 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
                 </Button>
 
                 <Box mt={4}>
-                    <h3>Response</h3>
-                    <p>Status Code: {statusCode}</p>
-                    <pre>{JSON.stringify(response, null, 2)}</pre>
+                    {response && (
+                        <ResponseStatusIndicator
+                            responseCode={statusCode}
+                            responseStatus={''}
+                        />
+                    )}
+                    <Editor
+                        height="50vh"
+                        defaultLanguage="javascript"
+                        defaultValue={t('restClient:response.defaultEditorValue')}
+                        value={JSON.stringify(response, null, 2)}
+                        theme={mode === 'light' ? 'light' : 'vs-dark'}
+                        options={{
+                            minimap: { enabled: false },
+                            readOnly: true,
+                        }}
+                    />
                 </Box>
                 {schema && <DocumentationViewer schema={schema} />}
             </Box>
-        </div>
+        </Container>
     );
 };
 

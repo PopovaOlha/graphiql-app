@@ -159,7 +159,7 @@ describe('Rest Client', () => {
         expect(mockPushState).toHaveBeenCalled();
     });
 
-    it('VariablesSection enders variables correctly', () => {
+    it('VariablesSection renders variables correctly', () => {
         const mockVariables = [{ name: 'testVar', value: 'testValue' }];
 
         render(
