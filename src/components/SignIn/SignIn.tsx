@@ -60,7 +60,7 @@ const SignIn = () => {
 
         const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         const passwordPattern =
-            /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            /^(?=.*\p{L})(?=.*\p{N})(?=.*[@$!%*?&])[\p{L}\p{N}\p{S}\p{P}]{8,}$/u;
 
         if (!emailPattern.test(email)) {
             setEmailError(t('errorEmail'));

@@ -22,7 +22,8 @@
         "paths": {
             "@/*": ["./src/*"]
         },
-        "types": ["vitest/globals"]
+        "types": ["vitest/globals"],
+        "target": "es6"
     },
     "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "vitest.config.mts"],
     "exclude": ["node_modules"]
