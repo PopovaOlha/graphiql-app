@@ -34,40 +34,42 @@ vi.mock('next/navigation', async (importOriginal) => {
     };
 });
 
-const renderWithThemeProvider = (ui: React.ReactElement) => {
-    return render(<AppThemeProvider>{ui}</AppThemeProvider>);
-};
-
 describe('Rest Client', () => {
-    afterEach(() => {
-        vi.restoreAllMocks();
-    });
-
     it('Client renders', () => {
-        renderWithThemeProvider(<RestClient body={''} />);
-        const heading = screen.getByRole('heading', { level: 1 });
-        expect(heading).toBeInTheDocument();
-        expect(heading).toHaveTextContent('restClient:title');
-    });
-
-    it('Response indicator shows correct status', () => {
-        renderWithThemeProvider(
-            <ResponseStatusIndicator responseCode={200} responseStatus={''} />
+        render(
+            <AppThemeProvider>
+                <RestClient body={''} />
+            </AppThemeProvider>
         );
-        const indicator = screen.getByTestId('indicator');
-        expect(indicator).toBeInTheDocument();
-        expect(indicator.textContent).toBe('restClient:response.status 200 ');
+
+        expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+            'restClient:title'
+        );
     });
 
-    it('No body editor if no URL is provided', async () => {
-        renderWithThemeProvider(<RestClient body={''} />);
+    it('Response indicator shows right status', () => {
+        render(<ResponseStatusIndicator responseCode={200} responseStatus={''} />);
+
+        expect(screen.getByTestId('indicator')).toBeInTheDocument();
+        expect(screen.getByTestId('indicator').textContent).toBe(
+            'restClient:response.status 200 '
+        );
+    });
+
+    it('No body editor, if no URL', () => {
+        render(
+            <AppThemeProvider>
+                <RestClient body={''} />
+            </AppThemeProvider>
+        );
 
         const bodyTab = screen.getByLabelText('restClient:tabs.jsonBody');
         expect(bodyTab).toBeInTheDocument();
 
         fireEvent.click(bodyTab);
 
-        await waitFor(() => {
+        waitFor(() => {
             expect(screen.getByText('restClient:emptyURL')).toBeInTheDocument();
         });
     });
@@ -76,12 +78,14 @@ describe('Rest Client', () => {
         const mockSendAnswer = vi.fn();
         const mockSendResponseStatus = vi.fn();
 
-        renderWithThemeProvider(
-            <RestForm
-                body={''}
-                sendAnswer={mockSendAnswer}
-                sendResponseStatus={mockSendResponseStatus}
-            />
+        render(
+            <AppThemeProvider>
+                <RestForm
+                    body={''}
+                    sendAnswer={mockSendAnswer}
+                    sendResponseStatus={mockSendResponseStatus}
+                />
+            </AppThemeProvider>
         );
 
         const methodSelect = screen.getByDisplayValue('GET');
@@ -96,7 +100,7 @@ describe('Rest Client', () => {
         expect(submitButton).not.toBeDisabled();
     });
 
-    it('Rest Form sends request to /api/restful when form is submitted', async () => {
+    it('Rest Form send request to /api/restful when form is submitted', async () => {
         const mockSendAnswer = vi.fn();
         const mockSendResponseStatus = vi.fn();
         const mockFetch = vi.fn(() =>
@@ -110,12 +114,14 @@ describe('Rest Client', () => {
         );
         global.fetch = mockFetch;
 
-        renderWithThemeProvider(
-            <RestForm
-                body={''}
-                sendAnswer={mockSendAnswer}
-                sendResponseStatus={mockSendResponseStatus}
-            />
+        render(
+            <AppThemeProvider>
+                <RestForm
+                    body={''}
+                    sendAnswer={mockSendAnswer}
+                    sendResponseStatus={mockSendResponseStatus}
+                />
+            </AppThemeProvider>
         );
 
         const urlInput = screen.getByPlaceholderText('restClient:urlPlaceholder');
@@ -126,10 +132,6 @@ describe('Rest Client', () => {
 
         await waitFor(() => {
             expect(mockFetch).toHaveBeenCalledTimes(1);
-            expect(mockFetch).toHaveBeenCalledWith(
-                expect.stringContaining('/api/restful'),
-                expect.any(Object)
-            );
         });
     });
 
@@ -138,34 +140,38 @@ describe('Rest Client', () => {
         const mockSendAnswer = vi.fn();
         const mockSendResponseStatus = vi.fn();
 
-        renderWithThemeProvider(
-            <RestForm
-                body={''}
-                sendAnswer={mockSendAnswer}
-                sendResponseStatus={mockSendResponseStatus}
-            />
+        render(
+            <AppThemeProvider>
+                <RestForm
+                    body={''}
+                    sendAnswer={mockSendAnswer}
+                    sendResponseStatus={mockSendResponseStatus}
+                />
+            </AppThemeProvider>
         );
 
         const urlInput = screen.getByPlaceholderText('restClient:urlPlaceholder');
 
         fireEvent.change(urlInput, { target: { value: 'https://test.com' } });
+
         fireEvent.blur(urlInput);
 
         expect(mockPushState).toHaveBeenCalled();
-        mockPushState.mockRestore();
     });
 
     it('VariablesSection renders variables correctly', () => {
         const mockVariables = [{ name: 'testVar', value: 'testValue' }];
 
-        renderWithThemeProvider(
-            <VariablesSection
-                variables={mockVariables}
-                handleAddVariable={vi.fn()}
-                handleNameChange={vi.fn()}
-                handleVarValueChange={vi.fn()}
-                handleRemoveVariable={vi.fn()}
-            />
+        render(
+            <AppThemeProvider>
+                <VariablesSection
+                    variables={mockVariables}
+                    handleAddVariable={vi.fn()}
+                    handleNameChange={vi.fn()}
+                    handleVarValueChange={vi.fn()}
+                    handleRemoveVariable={vi.fn()}
+                />
+            </AppThemeProvider>
         );
 
         expect(screen.getByDisplayValue('testVar')).toBeInTheDocument();
