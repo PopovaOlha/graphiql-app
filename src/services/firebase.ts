@@ -1,9 +1,9 @@
 import { initializeApp } from 'firebase/app';
 import {
-    Auth,
     createUserWithEmailAndPassword,
     getAuth,
     GoogleAuthProvider,
+    onIdTokenChanged,
     sendPasswordResetEmail,
     signInWithEmailAndPassword,
     signInWithPopup,
@@ -29,10 +29,32 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
+const TOKEN_LIFETIME_MS = 60 * 60 * 1000;
+
+const monitorTokenExpiration = (user: User): void => {
+    console.log(user);
+    onIdTokenChanged(auth, async (user) => {
+        if (user) {
+            const idTokenResult = await user.getIdTokenResult();
+            const tokenIssuedAtTime = idTokenResult.issuedAtTime;
+            const expirationTime =
+                new Date(tokenIssuedAtTime).getTime() + TOKEN_LIFETIME_MS;
+
+            setTimeout(() => {
+                logout();
+                alert('Your session has expired. Please log in again.');
+            }, expirationTime - Date.now());
+        }
+    });
+};
+
 const signInWithGoogle = async (): Promise<void> => {
     try {
         const res = await signInWithPopup(auth, googleProvider);
         const user: User = res.user;
+
+        monitorTokenExpiration(user);
+
         const q = query(collection(db, 'users'), where('uid', '==', user.uid));
         const docs: QuerySnapshot<DocumentData> = await getDocs(q);
         if (docs.docs.length === 0) {
@@ -43,7 +65,6 @@ const signInWithGoogle = async (): Promise<void> => {
                 email: user.email,
             });
         }
-        startAutoLogout();
     } catch (err: unknown) {
         console.error(err);
         if (err instanceof Error) {
@@ -53,13 +74,14 @@ const signInWithGoogle = async (): Promise<void> => {
 };
 
 const logInWithEmailAndPassword = async (
-    auth: Auth,
     email: string,
     password: string
 ): Promise<void> => {
     try {
-        await signInWithEmailAndPassword(auth, email, password);
-        startAutoLogout();
+        const res = await signInWithEmailAndPassword(auth, email, password);
+        const user: User = res.user;
+
+        monitorTokenExpiration(user);
     } catch (err: unknown) {
         console.error(err);
         if (err instanceof Error) {
@@ -87,7 +109,8 @@ const registerWithEmailAndPassword = async (
             authProvider: 'local',
             email,
         });
-        startAutoLogout();
+
+        monitorTokenExpiration(user);
     } catch (err: unknown) {
         console.error(err);
         if (err instanceof Error) {
@@ -108,18 +131,15 @@ const sendPasswordReset = async (email: string): Promise<void> => {
     }
 };
 
-const logout = (): void => {
-    signOut(auth);
-    console.log('User logged out');
-};
-
-const startAutoLogout = (): void => {
-    setTimeout(
-        () => {
-            logout();
-        },
-        2 * 60 * 1000
-    );
+const logout = async (): Promise<void> => {
+    try {
+        await signOut(auth);
+    } catch (err: unknown) {
+        console.error('Error during logout: ', err);
+        if (err instanceof Error) {
+            alert(err.message);
+        }
+    }
 };
 
 export {
