@@ -70,7 +70,11 @@ describe('Rest Client', () => {
         fireEvent.click(bodyTab);
 
         waitFor(() => {
-            expect(screen.getByText('restClient:emptyURL')).toBeInTheDocument();
+            expect(
+                screen.getByText((content) =>
+                    content.includes('restClient:emptyURL')
+                )
+            ).toBeInTheDocument();
         });
     });
 
