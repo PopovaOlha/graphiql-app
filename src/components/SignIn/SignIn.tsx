@@ -73,7 +73,7 @@ const SignIn = () => {
         }
 
         try {
-            await logInWithEmailAndPassword(auth, email, password);
+            await logInWithEmailAndPassword(t, auth, email, password);
             router.push('/');
         } catch (error) {
             setError(t('errorLogin'));
@@ -176,7 +176,7 @@ const SignIn = () => {
                     variant="outlined"
                     color="primary"
                     fullWidth
-                    onClick={signInWithGoogle}
+                    onClick={() => signInWithGoogle(t)}
                     className={styles.loginButton}
                     startIcon={<Google />}
                     size="large"

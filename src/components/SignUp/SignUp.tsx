@@ -96,7 +96,7 @@ const SignUp = () => {
         }
 
         try {
-            await registerWithEmailAndPassword(name, email, password);
+            await registerWithEmailAndPassword(t, name, email, password);
             router.push('/');
             setSuccess(t('successRegister'));
         } catch (error) {
