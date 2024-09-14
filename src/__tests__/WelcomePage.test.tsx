@@ -52,7 +52,7 @@ vi.mock('next/navigation', () => ({
 
 describe('WelcomePage', () => {
     it('should render welcome back message when user is logged in', () => {
-        (useAuthState as unknown as ReturnType<typeof vi.fn>).mockReturnValue([
+        (useAuthState as ReturnType<typeof vi.fn>).mockReturnValue([
             mockAuth.currentUser,
             false,
             undefined,
@@ -72,7 +72,7 @@ describe('WelcomePage', () => {
     });
 
     it('should render welcome message when user is not logged in', () => {
-        (useAuthState as unknown as ReturnType<typeof vi.fn>).mockReturnValue([
+        (useAuthState as ReturnType<typeof vi.fn>).mockReturnValue([
             null,
             false,
             undefined,
@@ -91,7 +91,7 @@ describe('WelcomePage', () => {
     });
 
     it('should navigate to sign in page when Sign In button is clicked', () => {
-        (useAuthState as unknown as ReturnType<typeof vi.fn>).mockReturnValue([
+        (useAuthState as ReturnType<typeof vi.fn>).mockReturnValue([
             null,
             false,
             undefined,
@@ -106,7 +106,7 @@ describe('WelcomePage', () => {
     });
 
     it('should navigate to sign up page when Sign Up button is clicked', () => {
-        (useAuthState as unknown as ReturnType<typeof vi.fn>).mockReturnValue([
+        (useAuthState as ReturnType<typeof vi.fn>).mockReturnValue([
             null,
             false,
             undefined,
@@ -121,7 +121,7 @@ describe('WelcomePage', () => {
     });
 
     it('should navigate to rest client page when Rest Client button is clicked', () => {
-        (useAuthState as unknown as ReturnType<typeof vi.fn>).mockReturnValue([
+        (useAuthState as ReturnType<typeof vi.fn>).mockReturnValue([
             mockAuth.currentUser,
             false,
             undefined,

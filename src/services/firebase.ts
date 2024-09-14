@@ -1,11 +1,9 @@
-import { toast } from 'react-toastify';
 import { initializeApp } from 'firebase/app';
 import { Auth, updateProfile } from 'firebase/auth';
 import {
     createUserWithEmailAndPassword,
     getAuth,
     GoogleAuthProvider,
-    sendPasswordResetEmail,
     signInWithEmailAndPassword,
     signInWithPopup,
     signOut,
@@ -96,21 +94,6 @@ const registerWithEmailAndPassword = async (
     }
 };
 
-const sendPasswordReset = async (
-    t: (key: string) => string,
-    email: string
-): Promise<void> => {
-    try {
-        await sendPasswordResetEmail(auth, email);
-        toast.success(t('auth/password-reset-success'));
-    } catch (err: unknown) {
-        console.error(err);
-        if (err instanceof Error) {
-            showApiError('auth/password-reset-error', t);
-        }
-    }
-};
-
 const logout = (): void => {
     signOut(auth);
 };
@@ -121,6 +104,5 @@ export {
     signInWithGoogle,
     logInWithEmailAndPassword,
     registerWithEmailAndPassword,
-    sendPasswordReset,
     logout,
 };
