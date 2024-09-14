@@ -7,6 +7,7 @@ exports[`Logo component > renders Logo correctly 1`] = `
     style="text-decoration: none;"
   >
     <svg
+      aria-label="logo"
       height="22.036383mm"
       style="display: block; width: 100%; height: auto;"
       viewBox="0 0 102.5157 22.036383"
