@@ -8,6 +8,7 @@ const Logo = () => {
                 height="22.036383mm"
                 viewBox="0 0 102.5157 22.036383"
                 xmlns="http://www.w3.org/2000/svg"
+                aria-label="logo"
                 style={{
                     display: 'block',
                     width: '100%',
