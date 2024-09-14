@@ -1,5 +1,5 @@
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { signOut } from 'firebase/auth';
 
@@ -151,7 +151,7 @@ describe('Header Component', () => {
         });
     });
 
-    it('should update header style when scrolling', () => {
+    it('should update header style when scrolling', async () => {
         (useAuthState as ReturnType<typeof vi.fn>).mockReturnValue([
             { uid: '12345', displayName: 'Test User' },
             false,
@@ -161,9 +161,11 @@ describe('Header Component', () => {
         render(<Header />);
 
         window.scrollY = 100;
-        window.dispatchEvent(new Event('scroll'));
+        act(() => {
+            window.dispatchEvent(new Event('scroll'));
+        });
 
-        const header = screen.getByRole('banner');
-        expect(header).toHaveStyle('padding: 1.25rem');
+        const header = await screen.findByRole('banner');
+        expect(header).toHaveStyle('padding: 0.6rem');
     });
 });
