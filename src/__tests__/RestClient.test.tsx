@@ -34,6 +34,10 @@ vi.mock('next/navigation', async (importOriginal) => {
     };
 });
 
+beforeEach(() => {
+    vi.clearAllMocks();
+});
+
 describe('Rest Client', () => {
     it('Client renders', () => {
         render(
@@ -57,21 +61,23 @@ describe('Rest Client', () => {
         );
     });
 
-    it('No body editor, if no URL', () => {
+    it('No body editor, if no URL', async () => {
         render(
             <AppThemeProvider>
                 <RestClient body={''} />
             </AppThemeProvider>
         );
 
-        const bodyTab = screen.getByLabelText('restClient:tabs.jsonBody');
-        expect(bodyTab).toBeInTheDocument();
+        const urlInput: HTMLInputElement = screen.getByPlaceholderText(
+            'restClient:urlPlaceholder'
+        );
+        urlInput.value = '';
 
-        fireEvent.click(bodyTab);
+        fireEvent.click(screen.getByText('restClient:tabs.jsonBody'));
 
-        waitFor(() => {
-            expect(screen.getByText('restClient:emptyURL')).toBeInTheDocument();
-        });
+        const fallback = await screen.findByTestId('empty-url');
+
+        expect(fallback).toBeInTheDocument();
     });
 
     it('Rest Form should allow changing URL and method', () => {
