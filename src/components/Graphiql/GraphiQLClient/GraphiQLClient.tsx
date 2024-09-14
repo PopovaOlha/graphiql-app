@@ -239,6 +239,7 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
                 <Typography variant="h1">{t('graphqlClient:title')}</Typography>
                 <TextField
                     label={t('graphqlClient:endpointUrl')}
+                    placeholder={t('graphqlClient:endpointUrl')}
                     value={endpointUrl}
                     onChange={(e) => setEndpointUrl(e.target.value)}
                     fullWidth
@@ -253,6 +254,7 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
                 />
                 <TextField
                     label={t('graphqlClient:sdlUrl')}
+                    placeholder={t('graphqlClient:sdlUrl')}
                     value={sdlUrl}
                     fullWidth
                     margin="normal"
@@ -282,7 +284,11 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
                                 }}
                             />
                         ) : (
-                            <Typography variant={'body1'} p={2}>
+                            <Typography
+                                variant={'body1'}
+                                p={2}
+                                data-testid="empty-url"
+                            >
                                 {t('graphqlClient:emptyURL')}
                             </Typography>
                         ))}
