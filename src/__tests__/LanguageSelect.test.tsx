@@ -2,6 +2,7 @@ import { fireEvent, render } from '@testing-library/react';
 import { Resource } from 'i18next';
 
 import { LanguageSelect } from '@/components/LanguageSelect/LanguageSelect';
+import ClientProvider from '@/components/Providers/ClientProvider/ClientProvider';
 import { TranslationsProvider } from '@/components/Providers/TranslationsProvider';
 
 import '@testing-library/jest-dom';
@@ -70,13 +71,13 @@ const mockResources: Resource = {
 describe('LanguageSelect component', () => {
     it('renders LanguageSelect correctly', () => {
         const { asFragment } = render(
-            <TranslationsProvider
-                namespaces={['mainPage']}
+            <ClientProvider
+                i18nNamespaces={['mainPage']}
                 locale={'en'}
                 resources={mockResources}
             >
                 <LanguageSelect />
-            </TranslationsProvider>
+            </ClientProvider>
         );
         expect(asFragment()).toMatchSnapshot();
     });
