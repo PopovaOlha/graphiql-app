@@ -99,7 +99,7 @@ const History = () => {
                         }}
                         onClick={handleHistory}
                     >
-                        Remove history
+                        {t('history:remove')}
                     </Button>
                 )}
                 {history.length ? (
