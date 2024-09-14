@@ -9,22 +9,18 @@ export const executeGraphQLQuery = async (
     headers: Header[]
 ): Promise<{ statusCode: number; response: unknown }> => {
     try {
-        const headersObject = headers.reduce(
-            (acc, header) => {
-                acc[header.key] = header.value;
-                return acc;
-            },
-            {} as Record<string, string>
-        );
-
-        const response = await axios.post(
-            endpointUrl,
-            {
-                query,
-                variables: JSON.parse(variables || '{}'),
-            },
-            { headers: headersObject }
-        );
+        const response = await axios.post('/api/graphql', {
+            url: endpointUrl,
+            query,
+            variables: JSON.parse(variables || '{}'),
+            headers: headers.reduce(
+                (acc, header) => {
+                    acc[header.key] = header.value;
+                    return acc;
+                },
+                {} as Record<string, string>
+            ),
+        });
 
         return {
             statusCode: response.status,
