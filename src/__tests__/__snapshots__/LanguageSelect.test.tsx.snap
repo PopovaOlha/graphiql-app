@@ -1,0 +1,52 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LanguageSelect component > renders LanguageSelect correctly 1`] = `
+<DocumentFragment>
+  <div>
+    <div
+      class="MuiFormControl-root css-1869usk-MuiFormControl-root"
+    >
+      <label
+        class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-standard MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-standard css-1c2i806-MuiFormLabel-root-MuiInputLabel-root"
+        data-shrink="true"
+        for="language"
+      >
+        languages.label
+      </label>
+      <div
+        class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary MuiInputBase-formControl MuiNativeSelect-root css-1eed5fa-MuiInputBase-root-MuiInput-root"
+      >
+        <select
+          aria-invalid="false"
+          class="MuiNativeSelect-select MuiNativeSelect-standard MuiInputBase-input MuiInput-input css-1dmqq7i-MuiNativeSelect-select-MuiInputBase-input-MuiInput-input"
+          id="language"
+          name="language"
+        >
+          <option
+            selected=""
+            value="en"
+          >
+            languages.en
+          </option>
+          <option
+            value="ru"
+          >
+            languages.ru
+          </option>
+        </select>
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiNativeSelect-icon MuiNativeSelect-iconStandard css-10bey84-MuiSvgIcon-root-MuiNativeSelect-icon"
+          data-testid="ArrowDropDownIcon"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M7 10l5 5 5-5z"
+          />
+        </svg>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
