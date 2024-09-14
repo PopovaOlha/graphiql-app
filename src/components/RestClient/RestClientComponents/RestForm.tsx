@@ -391,7 +391,7 @@ const RestForm: FC<RestFormProps> = ({ body, sendAnswer, sendResponseStatus }) =
                         onChange={(value) => setJsonBody(value)}
                     />
                 ) : (
-                    <Typography variant={'body1'}>
+                    <Typography variant={'body1'} data-testid="empty-url">
                         {t('restClient:emptyURL')}
                     </Typography>
                 )}
