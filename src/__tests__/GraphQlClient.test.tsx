@@ -14,9 +14,14 @@ import '@testing-library/jest-dom';
 vi.mock('@/hooks/useUnauthorizedRedirect', () => ({
     default: vi.fn(),
 }));
+
 vi.mock('@/services/graphiqlService', () => ({
-    executeGraphQLQuery: vi.fn(),
+    executeGraphQLQuery: vi.fn().mockResolvedValue({
+        statusCode: 200,
+        data: { someField: 'someValue' },
+    }),
 }));
+
 vi.mock('@/services/schemaService', () => ({
     fetchGraphQLSchema: vi.fn(),
 }));
@@ -39,10 +44,6 @@ vi.mock('next/navigation', async (importOriginal) => {
                 ][Symbol.iterator](),
         }),
     };
-});
-
-beforeEach(() => {
-    vi.clearAllMocks();
 });
 
 describe('GraphQL Client', () => {
@@ -197,11 +198,19 @@ describe('GraphQL Client', () => {
             </AppThemeProvider>
         );
 
-        const docsButton = screen.getByText('graphqlClient:fetchDocs');
+        const executeButton = screen.getByText('graphqlClient:execute');
+        const docsButton: HTMLButtonElement = screen.getByText(
+            'graphqlClient:fetchDocs'
+        );
 
-        const urlInput = screen.getByPlaceholderText('graphqlClient:sdlUrl');
+        expect(docsButton).toBeDisabled();
 
-        fireEvent.change(urlInput, { target: { value: 'https://test.com?sdl' } });
+        fireEvent.click(executeButton);
+
+        await waitFor(() => {
+            expect(docsButton).not.toBeDisabled();
+        });
+
         fireEvent.click(docsButton);
 
         await waitFor(() => {
