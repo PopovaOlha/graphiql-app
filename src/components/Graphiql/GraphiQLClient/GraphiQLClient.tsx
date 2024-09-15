@@ -70,7 +70,7 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
             setQuery(savedQuery);
             setVariables(savedVariables);
         }
-    }, [body, searchParams]);
+    }, []);
 
     const [tabValue, setTabValue] = useState<number>(0);
 
