@@ -319,6 +319,7 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
                     variant="outlined"
                     onClick={handleFetchSchema}
                     style={{ marginLeft: 10 }}
+                    disabled={!response}
                 >
                     {t('graphqlClient:fetchDocs')}
                 </Button>
