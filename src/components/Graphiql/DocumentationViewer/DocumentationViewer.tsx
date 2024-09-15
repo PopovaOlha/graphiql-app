@@ -1,5 +1,6 @@
 'use client';
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Box, Button, Modal, Typography } from '@mui/material';
 import {
@@ -93,8 +94,11 @@ const DocumentationViewer: FC<DocumentationViewerProps> = ({ schema }) => {
     const queryType = schema.getQueryType() as GraphQLObjectType;
     const fields = queryType.getFields();
 
+    const { t } = useTranslation();
+
     return (
         <Box mt={4}>
+            <Typography variant="h6">{t('graphqlClient:docs')}</Typography>
             {Object.keys(fields).map((fieldName) => (
                 <FieldViewer
                     key={fieldName}

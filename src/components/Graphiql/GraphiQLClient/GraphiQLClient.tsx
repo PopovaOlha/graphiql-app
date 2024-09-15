@@ -349,9 +349,6 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
 
                 {response && statusCode === 200 && schema && (
                     <Box mt={4}>
-                        <Typography variant="h6">
-                            {t('graphqlClient:documentation')}
-                        </Typography>
                         <DocumentationViewer schema={schema} />
                     </Box>
                 )}
