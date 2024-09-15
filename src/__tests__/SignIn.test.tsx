@@ -57,7 +57,6 @@ describe('SignIn Component', () => {
         expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
         expect(screen.getByText('login')).toBeInTheDocument();
-        expect(screen.getByText('loginGoogle')).toBeInTheDocument();
     });
 
     it('should display validation errors when email or password is missing', async () => {

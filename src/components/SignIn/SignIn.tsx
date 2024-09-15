@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useTranslation } from 'react-i18next';
-import { Google, Visibility, VisibilityOff } from '@mui/icons-material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
     Alert,
     Box,
@@ -18,11 +18,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import styles from '@/components/SignIn/SignIn.module.scss';
-import {
-    auth,
-    logInWithEmailAndPassword,
-    signInWithGoogle,
-} from '@/services/firebase';
+import { auth, logInWithEmailAndPassword } from '@/services/firebase';
 
 const SignIn = () => {
     const [email, setEmail] = useState<string>('');
@@ -170,18 +166,6 @@ const SignIn = () => {
                     }}
                 >
                     {t('login')}
-                </Button>
-                <Button
-                    type="button"
-                    variant="outlined"
-                    color="primary"
-                    fullWidth
-                    onClick={() => signInWithGoogle(t)}
-                    className={styles.loginButton}
-                    startIcon={<Google />}
-                    size="large"
-                >
-                    {t('loginGoogle')}
                 </Button>
             </form>
             <Typography variant="body2" className={styles.loginText}>
