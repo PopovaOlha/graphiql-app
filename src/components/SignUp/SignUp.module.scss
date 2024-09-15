@@ -1,0 +1,41 @@
+.signupContainer {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    height: calc(100vh - 197px);
+}
+
+.signupPaper {
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.signupTitle {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.signupButton {
+    margin: 10px 0;
+}
+
+.loginText {
+    text-align: center;
+}
+
+.loginForm {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.backlink {
+    color: #1976d2;
+}

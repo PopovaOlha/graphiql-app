@@ -1,0 +1,40 @@
+{
+    "title": "Main Page",
+    "languages": {
+        "ru": "Russian",
+        "en": "English",
+        "label": "Language"
+    },
+    "authors": {
+        "title": "Authors"
+    },
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "mainPage": "Main Page",
+    "login": "Login",
+    "loginGoogle": "Login with Google",
+    "accountTextSignIn": "Don't have an account?",
+    "accountTextSignUp": "Already have an account?",
+    "now": "now",
+    "email": "E-mail",
+    "password": "Password",
+    "passwordConfirm": "Confirm Password",
+    "errorName": "Username must be 3 to 20 characters long and can contain letters, numbers, spaces, underscores, and hyphens.",
+    "errorEmail": "Please enter a valid email address (example@domain.com).",
+    "errorPassword": "Password must contain at least 8 characters, including one letter, one digit, and one special character.",
+    "errorConfirmPass": "Passwords must match.",
+    "errorLogin": "Failed to log in. Please check your credentials.",
+    "errorSignUp": "Failed to sign up. Please try again.",
+    "errorEmpty": "Please fill in this field.",
+    "successLogin": "You are logged in!",
+    "successRegister": "Registration successful! Welcome to our REST/GRAPHQL client app!",
+    "userName": "Username",
+    "clients": {
+        "history": "History",
+        "collapse": "Collapse",
+        "expand": "Expand",
+        "rest": "REST API Client",
+        "graph": "GraphQL Client"
+    }
+}

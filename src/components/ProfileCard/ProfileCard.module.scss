@@ -1,0 +1,28 @@
+.card {
+    display: flex;
+    align-items: stretch;
+    padding: 0;
+
+    .avatar {
+        width: 6rem;
+        height: 6rem;
+        margin: 1rem 0.5rem 0.5rem;
+    }
+
+    .cardContent {
+        flex: 1 0;
+        flex-direction: column;
+        padding: 0.25rem;
+    }
+
+    .cardLink {
+        text-decoration: none;
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .avatar {
+        display: none;
+    }
+}

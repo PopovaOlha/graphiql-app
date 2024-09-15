@@ -1,0 +1,18 @@
+{
+    "404": {
+        "text": "This page does not exist",
+        "link": "Go to the main page"
+    },
+    "400": "The request could not be understood or was missing required parameters.",
+    "401": "Authentication failed or user does not have permissions for the desired action.",
+    "403": "Authentication succeeded but authenticated user does not have access to the resource.",
+    "500": "An error occurred on the server.",
+    "502": "Received an invalid response from the upstream server.",
+    "503": "The server is currently unable to handle the request due to a temporary overload or maintenance.",
+    "auth/google-sign-in-error": "An error occurred during Google sign-in. Please try again.",
+    "auth/login-error": "An error occurred during login. Please check your credentials and try again.",
+    "auth/register-error": "This email is already in use. Please log in. If you need further help, contact support.",
+    "auth/password-reset-error": "An error occurred while sending the password reset email. Please try again.",
+    "auth/password-reset-success": "Password reset email sent successfully!",
+    "default": "An unexpected error occurred. Please try again later."
+}

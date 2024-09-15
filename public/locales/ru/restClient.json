@@ -1,0 +1,31 @@
+{
+    "title": "REST клиент",
+    "methodLabel": "Метод",
+    "urlLabel": "Конечный URL-адрес",
+    "urlPlaceholder": "https://dummyjson.com/users",
+    "submitButton": "Отправить",
+    "tabs": {
+        "headers": "Заголовки",
+        "jsonBody": "Тело JSON",
+        "variables": "Переменные"
+    },
+    "headers": {
+        "keyPlaceholder": "Ключ",
+        "valuePlaceholder": "Значение",
+        "addHeaderButton": "Добавить заголовок",
+        "removeButton": "Удалить"
+    },
+    "jsonBody": {
+        "languageLabel": "Язык"
+    },
+    "variables": {
+        "namePlaceholder": "Имя",
+        "valuePlaceholder": "Значение",
+        "addVariableButton": "Добавить переменную"
+    },
+    "response": {
+        "status": "Статус ответа:",
+        "defaultEditorValue": "// Ответ"
+    },
+    "emptyURL": "Сначала введите адрес запроса"
+}

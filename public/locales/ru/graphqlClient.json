@@ -1,0 +1,13 @@
+{
+    "title": "GraphQL Клиент",
+    "endpointUrl": "Конечный URL-адрес",
+    "sdlUrl": "SDL URL-адрес",
+    "query": "Запрос GraphQL",
+    "variables": "Переменные",
+    "headers": "Заголовки",
+    "emptyURL": "Сначала введите URL-адрес",
+    "execute": "Выполнить",
+    "fetchDocs": "Получить документацию",
+    "docs": "Документация",
+    "defaultEditorValue": "// Ответ"
+}
