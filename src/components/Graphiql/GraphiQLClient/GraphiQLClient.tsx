@@ -19,6 +19,7 @@ import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import DocumentationViewer from '@/components/Graphiql/DocumentationViewer/DocumentationViewer';
 import { HeadersSection } from '@/components/Graphiql/HeadersSection/HeadersSection';
 import { VariablesSection } from '@/components/Graphiql/VariableSection/VariableSection';
+import { ResponseStatusIndicator } from '@/components/RestClient/RestClientComponents';
 import { executeGraphQLQuery } from '@/services/graphiqlService';
 import { addToHistory } from '@/services/historyService';
 import { fetchGraphQLSchema } from '@/services/schemaService';
@@ -26,7 +27,6 @@ import { GraphQLResponse, KeyValuePair, Variable } from '@/types/interfaces';
 import { prettifyQuery } from '@/utils/prettifyQuery';
 
 Base64.extendBuiltins();
-import { ResponseStatusIndicator } from '@/components/RestClient/RestClientComponents';
 
 const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
     const pathname = usePathname();
@@ -70,7 +70,7 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
             setQuery(savedQuery);
             setVariables(savedVariables);
         }
-    }, []);
+    }, [body, searchParams]);
 
     const [tabValue, setTabValue] = useState<number>(0);
 
@@ -84,7 +84,11 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
     }, [endpointUrl]);
 
     useEffect(() => {
-        const newPath = `/graphiql/GRAPHQL/${endpointUrl.toBase64URL()}${query?.length ? `/${JSON.stringify({ query, variables }).toBase64URL()}` : ''}?${searchParams.toString()}`;
+        const newPath = `/graphiql/GRAPHQL/${endpointUrl.toBase64URL()}${
+            query?.length
+                ? `/${JSON.stringify({ query, variables }).toBase64URL()}`
+                : ''
+        }?${searchParams.toString()}`;
 
         window.history.pushState({}, '', newPath);
     }, [endpointUrl, searchParams, query, variables]);
@@ -256,9 +260,9 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
                     label={t('graphqlClient:sdlUrl')}
                     placeholder={t('graphqlClient:sdlUrl')}
                     value={sdlUrl}
+                    onChange={(e) => setSdlUrl(e.target.value)}
                     fullWidth
                     margin="normal"
-                    disabled
                 />
 
                 <Box sx={{ borderBottom: 1, borderColor: 'divider', marginTop: 2 }}>
@@ -321,6 +325,7 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
                     variant="outlined"
                     onClick={handleFetchSchema}
                     style={{ marginLeft: 10 }}
+                    disabled={!response || statusCode != 200}
                 >
                     {t('graphqlClient:fetchDocs')}
                 </Button>
@@ -347,7 +352,12 @@ const GraphiQLClient: FC<{ body: string }> = ({ body }) => {
                         }}
                     />
                 </Box>
-                {schema && <DocumentationViewer schema={schema} />}
+
+                {response && statusCode === 200 && schema && (
+                    <Box mt={4}>
+                        <DocumentationViewer schema={schema} />
+                    </Box>
+                )}
             </Box>
         </Container>
     );
